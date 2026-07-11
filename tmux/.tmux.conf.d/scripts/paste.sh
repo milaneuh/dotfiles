@@ -1,0 +1,41 @@
+#!/bin/bash
+
+paste_text() {
+	local content
+	content=$(xclip -out -selection clipboard)
+	if [[ "$1" == "--no-newline" ]]; then
+		content=$(printf '%s' "$content" | tr -d '\r' | sed --null-data 's/\n$//')
+	fi
+	printf '%s' "$content" | tmux load-buffer - && tmux paste-buffer
+}
+
+clipboard_has_image() {
+	xclip -selection clipboard -target TARGETS -out 2>/dev/null | tr '\000' '\n' | grep --quiet --ignore-case 'image'
+}
+
+pane_has() { echo "$pane_procs" | grep --quiet --line-regexp --extended-regexp "$1"; }
+
+do_paste() {
+	if pane_has 'vi|vim|nvim'; then
+		tmux send-keys -t "$TMUX_PANE" C-v
+		return
+	fi
+
+	if pane_has 'claude' && clipboard_has_image; then
+		tmux send-keys -t "$TMUX_PANE" C-v
+		return
+	fi
+
+	if pane_has 'claude'; then
+		paste_text --no-newline
+		return
+	fi
+
+	paste_text
+}
+
+
+pane_tty=$(tmux display-message -p '#{pane_tty}')
+pane_procs=$(ps --tty "${pane_tty#/dev/}" --format comm= 2>/dev/null)
+
+do_paste

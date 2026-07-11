@@ -1,0 +1,101 @@
+local M = {}
+
+M.setup = function()
+	-- FT, plugin, and indent settings
+	vim.o.exrc = true -- Load .nvim.lua if present in the current directory
+	vim.o.hidden = false -- Do not switch buffer if there are unsaved modifications
+	vim.o.confirm = true -- Prompt to save before switching from modified buffer
+
+	-- Gutentags configuration
+	vim.g.gutentags_ctags_executable = '/usr/bin/ctags'
+
+	-- Paths and Files
+	vim.o.path = ".,," -- Only index the current file/folder
+
+	-- Appearance
+	vim.o.background = "dark" -- Fix the background as dark
+	vim.o.wrap = false -- Don't wrap text when the window is too small
+	vim.o.showmatch = true -- Show matching braces/parentheses
+
+	-- Alarms
+	vim.o.errorbells = false -- Disable bell alarms
+	vim.o.visualbell = false -- Disable visual alarm
+
+	-- System Interaction
+  vim.opt.clipboard = "unnamedplus"
+	vim.o.encoding = "utf-8" -- Set UTF-8 encoding
+	vim.o.compatible = false -- Disable vi compatibility
+	vim.o.timeoutlen = 1000 -- Set timeout for mappings
+	vim.o.ttimeoutlen = 100 -- Set timeout for key codes
+	vim.o.updatetime = 500 -- Vital for LSP and Tagbar on Neovim
+
+	-- Backup
+	vim.o.backup = false -- Disable backups
+	vim.o.swapfile = false -- Disable swap file
+	vim.o.writebackup = false -- Disable write backups
+
+	-- Navigation
+	vim.o.mouse = "a" -- Enable mouse selection
+	vim.o.number = true -- Display line numbers
+	vim.o.scrolloff = 8 -- Enable scrolling when reaching the bottom
+	vim.o.grepprg = "rg --vimgrep" -- Use ripgrep with ignore file
+
+	-- Search
+	vim.o.ignorecase = true -- Ignore case in search
+	vim.o.smartcase = true -- Use smart case search
+	vim.o.hlsearch = true -- Highlight search results
+	vim.o.incsearch = true -- Show results while searching
+
+	-- Text Formatting
+	vim.o.tabstop = 2 -- Set tab width to 2 spaces
+	vim.o.softtabstop = 2 -- Set soft tab width to 2 spaces
+	vim.o.shiftwidth = 2 -- Set indentation width to 2 spaces
+	vim.o.textwidth = 0 -- Don't wrap lines automatically
+	vim.o.expandtab = true -- Convert tabs to spaces
+	vim.o.listchars = "nbsp:!" -- Show non-breaking spaces
+
+	-- Spelling
+	vim.o.spelllang = "fr" -- Set French as the spellcheck language
+
+	-- Autocompletion
+	vim.o.wildmenu = true -- Enable completion in command mode
+	vim.o.wildignorecase = true -- Ignore case in wildmenu
+
+	-- Tabs
+	vim.o.showtabline = 1
+	vim.o.tabline = "%!v:lua.require('utils.tabs').tabline()"
+
+	local function apply_color_scheme(is_dark)
+		if is_dark then
+			vim.o.background = "dark"
+		else
+			vim.o.background = "light"
+			vim.cmd("colorscheme morning")
+			vim.cmd([[highlight Normal guibg=NONE ctermbg=NONE]])
+			vim.cmd([[highlight NonText guibg=NONE ctermbg=NONE]])
+			vim.cmd([[highlight EndOfBuffer guibg=NONE ctermbg=NONE]])
+		end
+	end
+
+	apply_color_scheme()
+
+	-- Diagnostics
+	DIAGNOSTICS_ACTIVE = true
+	vim.diagnostic.config({
+		virtual_lines = true,
+	})
+
+	-- plugin -------------------------------------------------------------------
+
+	-- Netrw (file explorer)
+	vim.g.netrw_banner = 0 -- Remove the help banner
+	vim.g.netrw_use_errorwindow = 0 -- Disable error windows
+	vim.g.netrw_preview = 1 -- Keep position of the last line
+	vim.g.netrw_sort_by = "time"
+	vim.g.netrw_sort_direction = "reverse"
+
+	-- Could not be put in after folder
+	vim.g.tmux_navigator_no_mappings = 1
+end
+
+return M

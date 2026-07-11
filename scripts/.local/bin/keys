@@ -1,0 +1,59 @@
+#!/bin/bash
+
+# Completion -------------------------------------------------------------------
+
+declare -a COMMANDS=(kinesis asus asusk thinkpad)
+declare -a COMMANDS_SHORT=(k a ak t)
+
+check_args() {
+	for c in "${COMMANDS[@]}"; do
+		[[ "${c}" == "${1}" ]] && return 0
+	done
+	for c in "${COMMANDS_SHORT[@]}"; do
+		[[ "${c}" == "${1}" ]] && return 0
+	done
+	return 1
+}
+
+detect_keyboard() {
+	lsusb | grep -iq "kinesis" && echo "kinesis" && return
+	grep -iq "asus" /sys/class/dmi/id/sys_vendor 2>/dev/null || { echo "thinkpad"; return; }
+	compgen -G "/dev/input/by-id/*usb*kbd*" > /dev/null 2>&1 && echo "asusk" || echo "asus"
+}
+
+if [[ -n ${COMP_LINE} ]]; then
+	for c in "${COMMANDS[@]}"; do
+		[[ ${c:0:${#2}} == "${2,,}" ]] && echo "${c}"
+	done
+	exit
+fi
+
+# Auto-detect keyboard if no argument provided
+if [[ -z "${1}" ]]; then
+	KEYBOARD=$(detect_keyboard)
+	echo "Auto-detected keyboard: ${KEYBOARD}"
+else
+	check_args "${1}" || { echo "Invalid argument"; exit 1; }
+	KEYBOARD="${1}"
+fi
+
+# Script -----------------------------------------------------------------------
+
+case ${KEYBOARD} in
+asus | a)
+	OPTS="'altwin:menu_win', 'caps:escape', 'ctrl:swap_lalt_lctl', 'ctrl:swap_ralt_rctl'"
+	;;
+asusk | ak)
+	OPTS="'caps:escape', 'ctrl:swap_lalt_lctl', 'ctrl:swap_ralt_rctl'"
+	;;
+kinesis | k)
+	OPTS="''"
+	;;
+thinkpad | t)
+	OPTS="'ctrl:swap_lalt_lctl', 'ctrl:swap_ralt_rctl', 'altwin:prtsc_rwin', 'caps:escape'"
+	;;
+*)
+	;;
+esac
+
+dconf write /org/gnome/desktop/input-sources/xkb-options "[${OPTS}]"

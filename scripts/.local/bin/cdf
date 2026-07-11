@@ -1,0 +1,9 @@
+#!/bin/bash
+
+! command -v fzf >& /dev/null && echo "fzf not installed" && exit 1
+
+[[ -n ${TMUX} ]] && cmd="fzf-tmux ${FZF_TMUX_OPTS}" || cmd="fzf"
+
+path=$(zoxide query -ls -- "$@" | ${cmd} --preview 'tree -C  {2}' --layout=default --preview-window=top:wrap)
+[[ -n "${path}" ]] && cd "${path}" || exit
+

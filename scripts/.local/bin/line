@@ -1,0 +1,19 @@
+#!/bin/bash
+
+declare -i MAXLINE=78
+
+# TODO: make it work for different type of file
+
+standard_input=$(cat)
+
+if [[ -n "${standard_input}" ]]; then
+	TITLE=${standard_input}
+	MAXLINE=$((MAXLINE - ${#TITLE}))
+else
+	TITLE=
+fi
+printf "%s" "$TITLE "
+
+for ((c = 1; c < "$MAXLINE"; c++)); do
+	printf "-"
+done

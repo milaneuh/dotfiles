@@ -1,0 +1,11 @@
+{
+  "workbench.colorTheme": "Light 2026",
+  "workbench.preferredLightColorTheme": "Light+",
+  "window.autoDetectColorScheme": false,
+  "workbench.colorCustomizations": {
+    "activityBar.background": "#FFFFFF",
+    "activityBar.foreground": "#000000",
+    "activityBar.inactiveForeground": "#666666",
+    "activityBar.border": "#E0E0E0"
+  }
+}

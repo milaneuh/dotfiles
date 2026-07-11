@@ -1,0 +1,14 @@
+#!/bin/bash
+
+WHISPER_CLI="${WHISPER_DIR}/whisper-cli"
+MODEL="${1:-${WHISPER_DIR}/../../models/ggml-base.bin}"
+OUTPUT="/tmp/recording_$(date +%Y%m%d_%H%M%S).wav"
+LANGUAGE="fr"
+
+[[ ! -f "${WHISPER_CLI}" ]] && echo "whisper-cli not found" && exit 1
+[[ ! -f "${MODEL}" ]] && echo "model not found" && exit 1
+
+echo "Recording... (Ctrl+C to stop)"
+arecord -f S16_LE -r 16000 -c 1 "${OUTPUT}" 2>/dev/null
+echo "Transcribing... (do not Ctrl+C)"
+"${WHISPER_CLI}" -m "${MODEL}" -l "${LANGUAGE}" -nt -f "${OUTPUT}" 2>/dev/null | tee >(xclip -selection clipboard)

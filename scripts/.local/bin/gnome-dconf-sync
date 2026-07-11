@@ -1,0 +1,64 @@
+#!/bin/bash
+set -euo pipefail
+
+# Goal:
+#   Loads the personal GNOME configuration (~/.config/gnome-desktop/*.conf) into
+#   the dconf database, then removes any other key found under the managed paths.
+
+# Glossary:
+#   dconf     : binary database (~/.config/dconf/user) where GNOME stores deviations from defaults
+#   schema    : GSettings description of keys (types, defaults)
+#   path      : location in the dconf tree, ends with / (e.g. /org/gnome/mutter/)
+#   keyfile   : INI file in dconf format (*.conf)
+#   stale key : key present in dconf but absent from the keyfiles
+
+CONF_DIR="$HOME/.config/gnome-desktop"
+
+MANAGED_PATHS=(
+  /org/gnome/desktop/wm/keybindings/
+  /org/gnome/settings-daemon/plugins/media-keys/
+  /org/gnome/shell/extensions/forge/
+)
+
+keyfile_keys() {
+  awk -F= '
+    /^\[/ { section = substr($0, 2, length($0) - 2) }
+    /^[a-z]/ { print "/" section "/" $1 }
+  ' "$CONF_DIR"/*.conf | sort
+}
+
+dconf_keys() {
+  dconf dump "$1" | awk -F= -v root="$1" '
+    /^\[/ {
+      section = substr($0, 2, length($0) - 2)
+      section = (section == "/") ? "" : section "/"
+    }
+    /^[a-z]/ { print root section $1 }
+  ' | sort
+}
+
+prune_stale_keys() {
+  local root=$1
+  local keys_in_dconf keys_in_conf stale_keys
+
+  keys_in_dconf=$(dconf_keys "$root")
+  keys_in_conf=$(keyfile_keys | { grep "^$root" || true; })
+  stale_keys=$(comm -23 <(printf '%s\n' "$keys_in_dconf") <(printf '%s\n' "$keys_in_conf"))
+
+  if [[ -n "$stale_keys" ]]; then
+    while read -r key; do
+      dconf reset "$key"
+    done <<< "$stale_keys"
+  fi
+}
+
+dconf load / < "$CONF_DIR/desktop.conf"
+dconf load / < "$CONF_DIR/keybindings.conf"
+dconf load / < "$CONF_DIR/forge.conf"
+
+for path in "${MANAGED_PATHS[@]}"; do
+  prune_stale_keys "$path"
+done
+
+gnome-extensions disable forge@jmmaranan.com
+gnome-extensions enable forge@jmmaranan.com

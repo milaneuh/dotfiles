@@ -1,0 +1,327 @@
+#!/bin/bash
+
+ANKI_SHA256="97cbddae74e44944360cac89bbdda06af7cf080a4dc1012dd6dc63952bbbb029"
+ANKI_VERSION="25.09"
+BAT_PKG="bat"
+FORGE_UUID="forge@jmmaranan.com"
+FORGE_VERSION_TAG="67175"
+JOPLIN_SHA256="6bdb0747c02150d221d93bcad459dc2b2b453de9cfdbe380126619159b880809"
+JOPLIN_VERSION="v3.5.13"
+NEOVIM_VERSION="v0.12.1"
+ROUNDED_CORNERS_UUID="rounded-window-corners@fxgn"
+ROUNDED_CORNERS_VERSION_TAG="69895"
+UEBERZUGPP_VERSION="v2.9.8"
+UNAME=$(grep -w ID /etc/os-release | cut -d'=' -f2)
+
+export GOPATH="${HOME}/.go"
+
+remind_to_copy_ssh_key() {
+	cat <<-'EOF'
+		Add your SSH public key to GitHub and GitLab before continuing.
+		  ssh-keygen -t ed25519 -C "your_email@example.com"
+	EOF
+	read -r -p "Keys added? [y/N] " response
+	[[ "${response}" =~ ^[Yy]$ ]] || exit 1
+}
+
+install() {
+	sudo -E apt -y install "$@"
+}
+
+update() {
+	sudo -E apt update
+}
+
+cleanup_default_folders() {
+	[ -e ~/.bashrc ] && rm ~/.bashrc
+	[ -e ~/.profile ] && rm ~/.profile
+	[ -e ~/Bureau ] && rmdir ~/Bureau
+	[ -e ~/Desktop ] && rmdir ~/Desktop
+	[ -e ~/Documents ] && rmdir ~/Documents
+	[ -e ~/Downloads ] && rmdir ~/Downloads
+	[ -e ~/Images ] && rmdir ~/Images
+	[ -e ~/Music ] && rmdir ~/Music
+	[ -e ~/Modèles ] && rmdir ~/Modèles
+	[ -e ~/Musiques ] && rmdir ~/Musiques
+	[ -e ~/Pictures ] && rmdir ~/Pictures
+	[ -e ~/Public ] && rmdir ~/Public
+	[ -e ~/Publics ] && rmdir ~/Publics
+	[ -e ~/Templates ] && rmdir ~/Templates
+	[ -e ~/Téléchargements ] && rmdir ~/Téléchargements
+	[ -e ~/Videos ] && rmdir ~/Videos
+	[ -e ~/Vidéos ] && rmdir ~/Vidéos
+}
+
+create_directories() {
+	mkdir -p ~/bureau
+	mkdir -p ~/document
+	mkdir -p ~/image
+	mkdir -p ~/logiciels
+	mkdir -p ~/musique
+	mkdir -p ~/remoterepos/projects
+	mkdir -p ~/telechargements
+	mkdir -p ~/tmp
+	mkdir -p ~/video
+	mkdir -p ~/.go
+}
+
+install_anki_deps() {
+	install libxcb-cursor0      # Needed by Anki for Qt platform plugin
+	install libxcb-xinerama0    # Needed by Anki
+	install libnss3             # Needed by Anki
+	install zstd                # Needed to extract Anki archive
+}
+
+install_anki_deps() {
+	install libfuse2t64 # Required by Joplin AppImage
+}
+
+install_tmux_tools_deps() {
+	install libgtk-4-dev        # Needed by ripdrag
+	install libgraphene-1.0-dev # Needed by ripdrag
+	install ffmpegthumbnailer   # Needed for video preview in ranger
+	install libssl-dev          # Needed to build ueberzugpp
+	install libvips-dev         # Needed to build ueberzugpp
+	install libsixel-dev        # Needed to build ueberzugpp
+	install libchafa-dev        # Needed to build ueberzugpp
+	install libtbb-dev          # Needed to build ueberzugpp
+	install libxcb-image0-dev   # Needed to build ueberzugpp
+	install libxcb-res0-dev     # Needed to build ueberzugpp
+
+}
+
+install_nvim_deps() {
+	install cmake               # Needed to build neovim
+	install gettext             # Needed to build neovim
+	install ninja-build         # Needed to build neovim
+	install build-essential     # Needed to build neovim
+}
+
+install_nvim_plugs_deps() {
+	install jq                  # Needed by nvim for linting
+	install shellcheck          # Needed by nvim for linting
+	install imagemagick         # Needed for image preview in NVIM in TMUX
+	install libmagickwand-dev   # Needed for image preview in NVIM in TMUX
+	install luarocks            # Needed for image preview in NVIM in TMUX
+}
+
+install_apt_packages() {
+	update
+
+	install ssh
+	install curl
+	install stow
+	install git
+	install golang-go
+	install typst
+	install pandoc
+	install pdf2svg
+	install tesseract-ocr
+	install libtesseract-dev    # Needed for tesseract-ocr
+	install bash-completion
+	install bat
+	install entr
+	install fzf
+	install npm
+	install python-tk           # Needed to create dial box for python script (ex: screenrecorder)
+	install python3-pip         # Needed by Mason
+	install ranger
+	install ripgrep
+	install universal-ctags
+	install xclip
+	install sshfs
+	install sshpass
+	install tree
+	install tmux
+	install xournalpp
+	install pipx                # Needed for Python CLI tools
+
+	install_nvim_deps
+	install_nvim_plugs_deps
+	install_anki_deps
+	install_tmux_tools_deps
+
+	ln -s /usr/bin/batcat ~/.local/bin/bat
+}
+
+install_npm_packages() {
+	npm config set prefix "${HOME}/.local/"
+	npm install --global tree-sitter-cli
+	npm install --global mermaid-filter # Need by pandoc to convert mermaid block to img
+	npm install -g @anthropic-ai/claude-code
+	npm install -g eslint_d    # Needed by nvim for linting
+	npm install -g prettier    # Needed by nvim for formatting
+}
+
+install_cargo_packages() {
+	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+	cargo install zoxide --locked
+	cargo install stylua --locked    # Needed by nvim for formatting
+	cargo install ripdrag
+	cargo install difftastic
+}
+
+install_go_packages() {
+	go install github.com/jesseduffield/lazygit@latest
+	go install github.com/mvdan/sh/v3/cmd/shfmt@latest    # Needed by nvim for formatting
+	go install github.com/mgechev/revive@latest           # Needed by nvim for Go linting
+}
+
+install_pipx_packages() {
+	pipx install djlint    # Needed by nvim for linting
+	pipx install black     # Needed by nvim for formatting
+}
+
+install_ranger_plugins() {
+	mkdir -p ~/.config/ranger/plugins
+	cd ~/.config/ranger/plugins ""
+	git clone https://github.com/maximtrp/ranger-archives.git
+	cd -
+}
+
+install_luarocks_packages() {
+	luarocks install magick      # Needed for image.nvim
+	luarocks install luacheck    # Needed by nvim for linting
+}
+
+install_language_packages() {
+	install_npm_packages
+	install_cargo_packages
+	install_go_packages
+	install_pipx_packages
+	install_luarocks_packages
+}
+
+install_graphical_software() {
+	snap install firefox
+	snap install gimp
+	snap install inkscape
+	snap install mpv
+	snap install vlc
+	snap install chromium # Needed by mermaid-filter via puppeteer
+	install kitty
+	install flameshot
+	install extension-manager
+}
+
+
+install_forge() {
+	curl -fsSL "https://extensions.gnome.org/download-extension/${FORGE_UUID}.shell-extension.zip?version_tag=${FORGE_VERSION_TAG}" -o /tmp/forge.zip
+	gnome-extensions install --force /tmp/forge.zip
+	rm /tmp/forge.zip
+
+	local enabled
+	enabled=$(gsettings get org.gnome.shell enabled-extensions)
+	if [[ ${enabled} == "@as []" ]]; then
+		gsettings set org.gnome.shell enabled-extensions "['${FORGE_UUID}']"
+	elif [[ ${enabled} != *"${FORGE_UUID}"* ]]; then
+		gsettings set org.gnome.shell enabled-extensions "${enabled%]}, '${FORGE_UUID}']"
+	fi
+}
+
+install_rounded_corners() {
+	curl -fsSL "https://extensions.gnome.org/download-extension/${ROUNDED_CORNERS_UUID}.shell-extension.zip?version_tag=${ROUNDED_CORNERS_VERSION_TAG}" -o /tmp/rounded-corners.zip
+	gnome-extensions install --force /tmp/rounded-corners.zip
+	rm /tmp/rounded-corners.zip
+
+	local enabled
+	enabled=$(gsettings get org.gnome.shell enabled-extensions)
+	if [[ ${enabled} == "@as []" ]]; then
+		gsettings set org.gnome.shell enabled-extensions "['${ROUNDED_CORNERS_UUID}']"
+	elif [[ ${enabled} != *"${ROUNDED_CORNERS_UUID}"* ]]; then
+		gsettings set org.gnome.shell enabled-extensions "${enabled%]}, '${ROUNDED_CORNERS_UUID}']"
+	fi
+}
+
+
+verify_sha256() {
+	local file="$1" expected="$2"
+	echo "${expected}  ${file}" | sha256sum --check --status || {
+		echo "SHA256 mismatch for ${file}, aborting."
+		exit 1
+	}
+}
+
+install_neovim() {
+	git clone --depth 1 --branch "${NEOVIM_VERSION}" https://github.com/neovim/neovim.git ~/logiciels/neovim
+	cd ~/logiciels/neovim || exit 1
+	rm -rf .deps build
+	make CMAKE_BUILD_TYPE=Release
+	sudo make install
+	cd - || exit 1
+}
+
+install_joplin() {
+	curl -fsSL "https://raw.githubusercontent.com/laurent22/joplin/${JOPLIN_VERSION}/Joplin_install_and_update.sh" -o /tmp/joplin_install.sh
+	verify_sha256 /tmp/joplin_install.sh "${JOPLIN_SHA256}"
+	bash /tmp/joplin_install.sh
+	rm /tmp/joplin_install.sh
+}
+
+install_anki() {
+	curl -fsSL "https://github.com/ankitects/anki/releases/download/${ANKI_VERSION}/anki-launcher-${ANKI_VERSION}-linux.tar.zst" -o /tmp/anki.tar.zst
+	verify_sha256 /tmp/anki.tar.zst "${ANKI_SHA256}"
+	tar xaf /tmp/anki.tar.zst -C /tmp
+	cd "/tmp/anki-launcher-${ANKI_VERSION}-linux" || exit 1
+	sudo ./install.sh
+	cd - || exit 1
+	rm -rf "/tmp/anki-launcher-${ANKI_VERSION}-linux" /tmp/anki.tar.zst
+}
+
+install_ueberzugpp() {
+	git clone --depth 1 --branch "${UEBERZUGPP_VERSION}" https://github.com/jstkdng/ueberzugpp.git ~/logiciels/ueberzugpp
+	cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_OPENCV=OFF -S ~/logiciels/ueberzugpp -B ~/logiciels/ueberzugpp/build
+	cmake --build ~/logiciels/ueberzugpp/build
+	sudo cmake --install ~/logiciels/ueberzugpp/build
+}
+
+
+install_from_source() {
+	install_forge
+	install_rounded_corners
+	install_neovim
+	install_joplin
+	install_anki
+	install_ueberzugpp
+	install_ranger_plugins
+}
+
+configure_system() {
+	sudo update-alternatives --install /usr/bin/vi vi /usr/local/bin/nvim 60
+	sudo update-alternatives --set vi /usr/local/bin/nvim
+	echo 'kitty.desktop' >~/.config/xdg-terminals.list
+}
+
+clone_repositories() {
+	git clone git@gitlab.com:maxencetholomier/zettelkasten.git ~/remoterepos/zettelkasten/
+	git clone git@github.com:maxencetholomier/knowledge.git ~/remoterepos/projects/knowledge
+
+	sudo ~/remoterepos/projects/knowledge/install
+}
+
+print_manual_steps() {
+	cat <<-'EOF'
+		Installation finished
+
+		Manual installation required:
+		  - Gnome extension: Dash to panel, Focus changer
+			- Whisper.cpp
+		Forge installed: log out and back in to activate it
+		Rounded Window Corners Reborn installed: log out and back in to activate it
+		Focus installed: log out and back in to activate it
+	EOF
+}
+
+remind_to_copy_ssh_key
+setup_variables
+cleanup_default_folders
+create_directories
+
+install_apt_packages
+install_language_packages
+install_graphical_software
+install_from_source
+configure_system
+clone_repositories
+
+print_manual_steps

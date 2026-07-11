@@ -1,0 +1,5 @@
+#!/bin/bash
+
+[[ -d ".git" ]] && lazygit "${@}" && exit
+
+echo "Not a git repository" && exit

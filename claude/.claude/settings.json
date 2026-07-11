@@ -1,0 +1,59 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(apt list:*)",
+      "Bash(awk:*)",
+      "Bash(cat:*)",
+      "Bash(cd:*)",
+      "Bash(du:*)",
+      "Bash(echo:*)",
+      "Bash(file:*)",
+      "Bash(find:*)",
+      "Bash(git add:*)",
+      "Bash(git branch:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git ls:*)",
+      "Bash(git pager:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(git show:*)",
+      "Bash(git status:*)",
+      "Bash(go:*)",
+      "Bash(grep:*)",
+      "Bash(head:*)",
+      "Bash(ls:*)",
+      "Bash(make:*)",
+      "Bash(man:*)",
+      "Bash(mix compile:*)",
+      "Bash(mix format:*)",
+      "Bash(mkdir -p:*)",
+      "Bash(nvim:*)",
+      "Bash(ps)",
+      "Bash(pwd)",
+      "Bash(rg:*)",
+      "Bash(sed:*)",
+      "Bash(stat:*)",
+      "Bash(tail:*)",
+      "Bash(tmux:*)",
+      "Bash(tree:*)",
+      "Bash(wc:*)",
+      "Bash(which:*)"
+    ],
+    "deny": [
+      "Bash(git push:*)",
+      "Bash(git commit:*)"
+    ]
+  },
+  "model": "claude-fable-5[1m]",
+  "statusLine": {
+    "type": "command",
+    "command": "bash ~/.claude/statusline-command.sh"
+  },
+  "enabledPlugins": {
+    "lua-lsp@claude-plugins-official": true,
+    "pyright-lsp@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true,
+    "gopls-lsp@claude-plugins-official": true
+  },
+  "theme": "light"
+}

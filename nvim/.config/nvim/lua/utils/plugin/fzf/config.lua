@@ -1,0 +1,101 @@
+local M = {}
+
+local fzf_lua = require("fzf-lua")
+
+M.LIGHT_THEME_COLORS = {
+	["hl+"] = "#d11010",
+	["hl"] = "#d11010",
+	["bg+"] = "#ddd3ac",
+	["fg+"] = "#000000",
+	["border"] = "#292929",
+}
+
+M.PREVIEW_OPTIONS = {
+	no_header = true,
+	multiprocess = false, -- This make `buffers` crash now. Don't know why
+}
+
+M.GIT_COMMANDS = {
+	HEAD = 'git show --pretty="format:" --name-only HEAD',
+	HEAD_PREV = 'git show --pretty="format:" --name-only HEAD~1',
+}
+
+M.FIND_COMMANDS = {
+	DIRS = "find . -type d ",
+	FILES = "find . -type f ",
+}
+
+M.ZET_DIRS = {
+	{ dir = os.getenv("zettelkasten"), prefix = "k", name = "personal", todo = "20250716233520.md" },
+	{ dir = os.getenv("zettelkasten_company"), prefix = "c", name = "company", todo = "20250715102653.md" },
+}
+
+M.PASTE_BIND = 'ctrl-v:transform-query:echo "${FZF_QUERY}$(wl-paste -n 2>/dev/null || xclip -o -selection clipboard 2>/dev/null)"'
+
+local function get_tmux_config()
+	if os.getenv("TMUX") then
+		return "fzf-tmux", { ["--border"] = "rounded", ["--tmux"] = "80%,80%", ["--layout"] = "default" }
+	else
+		return "default", { ["--layout"] = "default" }
+	end
+end
+
+local function get_fzf_colors()
+	local theme = vim.env.GNOME_THEME
+	if theme and string.match(theme, "dark") then
+		return true
+	else
+		return M.LIGHT_THEME_COLORS
+	end
+end
+
+function M.setup()
+	local fzf_env, fzf_opts = get_tmux_config()
+	fzf_opts["--bind"] = M.PASTE_BIND
+	local fzf_colors = get_fzf_colors()
+
+	fzf_lua.setup({
+		[1] = fzf_env,
+		fzf_opts = fzf_opts,
+		fzf_colors = fzf_colors,
+		files = M.PREVIEW_OPTIONS,
+		buffers = M.PREVIEW_OPTIONS,
+		previewers = {
+			tree = {
+				cmd = "tree",
+			},
+		},
+		grep = M.PREVIEW_OPTIONS,
+		winopts = {
+			preview = {
+				layout = "vertical",
+				vertical = "up:45%",
+			},
+		},
+		hls = {
+			titleflag = false,
+		},
+		actions = {
+			files = {
+				["default"] = fzf_lua.actions.file_edit,
+				["ctrl-v"] = false,
+				["ctrl-q"] = fzf_lua.actions.file_sel_to_qf,
+				["ctrl-Q"] = fzf_lua.actions.file_sel_to_ll,
+				["ctrl-i"] = fzf_lua.actions.toggle_ignore,
+				["ctrl-h"] = fzf_lua.actions.toggle_hidden,
+				["ctrl-f"] = fzf_lua.actions.toggle_follow,
+			},
+			buffers = {
+				["default"] = fzf_lua.actions.buf_edit,
+				["ctrl-v"] = false,
+				["ctrl-q"] = fzf_lua.actions.file_sel_to_qf,
+				["ctrl-Q"] = fzf_lua.actions.file_sel_to_ll,
+				["ctrl-i"] = fzf_lua.actions.toggle_ignore,
+				["ctrl-h"] = fzf_lua.actions.toggle_hidden,
+				["ctrl-f"] = fzf_lua.actions.toggle_follow,
+			},
+		},
+	})
+end
+
+return M

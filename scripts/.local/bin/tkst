@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# alias: tmux kill-session -t <session>
+
+! command -v tmux >& /dev/null && echo "tmux not installed" && exit 1
+
+[[ -z "${1}" ]] && exit 0
+
+for arg in "$@"; do
+	tmux kill-session -t "${arg}"
+done

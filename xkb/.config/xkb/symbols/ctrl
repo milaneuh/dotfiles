@@ -1,0 +1,28 @@
+// Override of xkeyboard-config's ctrl(swap_ralt_rctl).
+//
+// AltGr key (<RALT>) -> real Ctrl in every group (US, US-Intl, ...): the
+// stock option only touched group1, so group2 (us+intl) kept native AltGr.
+//
+// Right Ctrl key (<RCTL>) is NOT a uniform swap: on plain US (group1) it
+// should be a real Alt (Mod1) for shortcuts, but on US-Intl (group2) it must
+// stay the actual AltGr/Level3 chooser (ISO_Level3_Shift) since that layout
+// relies on AltGr to type accented/special characters. No modifier_map is
+// forced for <RCTL> so the automatic per-keysym interpret rules pick Mod1 in
+// group1 and Level3/Mod5 in group2 without both being active at once.
+partial modifier_keys
+xkb_symbols "swap_ralt_rctl" {
+    replace key <RALT> {
+        type[Group1]= "TWO_LEVEL", type[Group2]= "TWO_LEVEL",
+        type[Group3]= "TWO_LEVEL", type[Group4]= "TWO_LEVEL",
+        symbols[Group1]= [ Control_R, Control_R ], symbols[Group2]= [ Control_R, Control_R ],
+        symbols[Group3]= [ Control_R, Control_R ], symbols[Group4]= [ Control_R, Control_R ]
+    };
+    modifier_map Control { <RALT> };
+
+    replace key <RCTL> {
+        type[Group1]= "TWO_LEVEL", type[Group2]= "ONE_LEVEL",
+        type[Group3]= "TWO_LEVEL", type[Group4]= "TWO_LEVEL",
+        symbols[Group1]= [ Alt_R, Meta_R ], symbols[Group2]= [ ISO_Level3_Shift ],
+        symbols[Group3]= [ Alt_R, Meta_R ], symbols[Group4]= [ Alt_R, Meta_R ]
+    };
+};

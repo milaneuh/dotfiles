@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# Add a key at the beginning of each block to search it  and then remove it
+cat - | awk -v RS= -v ORS='\n\n\0' 1 | sort -z | tr -d '\0'
+
+

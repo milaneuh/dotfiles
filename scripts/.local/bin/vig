@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# alias: vi -c ':G|only'
+
+[[ -d .git ]] && vi -c ':G|only'

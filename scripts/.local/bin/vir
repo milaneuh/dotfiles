@@ -1,0 +1,22 @@
+#!/bin/bash
+
+! command -v fzf >& /dev/null && echo "fzf not installed" && exit 1
+! command -v bat >& /dev/null && echo "bat not installed" && exit 1
+
+[[ -n ${TMUX} ]] && cmd="fzf-tmux ${FZF_TMUX_OPTS}" || cmd="fzf"
+
+file=$(rg --color=always --line-number --no-heading --smart-case "${*:-}" |
+  ${cmd} --ansi \
+      --color "hl:-1:underline,hl+:-1:underline:reverse" \
+      --delimiter : \
+      --preview 'bat --color=always {1} --highlight-line {2}' \
+      --preview-window 'up,60%,border-bottom,+{2}+3/3,~3' \
+			)
+
+[[ -z "${file}" ]] && echo "No file selected" && exit 0
+
+file=$(echo "${file}" | awk -F ':' '{print $1 " +" $2}')
+echo "vi ${file}"  >> ~/.bash_history
+
+# do not double quote
+vi ${file}

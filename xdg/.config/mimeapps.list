@@ -1,0 +1,11 @@
+[Default Applications]
+text/html=google-chrome.desktop
+x-scheme-handler/http=google-chrome.desktop
+x-scheme-handler/https=google-chrome.desktop
+x-scheme-handler/about=google-chrome.desktop
+x-scheme-handler/unknown=google-chrome.desktop
+x-scheme-handler/claude-cli=claude-code-url-handler.desktop
+text/plain=nvim.desktop
+text/xml=nvim.desktop
+x-scheme-handler/anki=anki-desktop_anki-desktop.desktop
+x-scheme-handler/slack=slack.desktop

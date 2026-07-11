@@ -1,0 +1,15 @@
+#!/bin/bash
+
+GNOME_THEME=$(gsettings get org.gnome.desktop.interface color-scheme)
+
+if  [[ ${GNOME_THEME} =~ "dark" ]] ; then
+	kitty
+	cp ~/.config/kitty/kitty-themes/themes/gruvbox_dark.conf  ~/.config/kitty/current-theme.conf
+	kill -SIGUSR1 $(pgrep kitty)
+else
+	kitty
+	cp ~/.config/kitty/kitty-themes/themes/gruvbox_light.conf  ~/.config/kitty/current-theme.conf
+	kill -SIGUSR1 $(pgrep kitty)
+	echo toto
+fi
+

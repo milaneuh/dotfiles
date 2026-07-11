@@ -1,0 +1,17 @@
+#!/bin/bash
+
+source ~/.bashrc
+
+# TODO: Is this possible to list all pane with vim and sent them :Reload command ?
+
+GNOME_THEME=$(gsettings get org.gnome.desktop.interface color-scheme)
+
+if  [[ ${GNOME_THEME} =~ "dark" ]] ; then
+	cp ~/.config/kitty/kitty-themes/themes/gruvbox_dark.conf  ~/.config/kitty/current-theme.conf
+	kill -SIGUSR1 $(pgrep kitty)
+	[[ -n ${TMUX} ]] && tmux source-file ~/.tmux.conf
+else
+	cp ~/.config/kitty/kitty-themes/themes/gruvbox_light.conf  ~/.config/kitty/current-theme.conf
+	kill -SIGUSR1 $(pgrep kitty)
+	[[ -n ${TMUX} ]] && tmux source-file ~/.tmux.conf
+fi

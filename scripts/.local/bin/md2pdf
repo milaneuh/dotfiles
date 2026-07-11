@@ -1,0 +1,15 @@
+#!/bin/bash
+
+[[ -z "${1}" ]] && echo "Missing argument" && exit 1
+
+echo '{"args":["--no-sandbox"]}' > .puppeteer.json
+
+SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+
+pandoc \
+    -V mainfont="DejaVu Sans" \
+    --pdf-engine=typst \
+    --highlight-style zenburn \
+	"${1}" -o "${1//md/pdf}"
+
+rm -f .puppeteer.json

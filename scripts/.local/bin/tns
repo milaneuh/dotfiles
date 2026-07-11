@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# alias: tmux new-session (with some tricks)
+
+! command -v tmux >& /dev/null && echo "tmux not installed" && exit 1
+! command -v zoxide >& /dev/null && cd_exe="z" || cd_exe="cd"
+
+user_parameter="$@"
+
+# The "/" is generally add while tabbing
+[[ "${user_parameter}" == */ ]] && user_parameter=${user_parameter%/}
+
+if [[ "${user_parameter}" == "." || -z "${user_parameter}" ]]; then
+  dir=$(pwd)
+elif command -v zoxide >& /dev/null ; then
+  dir=$(zoxide query ${user_parameter} 2> /dev/null)
+  [[ -z "${dir}" ]]  && dir="$(pwd)/${user_parameter}"
+else
+  dir="${user_parameter}"
+fi
+
+[[ ! -d "${dir}" ]] && echo "Folder not found: \"${dir}\"" && exit 1
+
+session=${dir##*/}
+session=${session/./}
+
+if ! tmux ls 2>/dev/null | grep -i "${session}" &>/dev/null; then
+	${cd_exe} "${dir}"
+	tmux new-session -d -s "${session}"
+	${cd_exe} - &>/dev/null
+fi
+
+if [[ -z $TMUX ]]; then
+	tmux attach-session -t "${session}"
+else
+	tmux switch -t "${session}"
+fi
