@@ -14,6 +14,16 @@ fmt_duration() {
     fi
 }
 
+fmt_bar() {
+    local percent="$1" width="$2"
+    local filled=$(( percent * width / 100 ))
+    local empty=$(( width - filled ))
+    local filled_str="" empty_str=""
+    [ "$filled" -gt 0 ] && filled_str=$(printf '█%.0s' $(seq 1 $filled))
+    [ "$empty" -gt 0 ] && empty_str=$(printf '░%.0s' $(seq 1 $empty))
+    printf '[%s%s] %d%%' "$filled_str" "$empty_str" "$percent"
+}
+
 input=$(cat)
 context_used_percentage=$(echo "$input" | jq -r '.context_window.used_percentage // empty')
 model=$(echo "$input" | jq -r '.model.display_name // empty')
@@ -42,24 +52,14 @@ fi
 
 context_bar=""
 if [ -n "$context_used_percentage" ]; then
-    percent=$(printf '%.0f' "$context_used_percentage")
-    filled_blocks=$(( percent * 10 / 100 ))
-    empty_blocks=$(( 10 - filled_blocks ))
-    bar="$(printf '█%.0s' $(seq 1 $filled_blocks 2>/dev/null))$(printf '░%.0s' $(seq 1 $empty_blocks 2>/dev/null))"
-    context_bar="context: [${bar}] ${percent}%"
+    context_bar="context: $(fmt_bar "$(printf '%.0f' "$context_used_percentage")" 10)"
 fi
 
-token_display=""
-if [ -n "$input_tokens" ] && [ -n "$output_tokens" ] && [ -n "$max_tokens" ] && [ "$max_tokens" -gt 0 ]; then
-    total_tokens=$(( input_tokens + output_tokens ))
-    filled_blocks=$(( input_tokens * 5 / max_tokens ))
-    empty_blocks=$(( 5 - filled_blocks ))
-    token_bar="$(printf '█%.0s' $(seq 1 $filled_blocks 2>/dev/null))$(printf '░%.0s' $(seq 1 $empty_blocks 2>/dev/null))"
-    if [ "$total_tokens" -ge 1000 ]; then
-        token_display="tokens: [${token_bar}] $(( total_tokens / 1000 ))k"
-    else
-        token_display="tokens: [${token_bar}] ${total_tokens}"
-    fi
+five_hour_percentage=$(echo "$input" | jq -r '.rate_limits.five_hour.used_percentage // empty')
+
+five_hour_bar=""
+if [ -n "$five_hour_percentage" ]; then
+    five_hour_bar="5h: $(fmt_bar "$(printf '%.0f' "$five_hour_percentage")" 5)"
 fi
 
 parts=()
@@ -70,6 +70,6 @@ parts=()
 [ -n "$model" ] && parts+=("model: [${model}]")
 # [ -n "$current_directory" ] && parts+=("$current_directory")
 [ -n "$context_bar" ] && parts+=("$context_bar")
-[ -n "$token_display" ] && parts+=("$token_display")
+[ -n "$five_hour_bar" ] && parts+=("$five_hour_bar")
 
 printf "%s" "$(IFS=' | '; echo "${parts[*]}")"
