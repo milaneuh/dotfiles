@@ -10,4 +10,4 @@ endfunction
 ]])
 vim.g.mkdp_browserfunc = "MkdpOpenInNewWindow"
 
-vim.keymap.set("n", "<leader>fm", ":MarkdownPreviewToggle<CR>", { desc = "Toggle markdown preview" })
+vim.keymap.set("n", "<leader>fm", ":MarkdownPreview<CR>", { desc = "Markdown preview" })
