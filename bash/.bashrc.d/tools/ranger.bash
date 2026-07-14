@@ -8,7 +8,7 @@ if command -v ranger >&/dev/null; then
 			--cmd="map Q quitallcd $tempfile"
 		)
 
-		${ranger_cmd[@]} "$@"
+		PYTHONWARNINGS=ignore::SyntaxWarning ${ranger_cmd[@]} "$@"
 		local target_dir=$(cat -- "$tempfile" | tr -d ' ')
 		local cwd=$(echo -n $(pwd) | tr -d ' ')
 		if [[ -f "$tempfile" ]] && [[ "$target_dir" != "" ]] &&
