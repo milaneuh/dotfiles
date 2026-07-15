@@ -43,6 +43,10 @@ M.setup = function()
 	vim.o.scrolloff = 8 -- Enable scrolling when reaching the bottom
 	vim.o.grepprg = "rg --vimgrep" -- Use ripgrep with ignore file
 
+	-- Diff
+	vim.opt.diffopt:remove("linematch:40") -- Fix Fugitive alignment problem
+	vim.opt.diffopt:append({ "algorithm:histogram", "linematch:200" }) -- Fix Fugitive alignment problem
+
 	-- Search
 	vim.o.ignorecase = true -- Ignore case in search
 	vim.o.smartcase = true -- Use smart case search
