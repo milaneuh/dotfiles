@@ -1,5 +1,33 @@
 local M = {}
 
+local function raw_label(tabpage, bufnr)
+	local tab_ok, custom_label = pcall(vim.api.nvim_tabpage_get_var, tabpage, "tablabel")
+	if tab_ok and custom_label ~= "" then
+		return custom_label
+	end
+
+	local buf_name = vim.api.nvim_buf_get_name(bufnr)
+	if buf_name == "" then
+		local buftype = vim.api.nvim_buf_get_option(bufnr, "buftype")
+		return buftype == "" and "No Name" or ("<" .. buftype .. ">")
+	end
+
+	local filename = vim.fn.fnamemodify(buf_name, ":t")
+	if filename == "" then
+		return buf_name:match("fugitive") and "G status" or "No Name"
+	end
+
+	if buf_name:match("zettelkasten") and buf_name:match("%.md$") then
+		local first_line = vim.api.nvim_buf_get_lines(bufnr, 0, 1, false)[1] or ""
+		local title = first_line:match("^#%s+(.+)")
+		if title and title ~= "" then
+			return title
+		end
+	end
+
+	return filename
+end
+
 M.tab_label = function(tabnr)
 	local tabpage = vim.api.nvim_list_tabpages()[tabnr]
 	if not tabpage then
@@ -13,26 +41,10 @@ M.tab_label = function(tabnr)
 	local bufnr = vim.api.nvim_win_get_buf(win)
 	local modified = vim.api.nvim_buf_get_option(bufnr, "modified")
 
-	local tab_ok, tab_vars = pcall(function() return vim.api.nvim_tabpage_get_var(tabpage, 'tablabel') end)
-	local custom_label = tab_ok and tab_vars or nil
+	local label = raw_label(tabpage, bufnr)
 
-	local label = ""
-
-	if not custom_label or custom_label == "" then
-		local buf_name = vim.api.nvim_buf_get_name(bufnr)
-		if buf_name == "" then
-			local buftype = vim.api.nvim_buf_get_option(bufnr, "buftype")
-			label = buftype == "" and "No Name" or ("<" .. buftype .. ">")
-		else
-			label = vim.fn.fnamemodify(buf_name, ":t")
-			if buf_name:match("fugitive") and label == "" then
-				label = "G status"
-			elseif label == "" then
-				label = "No Name"
-			end
-		end
-	else
-		label = custom_label
+	if vim.fn.strchars(label) > 30 then
+		label = vim.fn.strcharpart(label, 0, 29) .. "…"
 	end
 
 	if modified then
