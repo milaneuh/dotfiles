@@ -29,6 +29,9 @@ M.setup = function()
 	vim.o.ttimeoutlen = 100 -- Set timeout for key codes
 	vim.o.updatetime = 500 -- Vital for LSP and Tagbar on Neovim
 
+	-- Files
+	vim.o.autoread = true -- Reload buffers changed outside of nvim
+
 	-- Backup
 	vim.o.backup = false -- Disable backups
 	vim.o.swapfile = false -- Disable swap file
