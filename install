@@ -304,11 +304,10 @@ print_manual_steps() {
 		Installation finished
 
 		Manual installation required:
-		  - Gnome extension: Dash to panel, Focus changer
+			- Create ~/.gitconfig.local with your git email:
+			    printf '[user]\n\temail = your_email@example.com\n' > ~/.gitconfig.local
 			- Whisper.cpp
-		Forge installed: log out and back in to activate it
-		Rounded Window Corners Reborn installed: log out and back in to activate it
-		Focus installed: log out and back in to activate it
+		Reboot to reload gnome application.
 	EOF
 }
 
