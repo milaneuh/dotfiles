@@ -7,4 +7,4 @@ if [[ ${SHELL} == "/bin/bash" ]]; then
 	fi
 fi
 
-[[ -f ~/.local_configuration.bash ]] && source "${HOME}/.local_configuration.bash"
+[[ -f ~/.bashrc.local ]] && source "${HOME}/.bashrc.local"
