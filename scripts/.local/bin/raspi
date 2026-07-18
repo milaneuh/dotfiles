@@ -1,0 +1,70 @@
+#!/bin/bash
+
+# Mount and unmount the raspi LUKS-encrypted disk over sshfs
+
+! command -v ssh >& /dev/null && echo "ssh not installed" && exit 1
+! command -v sshfs >& /dev/null && echo "sshfs not installed" && exit 1
+command -v fusermount3 >& /dev/null && FUSERMOUNT="fusermount3" || FUSERMOUNT="fusermount"
+
+SSH_HOST="raspi"
+DEVICE="/dev/sda1"
+MAPPER="drive"
+REMOTE_MOUNT="/mnt/drive"
+LOCAL_MOUNT="${HOME}/mnt/drive"
+
+# Help and completion ----------------------------------------------------------
+
+help() {
+	echo "raspi : raspi [command]
+    mount and unmount the raspi encrypted disk over sshfs
+    commands:
+        mount   unlock and mount the disk on the raspi, then mount it locally
+        umount  unmount locally, then unmount and lock the disk on the raspi"
+}
+
+declare -a COMMANDS=(mount umount)
+
+check_args() {
+	for c in "${COMMANDS[@]}"; do
+		[[ "${c}" == "${1}" ]] && return 0
+	done
+	return 1
+}
+
+if [[ -n "${COMP_LINE}" ]]; then
+	for c in "${COMMANDS[@]}"; do
+		[[ ${c:0:${#2}} == "${2,,}" ]] && echo "${c}"
+	done
+	exit
+fi
+
+if ! check_args "${1}"; then
+	help
+	exit 1
+fi
+
+# script -----------------------------------------------------------------------
+
+case ${1} in
+mount)
+	ssh -t "${SSH_HOST}" "
+		test -e /dev/mapper/${MAPPER} || sudo cryptsetup open ${DEVICE} ${MAPPER} || exit 1
+		sudo mkdir -p ${REMOTE_MOUNT}
+		mountpoint -q ${REMOTE_MOUNT} || sudo mount /dev/mapper/${MAPPER} ${REMOTE_MOUNT} || exit 1
+	" || exit 1
+	mountpoint -q "${LOCAL_MOUNT}" && echo "already mounted: ${LOCAL_MOUNT}" && exit 0
+	"${FUSERMOUNT}" -u "${LOCAL_MOUNT}" 2> /dev/null
+	mkdir -p "${LOCAL_MOUNT}"
+	sshfs -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3 \
+		"${SSH_HOST}:${REMOTE_MOUNT}" "${LOCAL_MOUNT}" || exit 1
+	echo "mounted: ${LOCAL_MOUNT}"
+	;;
+umount)
+	"${FUSERMOUNT}" -u "${LOCAL_MOUNT}" 2> /dev/null
+	ssh -t "${SSH_HOST}" "
+		! mountpoint -q ${REMOTE_MOUNT} || sudo umount ${REMOTE_MOUNT} || exit 1
+		! test -e /dev/mapper/${MAPPER} || sudo cryptsetup close ${MAPPER} || exit 1
+	" || exit 1
+	echo "unmounted: ${LOCAL_MOUNT}"
+	;;
+esac
