@@ -11,3 +11,6 @@
 
 [user]
 	name = maxence
+
+[include]
+    path = ~/.gitconfig.local
