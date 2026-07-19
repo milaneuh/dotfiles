@@ -2,7 +2,7 @@
 Type=Application
 Name=Gnome dconf sync
 Comment=Load GNOME keyfiles into dconf and prune stale keys
-Exec=/home/mtholomier/.local/bin/gnome-dconf-sync
+Exec=sh -c '"$HOME/.local/bin/gnome-dconf-sync"'
 Hidden=false
 NoDisplay=false
 X-GNOME-Autostart-enabled=true
