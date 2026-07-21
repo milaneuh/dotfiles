@@ -6,4 +6,12 @@ else
 	alias grep='grep --color=auto -i'
 fi
 
-alias claude="claude --ide --chrome"
+claude() {
+	if [ -n "$TMUX" ]; then
+		tmux rename-window "claude_${PWD##*/}"
+	fi
+	command claude --ide --chrome "$@"
+	if [ -n "$TMUX" ]; then
+		tmux set-window-option automatic-rename on >/dev/null
+	fi
+}
