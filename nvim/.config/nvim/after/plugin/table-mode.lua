@@ -8,6 +8,6 @@ vim.keymap.set("n", "yot", ":TableModeToggle<CR>", { noremap = true, desc = "Tog
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = "markdown",
 	callback = function()
-		vim.cmd("TableModeEnable")
+		vim.cmd("silent TableModeEnable")
 	end,
 })
