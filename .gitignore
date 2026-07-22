@@ -10,3 +10,6 @@ tags
 
 ranger/.config/ranger/plugins/*
 !ranger/.config/ranger/plugins/fzf_commands.py
+
+vscode/.config/User/*
+!vscode/.config/Code/User/settings.json
