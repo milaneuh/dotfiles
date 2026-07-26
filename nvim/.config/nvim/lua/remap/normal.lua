@@ -110,6 +110,9 @@ M.setup = function()
 
 	vim.keymap.set("n", "x", '"_x', { noremap = true, silent = true, desc = "Delete char without yanking" })
 
+	vim.keymap.set("n", "gp", '"0p', { noremap = true, silent = true, desc = "Paste last yank (register 0)" })
+	vim.keymap.set("x", "gp", '"0p', { noremap = true, silent = true, desc = "Paste last yank (register 0)" })
+
 	vim.keymap.set("i", "<C-V>", function()
 		vim.api.nvim_input("<C-R>+")
 	end, { noremap = true, silent = true, desc = "Paste from default register" })
