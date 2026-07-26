@@ -40,7 +40,7 @@ end
 
 local function open_claude_window()
 	local cwd = vim.fn.getcwd()
-	local claude_name = "claude-" .. vim.fn.fnamemodify(cwd, ":t")
+	local claude_name = "claude_" .. vim.fn.fnamemodify(cwd, ":t")
 	local port = get_sse_port()
 	local env_prefix = port and ("CLAUDE_CODE_SSE_PORT=" .. port .. " ") or ""
 	vim.fn.system(
