@@ -25,7 +25,7 @@ M.setup = function()
   vim.opt.clipboard = "unnamedplus"
 	vim.o.encoding = "utf-8" -- Set UTF-8 encoding
 	vim.o.compatible = false -- Disable vi compatibility
-	vim.o.timeoutlen = 1000 -- Set timeout for mappings
+	vim.o.timeoutlen = 300 -- Set timeout for mappings
 	vim.o.ttimeoutlen = 100 -- Set timeout for key codes
 	vim.o.updatetime = 500 -- Vital for LSP and Tagbar on Neovim
 
