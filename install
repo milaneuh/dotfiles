@@ -10,6 +10,9 @@ NEOVIM_VERSION="v0.12.1"
 ROUNDED_CORNERS_UUID="rounded-window-corners@fxgn"
 ROUNDED_CORNERS_VERSION_TAG="69895"
 UEBERZUGPP_VERSION="v2.9.8"
+WHISPER_MODEL="base"
+WHISPER_VERSION="v1.9.1"
+
 ANKI_SHA256="97cbddae74e44944360cac89bbdda06af7cf080a4dc1012dd6dc63952bbbb029"
 JOPLIN_SHA256="6bdb0747c02150d221d93bcad459dc2b2b453de9cfdbe380126619159b880809"
 
@@ -108,6 +111,8 @@ install_apt_packages() {
 	install curl
 	install stow
 	install git
+	install alsa-utils          # Needed by speech2text for arecord
+	install ffmpeg              # Needed by screenrecord
 	install golang-go
 	install typst
 	install pandoc
@@ -272,6 +277,13 @@ install_ueberzugpp() {
 	sudo cmake --install ~/logiciels/ueberzugpp/build
 }
 
+install_whisper() {
+	git clone --depth 1 --branch "${WHISPER_VERSION}" https://github.com/ggml-org/whisper.cpp.git ~/logiciels/whisper.cpp
+	cmake -DCMAKE_BUILD_TYPE=Release -S ~/logiciels/whisper.cpp -B ~/logiciels/whisper.cpp/build
+	cmake --build ~/logiciels/whisper.cpp/build --config Release
+	~/logiciels/whisper.cpp/models/download-ggml-model.sh "${WHISPER_MODEL}" ~/logiciels/whisper.cpp/models
+}
+
 
 install_from_source() {
 	install_forge
@@ -280,6 +292,7 @@ install_from_source() {
 	install_joplin
 	install_anki
 	install_ueberzugpp
+	install_whisper
 	install_ranger_plugins
 }
 
@@ -303,7 +316,6 @@ print_manual_steps() {
 		Manual installation required:
 			- Create ~/.gitconfig.local with your git email:
 			    printf '[user]\n\temail = your_email@example.com\n' > ~/.gitconfig.local
-			- Whisper.cpp
 		Reboot to reload gnome application.
 	EOF
 }
