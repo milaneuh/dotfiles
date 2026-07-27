@@ -1,13 +1,7 @@
 local M = {}
 
-function M.is_netrw_buffer()
-	if vim.b.netrw_localrm ~= nil then
-		return true
-	end
-	if vim.bo.filetype == "netrw" then
-		return true
-	end
-	return false
+function M.is_oil_buffer()
+	return vim.bo.filetype == "oil"
 end
 
 function M.get_visual_selection()

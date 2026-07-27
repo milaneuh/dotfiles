@@ -124,7 +124,6 @@ M.setup = function()
 
 	-- Project
 	vim.keymap.set("n", "<Leader>pT", ":tags<CR>", { desc = "Show tag stack" })
-	vim.keymap.set("n", "<Leader>pd", ":Explore **/", { desc = "Explore project directories" })
 	vim.keymap.set("n", "<Leader>pf", ":find *", { desc = "Find file in project" })
 	vim.keymap.set("n", "<Leader>pt", ":tag", { desc = "Jump to tag" })
 	vim.keymap.set("n", "<leader>pg", ':grep ""<left>', { desc = "Grep in project" })

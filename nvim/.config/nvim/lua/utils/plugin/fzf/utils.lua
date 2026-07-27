@@ -20,8 +20,8 @@ function M.is_git_repo()
 end
 
 function M.get_current_dir()
-	if bufutils.is_netrw_buffer() then
-		return vim.b.netrw_curdir
+	if bufutils.is_oil_buffer() then
+		return require("utils.plugin.oil").get_current_dir()
 	else
 		return vim.fn.expand("%:p:h")
 	end

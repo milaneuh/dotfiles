@@ -3,6 +3,10 @@ local M = {}
 M.setup = function()
 	local gh = function(x) return "https://github.com/" .. x end
 
+	-- Netrw (replaced by oil.nvim), couldn't be put in after folder
+	vim.g.loaded_netrw = 1
+	vim.g.loaded_netrwPlugin = 1
+
 	vim.api.nvim_create_autocmd("PackChanged", {
 		callback = function(ev)
 			local name = ev.data.spec.name
@@ -63,6 +67,7 @@ M.setup = function()
 
 		-- Navigation (Files, Windows, Buffers, Tags, ...)
 		gh("ibhagwan/fzf-lua"),
+		gh("stevearc/oil.nvim"),
 		gh("ludovicchabant/vim-gutentags"),
 		gh("preservim/tagbar"),
 		gh("szw/vim-maximizer"),

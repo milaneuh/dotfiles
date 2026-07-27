@@ -1,5 +1,6 @@
 local M = {}
 
+local oil = require("utils.plugin.oil")
 local utils = require("utils.plugin.fzf.utils")
 
 function M.zoxide_buffer()
@@ -7,10 +8,11 @@ function M.zoxide_buffer()
 		prompt = "Zoxide> ",
 		actions = {
 			["default"] = function(selected)
-				vim.cmd("Explore " .. selected[1])
+				oil.open(selected[1])
 			end,
 			["ctrl-t"] = function(selected)
-				vim.cmd("tabnew | Explore " .. selected[1])
+				vim.cmd("tabnew")
+				oil.open(selected[1])
 			end,
 		},
 		query = utils.get_visual_query(),

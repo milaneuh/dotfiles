@@ -94,14 +94,7 @@ M.setup = function()
 
 	-- plugin -------------------------------------------------------------------
 
-	-- Netrw (file explorer)
-	vim.g.netrw_banner = 0 -- Remove the help banner
-	vim.g.netrw_use_errorwindow = 0 -- Disable error windows
-	vim.g.netrw_preview = 1 -- Keep position of the last line
-	vim.g.netrw_sort_by = "time"
-	vim.g.netrw_sort_direction = "reverse"
-
-	-- Could not be put in after folder
+	-- This line couldn't be put in after folder
 	vim.g.tmux_navigator_no_mappings = 1
 end
 

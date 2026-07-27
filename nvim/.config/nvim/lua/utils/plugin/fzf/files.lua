@@ -1,6 +1,7 @@
 local M = {}
 
 local config = require("utils.plugin.fzf.config")
+local oil = require("utils.plugin.oil")
 local utils = require("utils.plugin.fzf.utils")
 
 function M.directories(cwd)
@@ -19,7 +20,7 @@ function M.directories(cwd)
 				local entry = fzf_path.entry_to_file(selected[1], opts)
 				local dir = entry.path
 				if dir then
-					vim.cmd("Explore " .. vim.fn.fnameescape(dir))
+					oil.open(dir)
 				end
 			end,
 		},

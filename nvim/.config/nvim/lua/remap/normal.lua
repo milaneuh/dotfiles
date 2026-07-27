@@ -34,14 +34,6 @@ M.setup = function()
 	vim.keymap.set("n", "]t", ":ta<CR>zz", { noremap = true, silent = true, desc = "Jump to tag" })
 	vim.keymap.set("n", "]z", "zj", { noremap = true, silent = true, desc = "Move to start of next fold" })
 
-	-- Remap: File Explorer -------------------------------------------------------
-
-	vim.keymap.set("n", "-", function()
-		if vim.bo.buftype == "" and vim.bo.filetype ~= "fugitive" then
-			vim.cmd("Explore")
-		end
-	end, { noremap = true, silent = true, desc = "Open file explorer in current folder" })
-
 	-- Remap: Ergonomy ------------------------------------------------------------
 
 	vim.keymap.set("", "<F1>", "<Nop>", { noremap = true, silent = true, desc = "Disable F1 help" })
