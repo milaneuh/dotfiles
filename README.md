@@ -8,7 +8,7 @@ I highly recommend **not** installing my entire configuration. Instead, feel fre
 
 ## Dependancy
 
-- Ubuntu or Debian
+- Ubuntu
 - Git
 
 ## Installation script
