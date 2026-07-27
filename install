@@ -9,12 +9,17 @@ JOPLIN_VERSION="v3.5.13"
 NEOVIM_VERSION="v0.12.1"
 ROUNDED_CORNERS_UUID="rounded-window-corners@fxgn"
 ROUNDED_CORNERS_VERSION_TAG="69895"
+RUSTUP_VERSION="1.29.0"
 UEBERZUGPP_VERSION="v2.9.8"
 WHISPER_MODEL="base"
 WHISPER_VERSION="v1.9.1"
 
 ANKI_SHA256="97cbddae74e44944360cac89bbdda06af7cf080a4dc1012dd6dc63952bbbb029"
+FORGE_SHA256="04d19cb1cb5684b81eb9cc84be62e18cfcb14ea311c3c4e19930746b5cddfb4e"
 JOPLIN_SHA256="6bdb0747c02150d221d93bcad459dc2b2b453de9cfdbe380126619159b880809"
+ROUNDED_CORNERS_SHA256="e69e0bd85cf9208a57efbbf0c20edac565404cc3de6bfdff8011a42d6b6c0a1e"
+RUSTUP_SHA256="4acc9acc76d5079515b46346a485974457b5a79893cfb01112423c89aeb5aa10"
+WHISPER_MODEL_SHA256="60ed5bc3dd14eea856493d334349b405782ddcaf0028d4b5df4088345fba2efe"
 
 export GOPATH="${HOME}/.go"
 
@@ -156,7 +161,13 @@ install_npm_packages() {
 }
 
 install_cargo_packages() {
-	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+	curl -fsSL "https://static.rust-lang.org/rustup/archive/${RUSTUP_VERSION}/x86_64-unknown-linux-gnu/rustup-init" -o /tmp/rustup-init
+	verify_sha256 /tmp/rustup-init "${RUSTUP_SHA256}"
+	chmod +x /tmp/rustup-init
+	/tmp/rustup-init -y --no-modify-path
+	rm /tmp/rustup-init
+	. "${HOME}/.cargo/env"
+
 	cargo install zoxide --locked
 	cargo install stylua --locked    # Needed by nvim for formatting
 	cargo install ripdrag
@@ -209,6 +220,7 @@ install_graphical_software() {
 
 install_forge() {
 	curl -fsSL "https://extensions.gnome.org/download-extension/${FORGE_UUID}.shell-extension.zip?version_tag=${FORGE_VERSION_TAG}" -o /tmp/forge.zip
+	verify_sha256 /tmp/forge.zip "${FORGE_SHA256}"
 	gnome-extensions install --force /tmp/forge.zip
 	rm /tmp/forge.zip
 
@@ -223,6 +235,7 @@ install_forge() {
 
 install_rounded_corners() {
 	curl -fsSL "https://extensions.gnome.org/download-extension/${ROUNDED_CORNERS_UUID}.shell-extension.zip?version_tag=${ROUNDED_CORNERS_VERSION_TAG}" -o /tmp/rounded-corners.zip
+	verify_sha256 /tmp/rounded-corners.zip "${ROUNDED_CORNERS_SHA256}"
 	gnome-extensions install --force /tmp/rounded-corners.zip
 	rm /tmp/rounded-corners.zip
 
@@ -282,6 +295,7 @@ install_whisper() {
 	cmake -DCMAKE_BUILD_TYPE=Release -S ~/logiciels/whisper.cpp -B ~/logiciels/whisper.cpp/build
 	cmake --build ~/logiciels/whisper.cpp/build --config Release
 	~/logiciels/whisper.cpp/models/download-ggml-model.sh "${WHISPER_MODEL}" ~/logiciels/whisper.cpp/models
+	verify_sha256 ~/logiciels/whisper.cpp/models/"ggml-${WHISPER_MODEL}.bin" "${WHISPER_MODEL_SHA256}"
 }
 
 
