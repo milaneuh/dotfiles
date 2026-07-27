@@ -329,7 +329,7 @@ print_manual_steps() {
 
 		Manual installation required:
 			- Create ~/.gitconfig.local with your git email:
-			    printf '[user]\n\temail = your_email@example.com\n' > ~/.gitconfig.local
+			    git config --file ~/.gitconfig.local user.email your_email@example.com
 		Reboot to reload gnome application.
 	EOF
 }
