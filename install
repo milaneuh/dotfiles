@@ -313,7 +313,6 @@ install_from_source() {
 configure_system() {
 	sudo update-alternatives --install /usr/bin/vi vi /usr/local/bin/nvim 60
 	sudo update-alternatives --set vi /usr/local/bin/nvim
-	echo 'kitty.desktop' >~/.config/xdg-terminals.list
 }
 
 clone_repositories() {
