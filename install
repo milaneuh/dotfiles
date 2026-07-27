@@ -1,17 +1,17 @@
 #!/bin/bash
 
-ANKI_SHA256="97cbddae74e44944360cac89bbdda06af7cf080a4dc1012dd6dc63952bbbb029"
+
 ANKI_VERSION="25.09"
 BAT_PKG="bat"
 FORGE_UUID="forge@jmmaranan.com"
 FORGE_VERSION_TAG="67175"
-JOPLIN_SHA256="6bdb0747c02150d221d93bcad459dc2b2b453de9cfdbe380126619159b880809"
 JOPLIN_VERSION="v3.5.13"
 NEOVIM_VERSION="v0.12.1"
 ROUNDED_CORNERS_UUID="rounded-window-corners@fxgn"
 ROUNDED_CORNERS_VERSION_TAG="69895"
 UEBERZUGPP_VERSION="v2.9.8"
-UNAME=$(grep -w ID /etc/os-release | cut -d'=' -f2)
+ANKI_SHA256="97cbddae74e44944360cac89bbdda06af7cf080a4dc1012dd6dc63952bbbb029"
+JOPLIN_SHA256="6bdb0747c02150d221d93bcad459dc2b2b453de9cfdbe380126619159b880809"
 
 export GOPATH="${HOME}/.go"
 
@@ -26,10 +26,6 @@ remind_to_copy_ssh_key() {
 
 install() {
 	sudo -E apt -y install "$@"
-}
-
-update() {
-	sudo -E apt update
 }
 
 cleanup_default_folders() {
@@ -106,7 +102,7 @@ install_nvim_plugs_deps() {
 }
 
 install_apt_packages() {
-	update
+	sudo -E apt update
 
 	install ssh
 	install curl
@@ -136,6 +132,7 @@ install_apt_packages() {
 	install xournalpp
 	install pipx                # Needed for Python CLI tools
 
+	# Deps
 	install_nvim_deps
 	install_nvim_plugs_deps
 	install_anki_deps
@@ -312,7 +309,6 @@ print_manual_steps() {
 }
 
 remind_to_copy_ssh_key
-setup_variables
 cleanup_default_folders
 create_directories
 
