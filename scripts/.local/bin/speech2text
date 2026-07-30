@@ -1,14 +1,48 @@
 #!/bin/bash
 
+WHISPER_ROOT="${WHISPER_DIR%/build/bin}"
+MODELS_DIR="${WHISPER_ROOT}/models"
 WHISPER_CLI="${WHISPER_DIR}/whisper-cli"
-MODEL="${1:-${WHISPER_DIR}/../../models/ggml-base.bin}"
-OUTPUT="/tmp/recording_$(date +%Y%m%d_%H%M%S).wav"
+MODEL="${1:-${MODELS_DIR}/ggml-small-q5_1.bin}"
+VAD_MODEL="${MODELS_DIR}/ggml-silero-v6.2.0.bin"
+TIMESTAMP="$(date +%Y%m%d_%H%M%S)"
+OUTPUT="/tmp/recording_${TIMESTAMP}.wav"
+LOG="/tmp/speech2text_${TIMESTAMP}.log"
+TRANSCRIPT="/tmp/transcript_${TIMESTAMP}.txt"
 LANGUAGE="fr"
 
-[[ ! -f "${WHISPER_CLI}" ]] && echo "whisper-cli not found" && exit 1
-[[ ! -f "${MODEL}" ]] && echo "model not found" && exit 1
+abort() {
+    echo "$1" >&2
+    read -rsn1 -p "Press any key to close..."
+    exit 1
+}
+
+copy_to_clipboard() {
+    if [[ -n "${WAYLAND_DISPLAY}" ]] && command -v wl-copy >/dev/null; then
+        setsid -f wl-copy <"$1" >/dev/null 2>&1
+    else
+        setsid -f xclip -selection clipboard -i "$1" >/dev/null 2>&1
+    fi
+}
+
+[[ ! -f "${WHISPER_CLI}" ]] && abort "whisper-cli not found: ${WHISPER_CLI}"
+[[ ! -f "${MODEL}" ]] && abort "model not found: ${MODEL}"
+[[ ! -f "${VAD_MODEL}" ]] && abort "vad model not found: ${VAD_MODEL}"
 
 echo "Recording... (Ctrl+C to stop)"
-arecord -f S16_LE -r 16000 -c 1 "${OUTPUT}" 2>/dev/null
+arecord -f S16_LE -r 16000 -c 1 "${OUTPUT}" 2> >(tee -a "${LOG}" >&2)
+
 echo "Transcribing... (do not Ctrl+C)"
-"${WHISPER_CLI}" -m "${MODEL}" -l "${LANGUAGE}" -nt -f "${OUTPUT}" 2>/dev/null | tee >(xclip -selection clipboard)
+"${WHISPER_CLI}" \
+    -m "${MODEL}" \
+    -l "${LANGUAGE}" \
+    -nt \
+    -sns \
+    --vad \
+    -vm "${VAD_MODEL}" \
+    -f "${OUTPUT}" \
+    >"${TRANSCRIPT}" 2> >(tee -a "${LOG}" >&2) \
+    || abort "transcription failed, see ${LOG}"
+
+cat "${TRANSCRIPT}"
+copy_to_clipboard "${TRANSCRIPT}"
