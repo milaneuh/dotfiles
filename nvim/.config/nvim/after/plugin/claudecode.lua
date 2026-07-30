@@ -10,21 +10,37 @@ require("claudecode").setup({
 	},
 })
 
-local function get_claude_idx()
-	local tmux = vim.fn.getenv("TMUX")
-	if tmux == vim.NIL or tmux == "" then
+local function in_tmux()
+	if vim.env.TMUX == nil or vim.env.TMUX == "" then
 		vim.notify("Claude: not in a TMUX session", vim.log.levels.WARN)
+		return false
+	end
+	return true
+end
+
+local function tmux(...)
+	return vim.system({ "tmux", ... }, { text = true }):wait()
+end
+
+local function claude_window_name()
+	return "claude-" .. vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
+end
+
+local function get_claude_target()
+	local cwd = vim.fn.getcwd()
+	local claude_name = claude_window_name()
+	local res = tmux(
+		"list-windows",
+		"-F",
+		"#{session_name}:#{window_index}|#{window_name}|#{pane_current_path}|#{pane_current_command}"
+	)
+	if res.code ~= 0 then
 		return nil
 	end
-	local cwd = vim.fn.getcwd()
-	local claude_name = "claude-" .. vim.fn.fnamemodify(cwd, ":t")
-	local output = vim.fn.system(
-		"tmux list-windows -F '#{window_index}|#{window_name}|#{pane_current_path}|#{pane_current_command}'"
-	)
-	for line in output:gmatch("[^\n]+") do
-		local idx, name, path, cmd = line:match("^(%d+)|([^|]+)|([^|]+)|(.+)$")
-		if path == cwd and (name == claude_name or cmd == "claude") then
-			return idx
+	for line in (res.stdout or ""):gmatch("[^\n]+") do
+		local target, name, path, cmd = line:match("^([^|]+)|([^|]+)|([^|]+)|(.*)$")
+		if target and path == cwd and (name == claude_name or cmd == "claude") then
+			return target
 		end
 	end
 	return nil
@@ -39,41 +55,29 @@ local function get_sse_port()
 end
 
 local function open_claude_window()
-	local cwd = vim.fn.getcwd()
-	local claude_name = "claude_" .. vim.fn.fnamemodify(cwd, ":t")
 	local port = get_sse_port()
 	local env_prefix = port and ("CLAUDE_CODE_SSE_PORT=" .. port .. " ") or ""
-	vim.fn.system(
-		"tmux new-window -a -n "
-			.. vim.fn.shellescape(claude_name)
-			.. " -c "
-			.. vim.fn.shellescape(cwd)
-			.. " '"
-			.. env_prefix
-			.. "claude --ide'"
-	)
+	tmux("new-window", "-a", "-n", claude_window_name(), "-c", vim.fn.getcwd(), env_prefix .. "claude --ide")
 end
 
 local function focus_claude_tmux()
-	local idx = get_claude_idx()
-	if idx then
-		vim.fn.system("tmux select-window -t " .. idx)
+	if not in_tmux() then
+		return
+	end
+	local target = get_claude_target()
+	if target then
+		tmux("select-window", "-t", target)
 	else
 		open_claude_window()
 	end
 end
 
 local function send_file_to_claude()
-	local idx = get_claude_idx()
-	if not idx then
-		open_claude_window()
-		return
-	end
 	local filepath = vim.fn.expand("%:p")
 	if filepath ~= "" then
-		vim.fn.system("tmux send-keys -t " .. idx .. " " .. vim.fn.shellescape("@" .. filepath) .. " ''")
+		require("claudecode").send_at_mention(filepath, nil, nil, "keymap")
 	end
-	vim.fn.system("tmux select-window -t " .. idx)
+	focus_claude_tmux()
 end
 
 local function send_selection_to_claude()
