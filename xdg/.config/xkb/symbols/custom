@@ -1,0 +1,7 @@
+partial modifier_keys
+xkb_symbols "compose_shift_space" {
+    key <SPCE> {
+        type[Group1] = "TWO_LEVEL",
+        symbols[Group1] = [ space, Multi_key ]
+    };
+};

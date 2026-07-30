@@ -41,16 +41,16 @@ fi
 
 case ${KEYBOARD} in
 asus | a)
-	OPTS="'altwin:menu_win', 'caps:escape_shifted_compose', 'ctrl:swap_lalt_lctl', 'ctrl:swap_ralt_rctl'"
+	OPTS="'altwin:menu_win', 'caps:escape_shifted_compose', 'custom:compose_shift_space', 'ctrl:swap_lalt_lctl', 'ctrl:swap_ralt_rctl'"
 	;;
 asusk | ak)
-	OPTS="'caps:escape_shifted_compose', 'ctrl:swap_lalt_lctl', 'ctrl:swap_ralt_rctl'"
+	OPTS="'caps:escape_shifted_compose', 'custom:compose_shift_space', 'ctrl:swap_lalt_lctl', 'ctrl:swap_ralt_rctl'"
 	;;
 kinesis | k)
 	OPTS="''"
 	;;
 thinkpad | t)
-	OPTS="'ctrl:swap_lalt_lctl', 'ctrl:swap_ralt_rctl', 'altwin:prtsc_rwin', 'caps:escape_shifted_compose'"
+	OPTS="'ctrl:swap_lalt_lctl', 'ctrl:swap_ralt_rctl', 'altwin:prtsc_rwin', 'caps:escape_shifted_compose', 'custom:compose_shift_space'"
 	;;
 *)
 	;;

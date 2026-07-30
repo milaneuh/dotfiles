@@ -1,0 +1,4 @@
+! option = symbols
+  custom:compose_shift_space = +custom(compose_shift_space)
+
+! include %S/evdev
