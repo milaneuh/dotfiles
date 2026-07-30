@@ -18,8 +18,9 @@ require("oil").setup({
 		["<C-l>"] = false,
 		["<C-s>"] = false,
 		["<F5>"] = { "actions.refresh", mode = "n" },
-		["<leader>h"] = { "actions.select", opts = { horizontal = true }, desc = "Open entry in horizontal split" },
-		["<leader>v"] = { "actions.select", opts = { vertical = true }, desc = "Open entry in vertical split" },
+		["zh"] = { "actions.toggle_hidden", mode = "n", desc = "Toggle hidden files" },
+		["<leader>h"] = { "actions.select", opts = { horizontal = true, split = "belowright" }, desc = "Open entry in horizontal split" },
+		["<leader>v"] = { "actions.select", opts = { vertical = true, split = "belowright" }, desc = "Open entry in vertical split" },
 	},
 })
 
