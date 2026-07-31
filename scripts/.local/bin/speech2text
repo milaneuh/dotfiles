@@ -19,9 +19,9 @@ abort() {
 
 copy_to_clipboard() {
     if [[ -n "${WAYLAND_DISPLAY}" ]] && command -v wl-copy >/dev/null; then
-        setsid -f wl-copy <"$1" >/dev/null 2>&1
+        setsid --fork wl-copy <"$1" >/dev/null 2>&1
     else
-        setsid -f xclip -selection clipboard -i "$1" >/dev/null 2>&1
+        setsid --fork xclip -selection clipboard -in "$1" >/dev/null 2>&1
     fi
 }
 
@@ -30,18 +30,18 @@ copy_to_clipboard() {
 [[ ! -f "${VAD_MODEL}" ]] && abort "vad model not found: ${VAD_MODEL}"
 
 echo "Recording... (Ctrl+C to stop)"
-arecord -f S16_LE -r 16000 -c 1 "${OUTPUT}" 2> >(tee -a "${LOG}" >&2)
+arecord --format S16_LE --rate 16000 --channels 1 "${OUTPUT}" 2> >(tee --append "${LOG}" >&2)
 
 echo "Transcribing... (do not Ctrl+C)"
 "${WHISPER_CLI}" \
-    -m "${MODEL}" \
-    -l "${LANGUAGE}" \
-    -nt \
-    -sns \
+    --model "${MODEL}" \
+    --language "${LANGUAGE}" \
+    --no-timestamps \
+    --suppress-nst \
     --vad \
-    -vm "${VAD_MODEL}" \
-    -f "${OUTPUT}" \
-    >"${TRANSCRIPT}" 2> >(tee -a "${LOG}" >&2) \
+    --vad-model "${VAD_MODEL}" \
+    --file "${OUTPUT}" \
+    >"${TRANSCRIPT}" 2> >(tee --append "${LOG}" >&2) \
     || abort "transcription failed, see ${LOG}"
 
 cat "${TRANSCRIPT}"

@@ -25,19 +25,19 @@ fmt_bar() {
 }
 
 input=$(cat)
-context_used_percentage=$(echo "$input" | jq -r '.context_window.used_percentage // empty')
-model=$(echo "$input" | jq -r '.model.display_name // empty')
-current_directory=$(echo "$input" | jq -r '.workspace.current_dir // empty' | sed "s|$HOME|~|")
+context_used_percentage=$(echo "$input" | jq --raw-output '.context_window.used_percentage // empty')
+model=$(echo "$input" | jq --raw-output '.model.display_name // empty')
+current_directory=$(echo "$input" | jq --raw-output '.workspace.current_dir // empty' | sed "s|$HOME|~|")
 
-input_tokens=$(echo "$input" | jq -r '.context_window.total_input_tokens // empty')
-output_tokens=$(echo "$input" | jq -r '.context_window.total_output_tokens // empty')
-max_tokens=$(echo "$input" | jq -r '.context_window.context_window_size // empty')
+input_tokens=$(echo "$input" | jq --raw-output '.context_window.total_input_tokens // empty')
+output_tokens=$(echo "$input" | jq --raw-output '.context_window.total_output_tokens // empty')
+max_tokens=$(echo "$input" | jq --raw-output '.context_window.context_window_size // empty')
 
-total_cost_usd=$(echo "$input" | jq -r '.cost.total_cost_usd // empty')
-total_duration_ms=$(echo "$input" | jq -r '.cost.total_duration_ms // empty')
-total_api_duration_ms=$(echo "$input" | jq -r '.cost.total_api_duration_ms // empty')
-total_lines_added=$(echo "$input" | jq -r '.cost.total_lines_added // empty')
-total_lines_removed=$(echo "$input" | jq -r '.cost.total_lines_removed // empty')
+total_cost_usd=$(echo "$input" | jq --raw-output '.cost.total_cost_usd // empty')
+total_duration_ms=$(echo "$input" | jq --raw-output '.cost.total_duration_ms // empty')
+total_api_duration_ms=$(echo "$input" | jq --raw-output '.cost.total_api_duration_ms // empty')
+total_lines_added=$(echo "$input" | jq --raw-output '.cost.total_lines_added // empty')
+total_lines_removed=$(echo "$input" | jq --raw-output '.cost.total_lines_removed // empty')
 
 cost_display=""
 [ -n "$total_cost_usd" ] && cost_display="\$$(printf '%.4f' "$total_cost_usd")"
@@ -55,7 +55,7 @@ if [ -n "$context_used_percentage" ]; then
     context_bar="context: $(fmt_bar "$(printf '%.0f' "$context_used_percentage")" 10)"
 fi
 
-five_hour_percentage=$(echo "$input" | jq -r '.rate_limits.five_hour.used_percentage // empty')
+five_hour_percentage=$(echo "$input" | jq --raw-output '.rate_limits.five_hour.used_percentage // empty')
 
 five_hour_bar=""
 if [ -n "$five_hour_percentage" ]; then

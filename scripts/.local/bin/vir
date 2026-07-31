@@ -15,7 +15,7 @@ file=$(rg --color=always --line-number --no-heading --smart-case "${*:-}" |
 
 [[ -z "${file}" ]] && echo "No file selected" && exit 0
 
-file=$(echo "${file}" | awk -F ':' '{print $1 " +" $2}')
+file=$(echo "${file}" | awk --field-separator ':' '{print $1 " +" $2}')
 echo "vi ${file}"  >> ~/.bash_history
 
 # do not double quote

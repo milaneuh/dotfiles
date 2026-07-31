@@ -4,7 +4,7 @@ paste_text() {
 	local content
 	content=$(xclip -out -selection clipboard)
 	if [[ "$1" == "--no-newline" ]]; then
-		content=$(printf '%s' "$content" | tr -d '\r' | sed --null-data 's/\n$//')
+		content=$(printf '%s' "$content" | tr --delete '\r' | sed --null-data 's/\n$//')
 	fi
 	printf '%s' "$content" | tmux load-buffer - && tmux paste-buffer
 }

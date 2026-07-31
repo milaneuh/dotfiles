@@ -7,7 +7,7 @@ output="/tmp/ocr_ouput.png"
 ! which tesseract && echo "tesseract is not installed"
 
 # TODO: why tesseract a txt extension on debian ?
-flameshot gui -p "${input}" >/dev/null 2>&1
+flameshot gui --path "${input}" >/dev/null 2>&1
 tesseract "${input}" "${output}" -l eng
 [[ -f "${output}.txt" ]] && xclip -in -selection clipboard "${output}.txt"
 [[ -f "${output}" ]] && xclip -in -selection clipboard "${output}"

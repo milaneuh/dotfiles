@@ -1,9 +1,9 @@
 alias man="LANG=en man"
 
 if command -v rg >&/dev/null; then
-	alias grep='rg -i'
+	alias grep='rg --ignore-case'
 else
-	alias grep='grep --color=auto -i'
+	alias grep='grep --color=auto --ignore-case'
 fi
 
 claude() {

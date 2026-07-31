@@ -8,14 +8,14 @@ if command -v fzf >&/dev/null; then
 		FZF_DEFAULT_OPTS="--color=hl+:#d11011,hl:#d11010,bg+:#ddd3ac,fg+:#000000,border:#292929"
 	fi
 
-	export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS --bind 'ctrl-v:transform-query:echo -n {q}; xclip -o -selection clipboard'"
+	export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS --bind 'ctrl-v:transform-query:echo -n {q}; xclip -out -selection clipboard'"
 
 	export FZF_DEFAULT_COMMAND="rg --files --hidden --glob '!.git' --follow"
 
 	if [[ -n ${TMUX} ]]; then
 		export FZF_TMUX='1'
 		export FZF_TMUX_OPTS="-p90%,80% --layout=default --preview-window=top:wrap"
-		export FZF_CTRL_T_OPTS="--preview 'bat -p --color=always --theme=${BAT_THEME} {}' --layout=default --preview-window=top:wrap"
+		export FZF_CTRL_T_OPTS="--preview 'bat --plain --color=always --theme=${BAT_THEME} {}' --layout=default --preview-window=top:wrap"
 		export FZF_ALT_C_OPTS="--layout=default --preview 'tree -C {}' --preview-window=top:wrap"
 	else
 		export FZF_CTRL_T_OPTS=""

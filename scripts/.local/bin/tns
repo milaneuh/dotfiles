@@ -24,7 +24,7 @@ fi
 session=${dir##*/}
 session=${session/./}
 
-if ! tmux ls 2>/dev/null | grep -i "${session}" &>/dev/null; then
+if ! tmux ls 2>/dev/null | grep --ignore-case "${session}" &>/dev/null; then
 	${cd_exe} "${dir}"
 	tmux new-session -d -s "${session}"
 	${cd_exe} - &>/dev/null

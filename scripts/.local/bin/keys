@@ -16,8 +16,8 @@ check_args() {
 }
 
 detect_keyboard() {
-	lsusb | grep -iq "kinesis" && echo "kinesis" && return
-	grep -iq "asus" /sys/class/dmi/id/sys_vendor 2>/dev/null || { echo "thinkpad"; return; }
+	lsusb | grep --ignore-case --quiet "kinesis" && echo "kinesis" && return
+	grep --ignore-case --quiet "asus" /sys/class/dmi/id/sys_vendor 2>/dev/null || { echo "thinkpad"; return; }
 	compgen -G "/dev/input/by-id/*usb*kbd*" > /dev/null 2>&1 && echo "asusk" || echo "asus"
 }
 

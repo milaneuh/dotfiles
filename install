@@ -33,7 +33,7 @@ remind_to_copy_ssh_key() {
 }
 
 install() {
-	sudo -E apt -y install "$@"
+	sudo --preserve-env apt --yes install "$@"
 }
 
 cleanup_default_folders() {
@@ -57,17 +57,17 @@ cleanup_default_folders() {
 }
 
 create_directories() {
-	mkdir -p ~/bureau
-	mkdir -p ~/document
-	mkdir -p ~/drive
-	mkdir -p ~/image
-	mkdir -p ~/logiciels
-	mkdir -p ~/musique
-	mkdir -p ~/remoterepos/projects
-	mkdir -p ~/telechargements
-	mkdir -p ~/tmp
-	mkdir -p ~/video
-	mkdir -p ~/.go
+	mkdir --parents ~/bureau
+	mkdir --parents ~/document
+	mkdir --parents ~/drive
+	mkdir --parents ~/image
+	mkdir --parents ~/logiciels
+	mkdir --parents ~/musique
+	mkdir --parents ~/remoterepos/projects
+	mkdir --parents ~/telechargements
+	mkdir --parents ~/tmp
+	mkdir --parents ~/video
+	mkdir --parents ~/.go
 }
 
 install_anki_deps() {
@@ -111,7 +111,7 @@ install_nvim_plugs_deps() {
 }
 
 install_apt_packages() {
-	sudo -E apt update
+	sudo --preserve-env apt update
 
 	install ssh
 	install curl
@@ -151,20 +151,20 @@ install_apt_packages() {
 	install_joplin_deps
 	install_tmux_tools_deps
 
-	ln -s /usr/bin/batcat ~/.local/bin/bat
+	ln --symbolic /usr/bin/batcat ~/.local/bin/bat
 }
 
 install_npm_packages() {
 	npm config set prefix "${HOME}/.local/"
 	npm install --global tree-sitter-cli
 	npm install --global mermaid-filter # Need by pandoc to convert mermaid block to img
-	npm install -g @anthropic-ai/claude-code
-	npm install -g eslint_d    # Needed by nvim for linting
-	npm install -g prettier    # Needed by nvim for formatting
+	npm install --global @anthropic-ai/claude-code
+	npm install --global eslint_d    # Needed by nvim for linting
+	npm install --global prettier    # Needed by nvim for formatting
 }
 
 install_cargo_packages() {
-	curl -fsSL "https://static.rust-lang.org/rustup/archive/${RUSTUP_VERSION}/x86_64-unknown-linux-gnu/rustup-init" -o /tmp/rustup-init
+	curl --fail --silent --show-error --location "https://static.rust-lang.org/rustup/archive/${RUSTUP_VERSION}/x86_64-unknown-linux-gnu/rustup-init" --output /tmp/rustup-init
 	verify_sha256 /tmp/rustup-init "${RUSTUP_SHA256}"
 	chmod +x /tmp/rustup-init
 	/tmp/rustup-init -y --no-modify-path
@@ -189,7 +189,7 @@ install_pipx_packages() {
 }
 
 install_ranger_plugins() {
-	mkdir -p ~/.config/ranger/plugins
+	mkdir --parents ~/.config/ranger/plugins
 	cd ~/.config/ranger/plugins ""
 	git clone https://github.com/maximtrp/ranger-archives.git
 	cd -
@@ -222,7 +222,7 @@ install_graphical_software() {
 
 
 install_forge() {
-	curl -fsSL "https://extensions.gnome.org/download-extension/${FORGE_UUID}.shell-extension.zip?version_tag=${FORGE_VERSION_TAG}" -o /tmp/forge.zip
+	curl --fail --silent --show-error --location "https://extensions.gnome.org/download-extension/${FORGE_UUID}.shell-extension.zip?version_tag=${FORGE_VERSION_TAG}" --output /tmp/forge.zip
 	verify_sha256 /tmp/forge.zip "${FORGE_SHA256}"
 	gnome-extensions install --force /tmp/forge.zip
 	rm /tmp/forge.zip
@@ -237,7 +237,7 @@ install_forge() {
 }
 
 install_rounded_corners() {
-	curl -fsSL "https://extensions.gnome.org/download-extension/${ROUNDED_CORNERS_UUID}.shell-extension.zip?version_tag=${ROUNDED_CORNERS_VERSION_TAG}" -o /tmp/rounded-corners.zip
+	curl --fail --silent --show-error --location "https://extensions.gnome.org/download-extension/${ROUNDED_CORNERS_UUID}.shell-extension.zip?version_tag=${ROUNDED_CORNERS_VERSION_TAG}" --output /tmp/rounded-corners.zip
 	verify_sha256 /tmp/rounded-corners.zip "${ROUNDED_CORNERS_SHA256}"
 	gnome-extensions install --force /tmp/rounded-corners.zip
 	rm /tmp/rounded-corners.zip
@@ -263,27 +263,27 @@ verify_sha256() {
 install_neovim() {
 	git clone --depth 1 --branch "${NEOVIM_VERSION}" https://github.com/neovim/neovim.git ~/logiciels/neovim
 	cd ~/logiciels/neovim || exit 1
-	rm -rf .deps build
+	rm --recursive --force .deps build
 	make CMAKE_BUILD_TYPE=Release
 	sudo make install
 	cd - || exit 1
 }
 
 install_joplin() {
-	curl -fsSL "https://raw.githubusercontent.com/laurent22/joplin/${JOPLIN_VERSION}/Joplin_install_and_update.sh" -o /tmp/joplin_install.sh
+	curl --fail --silent --show-error --location "https://raw.githubusercontent.com/laurent22/joplin/${JOPLIN_VERSION}/Joplin_install_and_update.sh" --output /tmp/joplin_install.sh
 	verify_sha256 /tmp/joplin_install.sh "${JOPLIN_SHA256}"
 	bash /tmp/joplin_install.sh
 	rm /tmp/joplin_install.sh
 }
 
 install_anki() {
-	curl -fsSL "https://github.com/ankitects/anki/releases/download/${ANKI_VERSION}/anki-launcher-${ANKI_VERSION}-linux.tar.zst" -o /tmp/anki.tar.zst
+	curl --fail --silent --show-error --location "https://github.com/ankitects/anki/releases/download/${ANKI_VERSION}/anki-launcher-${ANKI_VERSION}-linux.tar.zst" --output /tmp/anki.tar.zst
 	verify_sha256 /tmp/anki.tar.zst "${ANKI_SHA256}"
-	tar xaf /tmp/anki.tar.zst -C /tmp
+	tar --extract --auto-compress --file /tmp/anki.tar.zst --directory /tmp
 	cd "/tmp/anki-launcher-${ANKI_VERSION}-linux" || exit 1
 	sudo ./install.sh
 	cd - || exit 1
-	rm -rf "/tmp/anki-launcher-${ANKI_VERSION}-linux" /tmp/anki.tar.zst
+	rm --recursive --force "/tmp/anki-launcher-${ANKI_VERSION}-linux" /tmp/anki.tar.zst
 }
 
 install_ueberzugpp() {

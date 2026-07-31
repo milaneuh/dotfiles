@@ -49,12 +49,12 @@ case ${1} in
 mount)
 	ssh -t "${SSH_HOST}" "
 		test -e /dev/mapper/${MAPPER} || sudo cryptsetup open ${DEVICE} ${MAPPER} || exit 1
-		sudo mkdir -p ${REMOTE_MOUNT}
-		mountpoint -q ${REMOTE_MOUNT} || sudo mount /dev/mapper/${MAPPER} ${REMOTE_MOUNT} || exit 1
+		sudo mkdir --parents ${REMOTE_MOUNT}
+		mountpoint --quiet ${REMOTE_MOUNT} || sudo mount /dev/mapper/${MAPPER} ${REMOTE_MOUNT} || exit 1
 	" || exit 1
-	mountpoint -q "${LOCAL_MOUNT}" && echo "already mounted: ${LOCAL_MOUNT}" && exit 0
+	mountpoint --quiet "${LOCAL_MOUNT}" && echo "already mounted: ${LOCAL_MOUNT}" && exit 0
 	"${FUSERMOUNT}" -u "${LOCAL_MOUNT}" 2> /dev/null
-	mkdir -p "${LOCAL_MOUNT}"
+	mkdir --parents "${LOCAL_MOUNT}"
 	sshfs -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3 \
 		"${SSH_HOST}:${REMOTE_MOUNT}" "${LOCAL_MOUNT}" || exit 1
 	echo "mounted: ${LOCAL_MOUNT}"
@@ -62,7 +62,7 @@ mount)
 umount)
 	"${FUSERMOUNT}" -u "${LOCAL_MOUNT}" 2> /dev/null
 	ssh -t "${SSH_HOST}" "
-		! mountpoint -q ${REMOTE_MOUNT} || sudo umount ${REMOTE_MOUNT} || exit 1
+		! mountpoint --quiet ${REMOTE_MOUNT} || sudo umount ${REMOTE_MOUNT} || exit 1
 		! test -e /dev/mapper/${MAPPER} || sudo cryptsetup close ${MAPPER} || exit 1
 	" || exit 1
 	echo "unmounted: ${LOCAL_MOUNT}"

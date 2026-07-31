@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# alias: xclip -sel clip "${@}"
+# alias: xclip -selection clipboard "${@}"
 
 pwd | tmux load-buffer -
 pwd | xclip -selection clipboard

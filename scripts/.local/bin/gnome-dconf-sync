@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+set -o errexit -o nounset -o pipefail
 
 # Goal:
 #   Loads the personal GNOME configuration (~/.config/gnome-desktop/*.conf) into
@@ -21,14 +21,14 @@ MANAGED_PATHS=(
 )
 
 keyfile_keys() {
-  awk -F= '
+  awk --field-separator='=' '
     /^\[/ { section = substr($0, 2, length($0) - 2) }
     /^[a-z]/ { print "/" section "/" $1 }
   ' "$CONF_DIR"/*.conf | sort
 }
 
 dconf_keys() {
-  dconf dump "$1" | awk -F= -v root="$1" '
+  dconf dump "$1" | awk --field-separator='=' --assign root="$1" '
     /^\[/ {
       section = substr($0, 2, length($0) - 2)
       section = (section == "/") ? "" : section "/"

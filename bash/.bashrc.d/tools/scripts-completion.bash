@@ -1,4 +1,4 @@
-scripts_paths=$(grep -RlI "COMP_LINE" "${HOME}/.local/bin")
+scripts_paths=$(grep --dereference-recursive --files-with-matches --binary-files=without-match "COMP_LINE" "${HOME}/.local/bin")
 for s in ${scripts_paths[*]}; do
 	complete -C "${s##*/}" "${s##*/}"
 done

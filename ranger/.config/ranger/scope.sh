@@ -68,9 +68,9 @@ handle_extension() {
         pdf)
             ## Preview as text conversion
             pdftotext -l 10 -nopgbrk -q -- "${FILE_PATH}" - | \
-              fmt -w "${PV_WIDTH}" && exit 5
+              fmt --width "${PV_WIDTH}" && exit 5
             mutool draw -F txt -i -- "${FILE_PATH}" 1-10 | \
-              fmt -w "${PV_WIDTH}" && exit 5
+              fmt --width "${PV_WIDTH}" && exit 5
             exiftool "${FILE_PATH}" && exit 5
             exit 1;;
 
@@ -84,7 +84,7 @@ handle_extension() {
             ## Preview as text conversion
             odt2txt "${FILE_PATH}" && exit 5
             ## Preview as markdown conversion
-            pandoc -s -t markdown -- "${FILE_PATH}" && exit 5
+            pandoc --standalone --to markdown -- "${FILE_PATH}" && exit 5
             exit 1;;
 
         ## XLSX
@@ -100,7 +100,7 @@ handle_extension() {
             w3m -dump "${FILE_PATH}" && exit 5
             lynx -dump -- "${FILE_PATH}" && exit 5
             elinks -dump "${FILE_PATH}" && exit 5
-            pandoc -s -t markdown -- "${FILE_PATH}" && exit 5
+            pandoc --standalone --to markdown -- "${FILE_PATH}" && exit 5
             ;;
 
         ## JSON
@@ -278,7 +278,7 @@ handle_mime() {
         ## uncommented other methods to preview those formats
         *wordprocessingml.document|*/epub+zip|*/x-fictionbook+xml)
             ## Preview as markdown conversion
-            pandoc -s -t markdown -- "${FILE_PATH}" && exit 5
+            pandoc --standalone --to markdown -- "${FILE_PATH}" && exit 5
             exit 1;;
 
         ## XLS
@@ -320,7 +320,7 @@ handle_mime() {
         ## DjVu
         image/vnd.djvu)
             ## Preview as text conversion (requires djvulibre)
-            djvutxt "${FILE_PATH}" | fmt -w "${PV_WIDTH}" && exit 5
+            djvutxt "${FILE_PATH}" | fmt --width "${PV_WIDTH}" && exit 5
             exiftool "${FILE_PATH}" && exit 5
             exit 1;;
 

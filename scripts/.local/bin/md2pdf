@@ -4,12 +4,12 @@
 
 echo '{"args":["--no-sandbox"]}' > .puppeteer.json
 
-SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "$(readlink --canonicalize "${BASH_SOURCE[0]}")")" && pwd)"
 
 pandoc \
-    -V mainfont="DejaVu Sans" \
+    --variable mainfont="DejaVu Sans" \
     --pdf-engine=typst \
     --highlight-style zenburn \
-	"${1}" -o "${1//md/pdf}"
+	"${1}" --output "${1//md/pdf}"
 
-rm -f .puppeteer.json
+rm --force .puppeteer.json
