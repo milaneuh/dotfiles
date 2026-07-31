@@ -133,6 +133,7 @@ install_apt_packages() {
 	install python-tk           # Needed to create dial box for python script (ex: screenrecorder)
 	install python3-pip         # Needed by Mason
 	install ranger
+	install rclone
 	install ripgrep
 	install universal-ctags
 	install xclip
@@ -151,13 +152,6 @@ install_apt_packages() {
 	install_tmux_tools_deps
 
 	ln -s /usr/bin/batcat ~/.local/bin/bat
-}
-
-install_ppa_packages() {
-	sudo -E add-apt-repository -y ppa:alessandro-strada/google-drive-ocamlfuse-beta
-	sudo -E apt update
-
-	install google-drive-ocamlfuse
 }
 
 install_npm_packages() {
@@ -338,9 +332,6 @@ print_manual_steps() {
 		Manual installation required:
 			- Create ~/.gitconfig.local with your git email:
 			    git config --file ~/.gitconfig.local user.email your_email@example.com
-			- Authorize Google Drive access, then mount:
-			    google-drive-ocamlfuse
-			    google-drive-ocamlfuse ~/drive
 		Reboot to reload gnome application.
 	EOF
 }
@@ -350,7 +341,6 @@ cleanup_default_folders
 create_directories
 
 install_apt_packages
-install_ppa_packages
 install_language_packages
 install_graphical_software
 install_from_source
