@@ -60,6 +60,10 @@ M.setup = function()
 		{ noremap = true, silent = true, desc = "Increase window height" }
 	)
 	vim.keymap.set("n", "<C-Up>", ":resize -2<CR>", { noremap = true, silent = true, desc = "Decrease window height" })
+	vim.keymap.set("n", "<C-S-h>", "<C-w>H", { noremap = true, silent = true, desc = "Move window to far left" })
+	vim.keymap.set("n", "<C-S-j>", "<C-w>J", { noremap = true, silent = true, desc = "Move window to bottom" })
+	vim.keymap.set("n", "<C-S-k>", "<C-w>K", { noremap = true, silent = true, desc = "Move window to top" })
+	vim.keymap.set("n", "<C-S-l>", "<C-w>L", { noremap = true, silent = true, desc = "Move window to far right" })
 	vim.keymap.set(
 		"v",
 		"<MiddleMouse>",
