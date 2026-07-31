@@ -120,7 +120,6 @@ install_apt_packages() {
 	install alsa-utils          # Needed by speech2text for arecord
 	install ffmpeg              # Needed by screenrecord
 	install golang-go
-	install typst
 	install pandoc
 	install pdf2svg
 	install tesseract-ocr
@@ -173,6 +172,7 @@ install_cargo_packages() {
 
 	cargo install zoxide --locked
 	cargo install stylua --locked    # Needed by nvim for formatting
+	cargo install typst-cli --locked # Needed by md2pdf as pandoc pdf-engine
 	cargo install ripdrag
 	cargo install difftastic
 }
