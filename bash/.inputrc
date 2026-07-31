@@ -1,1 +1,8 @@
 set completion-ignore-case on # It's definitively easier to type
+
+# tmux lie C-h/C-j/C-k/C-l en table root (vim-tmux-navigator) et les confisque
+# dans les panes non-vim : on les redonne en accord, 2e touche sans Ctrl.
+"\C-xh": backward-delete-char
+"\C-xj": accept-line
+"\C-xk": kill-line
+"\C-xl": kill-whole-line
