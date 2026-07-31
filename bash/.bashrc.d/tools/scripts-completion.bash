@@ -1,4 +1,4 @@
-scripts_paths=$(grep -rl "COMP_LINE" "${HOME}/.local/bin")
+scripts_paths=$(grep -Rl "COMP_LINE" "${HOME}/.local/bin")
 for s in ${scripts_paths[*]}; do
 	complete -C "${s##*/}" "${s##*/}"
 done
