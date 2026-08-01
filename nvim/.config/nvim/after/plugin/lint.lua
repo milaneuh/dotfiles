@@ -8,7 +8,7 @@ lint.linters_by_ft = {
 	javascript = { "eslint_d" },
 	json = { "jq" },
 	lua = { "luacheck" },
-	shell = { "shellcheck" },
+	sh = { "shellcheck" },
 	typescript = { "eslint_d" },
 }
 
