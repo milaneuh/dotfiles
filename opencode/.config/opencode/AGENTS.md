@@ -7,6 +7,8 @@ If you need more information to complete a task, ask for it.
 
 No comments in code. Write self-explanatory code with clear naming instead.
 
+No line with more than 120 characters.
+
 # Output Style
 
 Keep responses as compact as possible. No filler, no repetition, no unnecessary explanations.
