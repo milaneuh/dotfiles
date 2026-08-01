@@ -5,15 +5,17 @@
 ! command -v tmux >& /dev/null && echo "tmux not installed" && exit 1
 ! command -v zoxide >& /dev/null && cd_exe="z" || cd_exe="cd"
 
-user_parameter="$@"
+user_parameters=("$@")
 
 # The "/" is generally add while tabbing
-[[ "${user_parameter}" == */ ]] && user_parameter=${user_parameter%/}
+(($#)) && user_parameters[-1]=${user_parameters[-1]%/}
+
+user_parameter="${user_parameters[*]}"
 
 if [[ "${user_parameter}" == "." || -z "${user_parameter}" ]]; then
   dir=$(pwd)
 elif command -v zoxide >& /dev/null ; then
-  dir=$(zoxide query ${user_parameter} 2> /dev/null)
+  dir=$(zoxide query "${user_parameters[@]}" 2> /dev/null)
   [[ -z "${dir}" ]]  && dir="$(pwd)/${user_parameter}"
 else
   dir="${user_parameter}"

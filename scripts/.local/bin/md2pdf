@@ -4,8 +4,6 @@
 
 echo '{"args":["--no-sandbox"]}' > .puppeteer.json
 
-SCRIPT_DIR="$(cd "$(dirname "$(readlink --canonicalize "${BASH_SOURCE[0]}")")" && pwd)"
-
 pandoc \
     --variable mainfont="DejaVu Sans" \
     --pdf-engine=typst \

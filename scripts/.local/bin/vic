@@ -3,13 +3,15 @@
 # Help and completion ----------------------------------------------------------
 
 help() {
-	echo """vic : vic [args]
-    description of the script
-    args:
-        command  program install on the system"""
+	cat <<-EOF
+		vic : vic [args]
+		    description of the script
+		    args:
+		        command  program install on the system
+	EOF
 }
 
-declare -a COMMANDS=($(compgen -c))
+mapfile -t COMMANDS < <(compgen -c)
 
 check_args() {
 	for c in "${COMMANDS[@]}"; do
@@ -36,4 +38,4 @@ fi
 
 # alias: vi $(command -v "${1}")
 
-vi $(command -v "${1}")
+vi "$(command -v "${1}")"

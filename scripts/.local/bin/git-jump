@@ -22,7 +22,7 @@ EOF
 }
 
 open_editor() {
-	editor=`git var GIT_EDITOR`
+	editor=$(git var GIT_EDITOR)
 	case "$editor" in
 	*emacs*)
 		# Supported editor values are:
@@ -60,7 +60,7 @@ mode_merge() {
 	git ls-files --unmerged "$@" |
 	perl -pe 's/^.*?\t//' |
 	sort --unique |
-	while IFS= read fn; do
+	while IFS= read -r fn; do
 		grep --with-filename --line-number '^<<<<<<<' "$fn"
 	done
 }
@@ -111,7 +111,7 @@ if test "$use_stdout" = "t"; then
 fi
 
 trap 'rm --force "$tmp"' 0 1 2 3 15
-tmp=`mktemp -t git-jump.XXXXXX` || exit 1
+tmp=$(mktemp -t git-jump.XXXXXX) || exit 1
 "mode_$mode" "$@" >"$tmp"
 test -s "$tmp" || exit 0
 open_editor "$tmp"

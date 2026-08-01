@@ -2,7 +2,6 @@
 
 
 ANKI_VERSION="25.09"
-BAT_PKG="bat"
 FORGE_UUID="forge@jmmaranan.com"
 FORGE_VERSION_TAG="67175"
 JOPLIN_VERSION="v3.5.13"
@@ -168,6 +167,7 @@ install_cargo_packages() {
 	chmod +x /tmp/rustup-init
 	/tmp/rustup-init -y --no-modify-path
 	rm /tmp/rustup-init
+	# shellcheck source=/dev/null
 	. "${HOME}/.cargo/env"
 
 	cargo install zoxide --locked
@@ -190,9 +190,10 @@ install_pipx_packages() {
 
 install_ranger_plugins() {
 	mkdir --parents ~/.config/ranger/plugins
-	cd ~/.config/ranger/plugins ""
-	git clone https://github.com/maximtrp/ranger-archives.git
-	cd -
+	(
+		cd ~/.config/ranger/plugins || exit 1
+		git clone https://github.com/maximtrp/ranger-archives.git
+	)
 }
 
 install_luarocks_packages() {

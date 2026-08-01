@@ -2,7 +2,11 @@
 export GROFF_NO_SGR=1
 
 bat_theme_apply() {
-	[[ ${THEME} == "dark" ]] && export BAT_THEME="gruvbox-dark" || export BAT_THEME="gruvbox-light"
+	if [[ ${THEME} == "dark" ]]; then
+		export BAT_THEME="gruvbox-dark"
+	else
+		export BAT_THEME="gruvbox-light"
+	fi
 
 	if command -v bat >&/dev/null; then
 		export MANPAGER="sh -c 'col --no-backspaces --spaces | bat --language man --plain --theme=${BAT_THEME}'"

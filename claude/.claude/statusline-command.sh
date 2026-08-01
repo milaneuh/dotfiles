@@ -27,12 +27,6 @@ fmt_bar() {
 input=$(cat)
 context_used_percentage=$(echo "$input" | jq --raw-output '.context_window.used_percentage // empty')
 model=$(echo "$input" | jq --raw-output '.model.display_name // empty')
-current_directory=$(echo "$input" | jq --raw-output '.workspace.current_dir // empty' | sed "s|$HOME|~|")
-
-input_tokens=$(echo "$input" | jq --raw-output '.context_window.total_input_tokens // empty')
-output_tokens=$(echo "$input" | jq --raw-output '.context_window.total_output_tokens // empty')
-max_tokens=$(echo "$input" | jq --raw-output '.context_window.context_window_size // empty')
-
 total_cost_usd=$(echo "$input" | jq --raw-output '.cost.total_cost_usd // empty')
 total_duration_ms=$(echo "$input" | jq --raw-output '.cost.total_duration_ms // empty')
 total_api_duration_ms=$(echo "$input" | jq --raw-output '.cost.total_api_duration_ms // empty')
@@ -68,7 +62,6 @@ parts=()
 [ -n "$wall_duration_display" ] && parts+=("wall: ${wall_duration_display}")
 [ -n "$lines_display" ] && parts+=("lines: ${lines_display}")
 [ -n "$model" ] && parts+=("model: [${model}]")
-# [ -n "$current_directory" ] && parts+=("$current_directory")
 [ -n "$context_bar" ] && parts+=("$context_bar")
 [ -n "$five_hour_bar" ] && parts+=("$five_hour_bar")
 

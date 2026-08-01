@@ -14,7 +14,7 @@ active_right_pane=$(tmux display-message -p '#{pane_id}')
 current_pane_info=$(tmux list-panes -F '#{pane_id} #{pane_at_top} #{pane_at_bottom} #{pane_at_left} #{pane_at_right}' | grep "^$active_right_pane")
 
 if [[ -n "$current_pane_info" ]]; then
-    read pane_id at_top at_bottom at_left at_right <<< "$current_pane_info"
+    read -r _ at_top at_bottom _ at_right <<< "$current_pane_info"
 
     if [[ "$at_right" == "1" ]]; then
         if [[ "$at_top" == "1" ]]; then

@@ -1,3 +1,4 @@
+# shellcheck source=/dev/null
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
 fzf_theme_apply() {

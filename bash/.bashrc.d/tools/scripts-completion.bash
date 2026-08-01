@@ -1,13 +1,14 @@
-scripts_paths=$(grep --dereference-recursive --files-with-matches --binary-files=without-match "COMP_LINE" "${HOME}/.local/bin")
-for s in ${scripts_paths[*]}; do
+mapfile -t scripts_paths < <(grep --dereference-recursive --files-with-matches --binary-files=without-match "COMP_LINE" "${HOME}/.local/bin")
+for s in "${scripts_paths[@]}"; do
 	complete -C "${s##*/}" "${s##*/}"
 done
 
 _tast() {
-	local sessions=$(tmux list-sessions 2>/dev/null | sed "s/:.*//g")
+	local sessions
+	sessions=$(tmux list-sessions 2>/dev/null | sed "s/:.*//g")
 
 	if [[ -n $sessions ]]; then
-		COMPREPLY=($(compgen -W "$sessions" -- "${COMP_WORDS[COMP_CWORD]}"))
+		mapfile -t COMPREPLY < <(compgen -W "$sessions" -- "${COMP_WORDS[COMP_CWORD]}")
 	else
 		COMPREPLY=()
 	fi

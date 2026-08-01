@@ -3,7 +3,8 @@
 fill="="
 input=$(cat)
 
-for i in {1..78}; do printf '%s' "${fill}"; done
-printf "\n"
+line=$(printf '%*s' 78 '' | tr ' ' "${fill}")
+
+echo "${line}"
 echo " ${input}"
-for i in {1..78}; do printf '%s' "${fill}"; done
+printf '%s' "${line}"

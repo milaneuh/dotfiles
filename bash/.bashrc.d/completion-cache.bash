@@ -7,5 +7,6 @@ cache_completion() {
 		mkdir --parents "${cache%/*}"
 		"${name}" completion bash >"${cache}"
 	fi
+	# shellcheck source=/dev/null
 	source "${cache}"
 }
