@@ -5,5 +5,5 @@ if [[ -d ~/.asdf ]]; then
 fi
 
 if command -v asdf &>/dev/null; then
-	. <(asdf completion bash)
+	cache_completion asdf
 fi
