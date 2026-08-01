@@ -179,7 +179,7 @@ install_cargo_packages() {
 
 install_go_packages() {
 	go install github.com/jesseduffield/lazygit@latest
-	go install github.com/mvdan/sh/v3/cmd/shfmt@latest    # Needed by nvim for formatting
+	go install mvdan.cc/sh/v3/cmd/shfmt@latest            # Needed by nvim for formatting
 	go install github.com/mgechev/revive@latest           # Needed by nvim for Go linting
 }
 
