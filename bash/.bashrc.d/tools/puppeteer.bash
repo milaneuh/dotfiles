@@ -1,4 +1,4 @@
-export MERMAID_FILTER_PUPPETEER_CONFIG="$HOME/.puppeteer.json"
+export MERMAID_FILTER_PUPPETEER_CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}/puppeteer-config.json"
 
 for _p in \
 	"/snap/chromium/current/usr/lib/chromium-browser/chrome" \

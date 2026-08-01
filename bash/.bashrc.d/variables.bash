@@ -11,7 +11,6 @@ export BROWSER="firefox"
 export CC="gcc"
 export EDITOR="nvim"
 export PAGER="less"
-export QT_QPA_PLATFORMTHEME=qt5ct
 export SUDO_EDITOR="nvim"
 export TERMINAL="kitty"
 export VISUAL="nvim"
@@ -21,6 +20,5 @@ export remoterepos=~/remoterepos
 export dotfiles=~/.dotfiles
 export logiciels=~/logiciels
 
-export notes="${remoterepos}"/notes
 export projects="${remoterepos}"/projects
 export zettelkasten="${remoterepos}"/zettelkasten/notes
