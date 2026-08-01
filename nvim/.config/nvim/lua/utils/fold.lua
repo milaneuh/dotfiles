@@ -1,5 +1,4 @@
 local M = {}
-local winutils = require("utils.windows")
 
 
 function M.search_outside_folds_next(direction)

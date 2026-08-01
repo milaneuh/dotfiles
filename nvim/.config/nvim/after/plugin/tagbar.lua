@@ -44,8 +44,14 @@ vim.g.tagbar_map_prevtag = ""
 vim.cmd("highlight TagbarHighlight guibg=#CCCCCC guifg=#000000")
 
 vim.keymap.set("n", "<leader>T", ":Tagbar<CR>", { noremap = true, desc = "Toggle Tagbar" })
-vim.keymap.set("n", "]g", ':call tagbar#jumpToNearbyTag(1, "nearest")<CR>zz', { noremap = true, desc = "Jump to next nearby tag" })
-vim.keymap.set("n", "[g", ':call tagbar#jumpToNearbyTag(-1, "nearest")<CR>zz', { noremap = true, desc = "Jump to previous nearby tag" })
+vim.keymap.set("n", "]g", ':call tagbar#jumpToNearbyTag(1, "nearest")<CR>zz', {
+	noremap = true,
+	desc = "Jump to next nearby tag",
+})
+vim.keymap.set("n", "[g", ':call tagbar#jumpToNearbyTag(-1, "nearest")<CR>zz', {
+	noremap = true,
+	desc = "Jump to previous nearby tag",
+})
 
 function _G.TagbarIsOpen()
 	for _, win in ipairs(vim.api.nvim_list_wins()) do

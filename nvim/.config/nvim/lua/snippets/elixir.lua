@@ -112,9 +112,9 @@ local is_function_in_parameters = function(parameters)
 end
 
 local create_snippet_map = function(snippet)
-  local command = ''
-  local parameter = {}
-  local r = {}
+  local command
+  local parameter
+  local r
   local result = {}
 
   -- command()
@@ -169,7 +169,11 @@ for u = 1, #snippets do
     table.insert(
       snippets_formatted,
       s(result[j]['map'],
-        fmt(result[j]['command'], apply_i(result[j]['parameters'], result[j]['is_fun_ano']), { delimiters = separator, }))
+        fmt(
+          result[j]['command'],
+          apply_i(result[j]['parameters'], result[j]['is_fun_ano']),
+          { delimiters = separator, }
+        ))
     )
   end
 end

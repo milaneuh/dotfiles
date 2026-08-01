@@ -2,7 +2,6 @@ local M = {}
 
 M.setup = function()
 	local winutils = require("utils.windows")
-	local regutils = require("utils.registers")
 	local optutils = require("utils.options")
 	local foldutils = require("utils.fold")
 

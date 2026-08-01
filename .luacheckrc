@@ -1,5 +1,4 @@
 globals = {
   "vim",
-  "client",
-  "filetype",
+  "DIAGNOSTICS_ACTIVE",
 }
