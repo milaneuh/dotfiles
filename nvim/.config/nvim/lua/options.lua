@@ -13,7 +13,7 @@ M.setup = function()
 	vim.o.path = ".,," -- Only index the current file/folder
 
 	-- Appearance
-	vim.o.background = "dark" -- Fix the background as dark
+	require("theme").apply()
 	vim.o.wrap = false -- Don't wrap text when the window is too small
 	vim.o.showmatch = true -- Show matching braces/parentheses
 
@@ -71,20 +71,6 @@ M.setup = function()
 	-- Tabs
 	vim.o.showtabline = 1
 	vim.o.tabline = "%!v:lua.require('utils.tabs').tabline()"
-
-	local function apply_color_scheme(is_dark)
-		if is_dark then
-			vim.o.background = "dark"
-		else
-			vim.o.background = "light"
-			vim.cmd("colorscheme morning")
-			vim.cmd([[highlight Normal guibg=NONE ctermbg=NONE]])
-			vim.cmd([[highlight NonText guibg=NONE ctermbg=NONE]])
-			vim.cmd([[highlight EndOfBuffer guibg=NONE ctermbg=NONE]])
-		end
-	end
-
-	apply_color_scheme()
 
 	-- Diagnostics
 	DIAGNOSTICS_ACTIVE = true

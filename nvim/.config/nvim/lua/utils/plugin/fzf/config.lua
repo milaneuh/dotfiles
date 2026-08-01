@@ -41,8 +41,7 @@ local function get_tmux_config()
 end
 
 local function get_fzf_colors()
-	local theme = vim.env.GNOME_THEME
-	if theme and string.match(theme, "dark") then
+	if require("theme").read() == "dark" then
 		return true
 	else
 		return M.LIGHT_THEME_COLORS

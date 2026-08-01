@@ -1,24 +1,33 @@
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
-if command -v fzf >&/dev/null; then
+fzf_theme_apply() {
+	local colors
 
-	if [[ ${GNOME_THEME} =~ "dark" ]]; then
-		FZF_DEFAULT_OPTS="--color=preview-border:#727272,border:#727272,separator:#ebdbb2,hl+:#d11010,hl:#d11010"
+	if [[ ${THEME} == "dark" ]]; then
+		colors="--color=preview-border:#727272,border:#727272,separator:#ebdbb2,hl+:#d11010,hl:#d11010"
 	else
-		FZF_DEFAULT_OPTS="--color=hl+:#d11011,hl:#d11010,bg+:#ddd3ac,fg+:#000000,border:#292929"
+		colors="--color=hl+:#d11011,hl:#d11010,bg+:#ddd3ac,fg+:#000000,border:#292929"
 	fi
 
-	export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS --bind 'ctrl-v:transform-query:echo -n {q}; xclip -out -selection clipboard'"
+	export FZF_DEFAULT_OPTS="${colors} --bind 'ctrl-v:transform-query:echo -n {q}; xclip -out -selection clipboard'"
+
+	if [[ -n ${TMUX} ]]; then
+		export FZF_CTRL_T_OPTS="--preview 'bat --plain --color=always --theme=${BAT_THEME} {}' --layout=default --preview-window=top:wrap"
+	else
+		export FZF_CTRL_T_OPTS=""
+	fi
+}
+
+if command -v fzf >&/dev/null; then
+
+	fzf_theme_apply
 
 	export FZF_DEFAULT_COMMAND="rg --files --hidden --glob '!.git' --follow"
 
 	if [[ -n ${TMUX} ]]; then
 		export FZF_TMUX='1'
 		export FZF_TMUX_OPTS="-p90%,80% --layout=default --preview-window=top:wrap"
-		export FZF_CTRL_T_OPTS="--preview 'bat --plain --color=always --theme=${BAT_THEME} {}' --layout=default --preview-window=top:wrap"
 		export FZF_ALT_C_OPTS="--layout=default --preview 'tree -C {}' --preview-window=top:wrap"
-	else
-		export FZF_CTRL_T_OPTS=""
 	fi
 
 	export FZF_CTRL_R_OPTS="--history=${HOME}/.bash_history --history-size=100000"
