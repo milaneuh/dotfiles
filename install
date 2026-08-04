@@ -6,10 +6,10 @@ FORGE_UUID="forge@jmmaranan.com"
 FORGE_VERSION_TAG="67175"
 JOPLIN_VERSION="v3.5.13"
 NEOVIM_VERSION="v0.12.1"
+RANGER_COMMIT="1719b17507cf10127ac535d5359926eede130160"
 ROUNDED_CORNERS_UUID="rounded-window-corners@fxgn"
 ROUNDED_CORNERS_VERSION_TAG="69895"
 RUSTUP_VERSION="1.29.0"
-UEBERZUGPP_VERSION="v2.9.8"
 WHISPER_MODEL="base"
 WHISPER_VERSION="v1.9.1"
 
@@ -84,14 +84,6 @@ install_tmux_tools_deps() {
 	install libgtk-4-dev        # Needed by ripdrag
 	install libgraphene-1.0-dev # Needed by ripdrag
 	install ffmpegthumbnailer   # Needed for video preview in ranger
-	install libssl-dev          # Needed to build ueberzugpp
-	install libvips-dev         # Needed to build ueberzugpp
-	install libsixel-dev        # Needed to build ueberzugpp
-	install libchafa-dev        # Needed to build ueberzugpp
-	install libtbb-dev          # Needed to build ueberzugpp
-	install libxcb-image0-dev   # Needed to build ueberzugpp
-	install libxcb-res0-dev     # Needed to build ueberzugpp
-
 }
 
 install_nvim_deps() {
@@ -130,7 +122,6 @@ install_apt_packages() {
 	install npm
 	install python-tk           # Needed to create dial box for python script (ex: screenrecorder)
 	install python3-pip         # Needed by Mason
-	install ranger
 	install rclone
 	install ripgrep
 	install universal-ctags
@@ -186,6 +177,11 @@ install_go_packages() {
 install_pipx_packages() {
 	pipx install djlint    # Needed by nvim for linting
 	pipx install black     # Needed by nvim for formatting
+}
+
+install_ranger() {
+	pipx install "ranger-fm @ git+https://github.com/ranger/ranger.git@${RANGER_COMMIT}"
+	pipx inject ranger-fm pillow    # Needed by ranger for kitty image previews
 }
 
 install_ranger_plugins() {
@@ -287,13 +283,6 @@ install_anki() {
 	rm --recursive --force "/tmp/anki-launcher-${ANKI_VERSION}-linux" /tmp/anki.tar.zst
 }
 
-install_ueberzugpp() {
-	git clone --depth 1 --branch "${UEBERZUGPP_VERSION}" https://github.com/jstkdng/ueberzugpp.git ~/logiciels/ueberzugpp
-	cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_OPENCV=OFF -S ~/logiciels/ueberzugpp -B ~/logiciels/ueberzugpp/build
-	cmake --build ~/logiciels/ueberzugpp/build
-	sudo cmake --install ~/logiciels/ueberzugpp/build
-}
-
 install_whisper() {
 	git clone --depth 1 --branch "${WHISPER_VERSION}" https://github.com/ggml-org/whisper.cpp.git ~/logiciels/whisper.cpp
 	cmake -DCMAKE_BUILD_TYPE=Release -S ~/logiciels/whisper.cpp -B ~/logiciels/whisper.cpp/build
@@ -309,8 +298,8 @@ install_from_source() {
 	install_neovim
 	install_joplin
 	install_anki
-	install_ueberzugpp
 	install_whisper
+	install_ranger
 	install_ranger_plugins
 }
 
