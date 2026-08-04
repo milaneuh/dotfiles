@@ -31,7 +31,7 @@ M.ZET_DIRS = {
 }
 
 M.PASTE_BIND = 'ctrl-v:transform-query:echo "${FZF_QUERY}'
-	.. '$(wl-paste -n 2>/dev/null || xclip -o -selection clipboard 2>/dev/null)"'
+	.. '$(xclip -o -selection clipboard 2>/dev/null)"'
 
 local function get_tmux_config()
 	if os.getenv("TMUX") then

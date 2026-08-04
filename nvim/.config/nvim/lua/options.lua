@@ -22,7 +22,8 @@ M.setup = function()
 	vim.o.visualbell = false -- Disable visual alarm
 
 	-- System Interaction
-  vim.opt.clipboard = "unnamedplus"
+	vim.opt.clipboard = "unnamedplus"
+	vim.g.clipboard = "xclip"
 	vim.o.encoding = "utf-8" -- Set UTF-8 encoding
 	vim.o.compatible = false -- Disable vi compatibility
 	vim.o.timeoutlen = 300 -- Set timeout for mappings

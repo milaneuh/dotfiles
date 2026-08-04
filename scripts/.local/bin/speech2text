@@ -18,11 +18,7 @@ abort() {
 }
 
 copy_to_clipboard() {
-    if [[ -n "${WAYLAND_DISPLAY}" ]] && command -v wl-copy >/dev/null; then
-        setsid --fork wl-copy <"$1" >/dev/null 2>&1
-    else
-        setsid --fork xclip -selection clipboard -in "$1" >/dev/null 2>&1
-    fi
+    setsid --fork xclip -selection clipboard -in "$1" >/dev/null 2>&1
 }
 
 [[ ! -f "${WHISPER_CLI}" ]] && abort "whisper-cli not found: ${WHISPER_CLI}"
