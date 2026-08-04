@@ -58,6 +58,19 @@ class z(ranger.api.commands.Command):
             self.fm.notify(e, bad=True)
 
 
+class enter_dir(ranger.api.commands.Command):
+    """
+    :enter_dir
+
+    Enter the directory under the cursor.
+    Do not open file.
+    """
+    def execute(self):
+        target = self.fm.thisfile
+        if target and target.is_directory:
+            self.fm.move(right=1)
+
+
 class ripdrag(ranger.api.commands.Command):
     """
     :ripdrag
