@@ -56,5 +56,6 @@
     "typescript-lsp@claude-plugins-official": true,
     "gopls-lsp@claude-plugins-official": true
   },
-  "theme": "light"
-}
+  "theme": "light",
+  "worktree": {"bgIsolation": "none"}
+  }
