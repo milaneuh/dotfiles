@@ -12,6 +12,12 @@ def _fzf_cmd():
     return "fzf"
 
 
+def _preview(base=None, field="{}", line=None):
+    target = f'"{base}"/{field}' if base else field
+    line_arg = f" {line}" if line else ""
+    return f"--preview 'fzf-preview {target}{line_arg}'"
+
+
 class fzf_project_files(ranger.api.commands.Command):
     """
     :fzf_project_files
@@ -20,7 +26,7 @@ class fzf_project_files(ranger.api.commands.Command):
     """
     def execute(self):
         fzf = _fzf_cmd()
-        cmd = f"cd \"{ROOT_DIR}\" && find . -type f | {fzf} --preview 'bat --color=always \"{ROOT_DIR}\"/{{}}'"
+        cmd = f"cd \"{ROOT_DIR}\" && find . -type f | {fzf} {_preview(ROOT_DIR)}"
         proc = self.fm.execute_command(cmd, stdout=PIPE)
         stdout, _ = proc.communicate()
         if proc.returncode == 0:
@@ -36,7 +42,8 @@ class fzf_project_rg(ranger.api.commands.Command):
     """
     def execute(self):
         fzf = _fzf_cmd()
-        cmd = f"cd \"{ROOT_DIR}\" && rg --line-number . | {fzf} --delimiter : --preview 'bat --color=always \"{ROOT_DIR}\"/{{1}} --highlight-line {{2}}'"
+        preview = _preview(ROOT_DIR, "{1}", "{2}")
+        cmd = f"cd \"{ROOT_DIR}\" && rg --line-number . | {fzf} --delimiter : {preview}"
         proc = self.fm.execute_command(cmd, stdout=PIPE)
         stdout, _ = proc.communicate()
         if proc.returncode == 0:
@@ -52,7 +59,7 @@ class fzf_project_dirs(ranger.api.commands.Command):
     """
     def execute(self):
         fzf = _fzf_cmd()
-        cmd = f"cd \"{ROOT_DIR}\" && find . -type d | {fzf} --preview 'tree -C \"{ROOT_DIR}\"/{{}} | head -50'"
+        cmd = f"cd \"{ROOT_DIR}\" && find . -type d | {fzf} {_preview(ROOT_DIR)}"
         proc = self.fm.execute_command(cmd, stdout=PIPE)
         stdout, _ = proc.communicate()
         if proc.returncode == 0:
@@ -69,7 +76,7 @@ class fzf_dir_files(ranger.api.commands.Command):
     def execute(self):
         fzf = _fzf_cmd()
         cur = self.fm.thisdir.path
-        cmd = f"cd \"{cur}\" && find . -type f | {fzf} --preview 'bat --color=always \"{cur}\"/{{}}'"
+        cmd = f"cd \"{cur}\" && find . -type f | {fzf} {_preview(cur)}"
         proc = self.fm.execute_command(cmd, stdout=PIPE)
         stdout, _ = proc.communicate()
         if proc.returncode == 0:
@@ -86,7 +93,7 @@ class fzf_dir_dirs(ranger.api.commands.Command):
     def execute(self):
         fzf = _fzf_cmd()
         cur = self.fm.thisdir.path
-        cmd = f"cd \"{cur}\" && find . -type d | {fzf} --preview 'tree -C \"{cur}\"/{{}} | head -50'"
+        cmd = f"cd \"{cur}\" && find . -type d | {fzf} {_preview(cur)}"
         proc = self.fm.execute_command(cmd, stdout=PIPE)
         stdout, _ = proc.communicate()
         if proc.returncode == 0:
@@ -103,7 +110,8 @@ class fzf_dir_rg(ranger.api.commands.Command):
     def execute(self):
         fzf = _fzf_cmd()
         cur = self.fm.thisdir.path
-        cmd = f"cd \"{cur}\" && rg --line-number . | {fzf} --delimiter : --preview 'bat --color=always \"{cur}\"/{{1}} --highlight-line {{2}}'"
+        preview = _preview(cur, "{1}", "{2}")
+        cmd = f"cd \"{cur}\" && rg --line-number . | {fzf} --delimiter : {preview}"
         proc = self.fm.execute_command(cmd, stdout=PIPE)
         stdout, _ = proc.communicate()
         if proc.returncode == 0:
@@ -119,7 +127,7 @@ class fzf_z(ranger.api.commands.Command):
     """
     def execute(self):
         fzf = _fzf_cmd()
-        cmd = f"zoxide query -l | {fzf} --preview 'tree -C {{}} | head -50'"
+        cmd = f"zoxide query -l | {fzf} {_preview()}"
         proc = self.fm.execute_command(cmd, stdout=PIPE)
         stdout, _ = proc.communicate()
         if proc.returncode == 0:

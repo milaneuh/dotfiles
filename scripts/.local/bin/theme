@@ -37,8 +37,14 @@ toggle() {
 }
 
 reload() {
+	local variant
+	variant=$(current_variant)
+
 	mkdir --parents "${STATE_DIR}"
-	printf '%s\n' "$(current_variant)" >"${STATE_FILE}"
+	printf '%s\n' "${variant}" >"${STATE_FILE}"
+
+	ln --symbolic --force --no-dereference \
+		"${HOME}/.config/fzf/${variant}.conf" "${STATE_DIR}/fzf.conf"
 
 	if tmux has-session 2>/dev/null; then
 		tmux source-file ~/.tmux.conf.d/appearance.conf

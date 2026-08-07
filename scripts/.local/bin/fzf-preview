@@ -1,6 +1,7 @@
 #!/bin/bash
 
 target=${1}
+line=${2}
 [[ -z ${target} || ! -e ${target} ]] && exit 0
 
 columns=${FZF_PREVIEW_COLUMNS:-${COLUMNS:-80}}
@@ -150,6 +151,28 @@ preview_pdf() {
 	preview_pdf_text "${1}"
 }
 
+bat_theme() {
+	local variant
+
+	if read -r variant 2>/dev/null <"${XDG_STATE_HOME:-${HOME}/.local/state}/theme" && [[ -n ${variant} ]]; then
+		printf 'gruvbox-%s' "${variant}"
+	else
+		printf '%s' "${BAT_THEME:-gruvbox-light}"
+	fi
+}
+
+preview_text() {
+	local args=(--color=always --theme="$(bat_theme)")
+
+	if [[ -n ${line} ]]; then
+		args+=(--style=numbers --highlight-line "${line}")
+	else
+		args+=(--plain)
+	fi
+
+	bat "${args[@]}" "${1}"
+}
+
 preview_zip() {
 	zipinfo -- "${1}" 2>/dev/null && return
 	unzip -l -- "${1}" 2>/dev/null && return
@@ -180,6 +203,6 @@ application/x-tar | application/gzip | application/x-bzip2 | application/x-xz | 
 	preview_tarball "${target}"
 	;;
 *)
-	bat --plain --color=always --theme="${BAT_THEME}" "${target}"
+	preview_text "${target}"
 	;;
 esac

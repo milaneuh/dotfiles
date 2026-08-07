@@ -4,6 +4,7 @@
 
 [[ -n ${TMUX} ]] && cmd="fzf-tmux ${FZF_TMUX_OPTS}" || cmd="fzf"
 
-path=$(zoxide query --list --score -- "$@" | ${cmd} --preview 'tree -C  {2}' --layout=default --preview-window=top:wrap)
+path=$(zoxide query --list --score -- "$@" |
+  ${cmd} --preview 'fzf-preview {2}' --layout=default --preview-window=top:wrap)
 [[ -n "${path}" ]] && cd "${path}" || exit
 

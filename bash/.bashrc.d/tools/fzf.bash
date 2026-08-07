@@ -2,15 +2,22 @@
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
 fzf_theme_apply() {
-	local colors
+	local state_dir="${XDG_STATE_HOME:-${HOME}/.local/state}"
+	local opts_file="${state_dir}/fzf.conf"
+	local theme_conf="${HOME}/.config/fzf/${THEME}.conf"
 
-	if [[ ${THEME} == "dark" ]]; then
-		colors="--color=preview-border:#727272,border:#727272,separator:#ebdbb2,hl+:#d11010,hl:#d11010"
-	else
-		colors="--color=hl+:#d11011,hl:#d11010,bg+:#ddd3ac,fg+:#000000,border:#292929"
+	if [[ -f ${theme_conf} ]]; then
+		mkdir --parents "${state_dir}"
+		ln --symbolic --force --no-dereference "${theme_conf}" "${opts_file}"
 	fi
 
-	export FZF_DEFAULT_OPTS="${colors} --bind 'ctrl-v:transform-query:echo -n {q}; xclip -out -selection clipboard'"
+	unset FZF_DEFAULT_OPTS
+
+	if [[ -e ${opts_file} ]]; then
+		export FZF_DEFAULT_OPTS_FILE="${opts_file}"
+	else
+		unset FZF_DEFAULT_OPTS_FILE
+	fi
 
 	if [[ -n ${TMUX} ]]; then
 		export FZF_CTRL_T_OPTS="--preview 'fzf-preview {}' --layout=default --preview-window=top:wrap"
@@ -28,7 +35,7 @@ if command -v fzf >&/dev/null; then
 	if [[ -n ${TMUX} ]]; then
 		export FZF_TMUX='1'
 		export FZF_TMUX_OPTS="-p90%,80% --layout=default --preview-window=top:wrap"
-		export FZF_ALT_C_OPTS="--layout=default --preview 'tree -C {}' --preview-window=top:wrap"
+		export FZF_ALT_C_OPTS="--layout=default --preview 'fzf-preview {}' --preview-window=top:wrap"
 	fi
 
 	export FZF_CTRL_R_OPTS="--history=${HOME}/.bash_history --history-size=100000"

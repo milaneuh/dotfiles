@@ -5,7 +5,6 @@
 
 [[ -n ${TMUX} ]] && cmd="fzf-tmux ${FZF_TMUX_OPTS}" || cmd="fzf"
 file=$(${cmd} --preview "fzf-preview {1}" --layout=default --preview-window=top:wrap )
-# file=$(${cmd} --preview "bat --plain  --theme=${BAT_THEME}  --color=always {1}")
 
 # TODO: ne fonctionne pas dans tmux
 [[ -n ${file} ]] && echo "vi ${file}" >>~/.bash_history
