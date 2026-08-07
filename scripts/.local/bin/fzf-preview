@@ -1,0 +1,185 @@
+#!/bin/bash
+
+target=${1}
+[[ -z ${target} || ! -e ${target} ]] && exit 0
+
+columns=${FZF_PREVIEW_COLUMNS:-${COLUMNS:-80}}
+lines=${FZF_PREVIEW_LINES:-${LINES:-30}}
+cache_dir=${XDG_CACHE_HOME:-${HOME}/.cache}/fzf-preview
+
+SAVE_CURSOR='\e7'
+RESTORE_CURSOR='\e8'
+KITTY_DELETE_ALL_IMAGES='\e_Ga=d,d=A\e\x5c'
+
+client_term=""
+client_tty=""
+if [[ -n ${TMUX} ]]; then
+	read -r client_term client_tty < <(tmux display -p '#{client_termname} #{client_tty}' 2>/dev/null)
+fi
+
+in_tmux_popup() {
+	[[ -n ${TMUX} && -z ${TMUX_PANE} ]]
+}
+
+kitty_graphics_available() {
+	command -v kitten >&/dev/null || return 1
+
+	if [[ -n ${TMUX} ]]; then
+		[[ ${client_term} == *kitty* ]] || return 1
+		in_tmux_popup || return 0
+		[[ -w ${client_tty} ]]
+	else
+		[[ ${TERM} == *kitty* || -n ${KITTY_PID}${KITTY_WINDOW_ID} ]]
+	fi
+}
+
+clear_kitty_images() {
+	local tty=${client_tty:-/dev/tty}
+	kitty_graphics_available || return 0
+	printf '%b' "${SAVE_CURSOR}${KITTY_DELETE_ALL_IMAGES}${RESTORE_CURSOR}" 2>/dev/null >"${tty}"
+}
+
+image_method() {
+	case ${FZF_IMAGE_PREVIEW:-auto} in
+	none)
+		echo none
+		;;
+	kitty)
+		command -v kitten >&/dev/null && echo kitty || echo none
+		;;
+	chafa)
+		command -v chafa >&/dev/null && echo chafa || echo none
+		;;
+	*)
+		if kitty_graphics_available; then
+			echo kitty
+		elif command -v chafa >&/dev/null; then
+			echo chafa
+		else
+			echo none
+		fi
+		;;
+	esac
+}
+
+preview_kitty() {
+	local cell=${FZF_PREVIEW_CELL_PX:-10x20}
+	local cell_width=${cell%x*} cell_height=${cell#*x}
+	local passthrough=tmux output transmission
+
+	in_tmux_popup && passthrough=none
+
+	output=$(kitten icat --clear --passthrough="${passthrough}" --transfer-mode=file \
+		--unicode-placeholder --stdin=no --scale-up \
+		--use-window-size "${columns},${lines},$((columns * cell_width)),$((lines * cell_height))" \
+		--place="${columns}x${lines}@0x0" "${1}" 2>/dev/null) || return 1
+	[[ -n ${output} ]] || return 1
+
+	if in_tmux_popup; then
+		transmission=${output%%$'\e'\[*}
+		[[ ${transmission} == "${output}" ]] && return 1
+		printf '%b%s%b' "${SAVE_CURSOR}" "${transmission}" "${RESTORE_CURSOR}" >"${client_tty}" || return 1
+		output=${output#"${transmission}"}
+	fi
+
+	printf '%s' "${output}"
+}
+
+preview_chafa() {
+	chafa --format=symbols --animate=off --work=9 --size="${columns}x${lines}" "${1}"
+}
+
+preview_metadata() {
+	identify "${1}" 2>/dev/null || file --brief "${1}"
+
+	command -v chafa >&/dev/null || printf '\n%s\n' "no image rendering: install chafa"
+}
+
+preview_image() {
+	case $(image_method) in
+	kitty)
+		preview_kitty "${1}" && return
+		if command -v chafa >&/dev/null; then
+			preview_chafa "${1}"
+		else
+			preview_metadata "${1}"
+		fi
+		;;
+	chafa)
+		preview_chafa "${1}"
+		;;
+	*)
+		preview_metadata "${1}"
+		;;
+	esac
+}
+
+pdf_page_image() {
+	local key png
+	command -v pdftoppm >&/dev/null || return 1
+	key=$(stat --format '%d-%i-%s-%Y' "${1}" 2>/dev/null) || return 1
+	png=${cache_dir}/${key}.png
+
+	if [[ ! -s ${png} ]]; then
+		mkdir --parents "${cache_dir}" || return 1
+		pdftoppm -png -r 150 -singlefile -f 1 -l 1 "${1}" "${png%.png}" 2>/dev/null || return 1
+	fi
+
+	[[ -s ${png} ]] || return 1
+	printf '%s' "${png}"
+}
+
+preview_pdf_text() {
+	local text
+	text=$(pdftotext -layout -l 2 -nopgbrk -q "${1}" - 2>/dev/null)
+
+	if [[ -n ${text//[[:space:]]/} ]]; then
+		printf '%s\n' "${text}"
+	else
+		pdfinfo "${1}" 2>/dev/null || file --brief "${1}"
+	fi
+}
+
+preview_pdf() {
+	local png
+	if [[ $(image_method) != none ]] && png=$(pdf_page_image "${1}"); then
+		preview_image "${png}"
+		return
+	fi
+
+	preview_pdf_text "${1}"
+}
+
+preview_zip() {
+	zipinfo -- "${1}" 2>/dev/null && return
+	unzip -l -- "${1}" 2>/dev/null && return
+	file --brief "${1}"
+}
+
+preview_tarball() {
+	tar --list --file "${1}" 2>/dev/null && return
+	file --brief "${1}"
+}
+
+clear_kitty_images
+
+case $(file --brief --mime-type --dereference "${target}") in
+inode/directory)
+	tree -C -a -L 2 "${target}"
+	;;
+image/*)
+	preview_image "${target}"
+	;;
+application/pdf)
+	preview_pdf "${target}"
+	;;
+application/zip | application/java-archive)
+	preview_zip "${target}"
+	;;
+application/x-tar | application/gzip | application/x-bzip2 | application/x-xz | application/zstd)
+	preview_tarball "${target}"
+	;;
+*)
+	bat --plain --color=always --theme="${BAT_THEME}" "${target}"
+	;;
+esac

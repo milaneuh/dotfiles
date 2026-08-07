@@ -13,7 +13,7 @@ fzf_theme_apply() {
 	export FZF_DEFAULT_OPTS="${colors} --bind 'ctrl-v:transform-query:echo -n {q}; xclip -out -selection clipboard'"
 
 	if [[ -n ${TMUX} ]]; then
-		export FZF_CTRL_T_OPTS="--preview 'bat --plain --color=always --theme=${BAT_THEME} {}' --layout=default --preview-window=top:wrap"
+		export FZF_CTRL_T_OPTS="--preview 'fzf-preview {}' --layout=default --preview-window=top:wrap"
 	else
 		export FZF_CTRL_T_OPTS=""
 	fi
