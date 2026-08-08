@@ -17,6 +17,13 @@ require("oil").setup({
 		["<C-k>"] = false,
 		["<C-l>"] = false,
 		["<C-s>"] = false,
+		["<C-p>"] = false,
+		["zp"] = {
+			"actions.preview",
+			opts = { vertical = true, split = "belowright" },
+			mode = "n",
+			desc = "Preview entry in vertical split on the right",
+		},
 		["<F5>"] = { "actions.refresh", mode = "n" },
 		["zh"] = { "actions.toggle_hidden", mode = "n", desc = "Toggle hidden files" },
 		["gh"] = {
