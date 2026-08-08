@@ -77,6 +77,50 @@ local additional_keymaps = {
 	},
 }
 
+local zettelkasten_keymaps = {
+	{
+		mode = "n",
+		suffix = "n",
+		desc = "Zettelkasten: Create new %s note",
+		make = function(entry)
+			return function()
+				zettelkasten.k_new(entry.dir)
+			end
+		end,
+	},
+	{
+		mode = { "n", "x" },
+		suffix = "f",
+		desc = "Zettelkasten: Find %s note",
+		make = function(entry)
+			return function()
+				zettelkasten.k_find(entry.dir)
+			end
+		end,
+	},
+	{
+		mode = { "n", "x" },
+		suffix = "r",
+		desc = "Zettelkasten: Grep in %s notes",
+		make = function(entry)
+			return function()
+				files.grep_local(entry.dir)
+			end
+		end,
+	},
+	{
+		mode = "n",
+		suffix = "t",
+		desc = "Zettelkasten: Toggle %s TODO",
+		make = function(entry)
+			return function()
+				local todo_path = vim.fn.fnamemodify(entry.dir .. "/" .. entry.todo, ":p")
+				winutils.toggle_file_window(todo_path, entry.dir, entry.todo)
+			end
+		end,
+	},
+}
+
 function M.setup()
 	for _, entry in ipairs(fzf_functions_to_add_visual) do
 		local func_name = entry.func
@@ -90,19 +134,11 @@ function M.setup()
 
 	for _, entry in ipairs(config.ZET_DIRS) do
 		local name = entry.name or entry.prefix
-		vim.keymap.set("n", "<leader>" .. entry.prefix .. "n", function()
-			zettelkasten.k_new(entry.dir)
-		end, { desc = "Zettelkasten: Create new " .. name .. " note" })
-		vim.keymap.set({ "n", "x" }, "<leader>" .. entry.prefix .. "f", function()
-			zettelkasten.k_find(entry.dir, entry.prefix)
-		end, { desc = "Zettelkasten: Find " .. name .. " note" })
-		vim.keymap.set({ "n", "x" }, "<leader>" .. entry.prefix .. "r", function()
-			files.grep_local(entry.dir)
-		end, { desc = "Zettelkasten: Grep in " .. name .. " notes" })
-		vim.keymap.set("n", "<leader>" .. entry.prefix .. "t", function()
-			local todo_path = vim.fn.fnamemodify(entry.dir .. "/" .. entry.todo, ":p")
-			winutils.toggle_file_window(todo_path, entry.dir, entry.todo)
-		end, { desc = "Zettelkasten: Toggle " .. name .. " TODO" })
+		for _, keymap in ipairs(zettelkasten_keymaps) do
+			vim.keymap.set(keymap.mode, "<leader>" .. entry.prefix .. keymap.suffix, keymap.make(entry), {
+				desc = keymap.desc:format(name),
+			})
+		end
 	end
 end
 
