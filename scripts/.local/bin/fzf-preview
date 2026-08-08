@@ -14,12 +14,28 @@ KITTY_DELETE_ALL_IMAGES='\e_Ga=d,d=A\e\x5c'
 
 client_term=""
 client_tty=""
+pane_tty=""
+self_tty=""
+tmux_popup=""
+
 if [[ -n ${TMUX} ]]; then
-	read -r client_term client_tty < <(tmux display -p '#{client_termname} #{client_tty}' 2>/dev/null)
+	pane_target=()
+	[[ -n ${TMUX_PANE} ]] && pane_target=(-t "${TMUX_PANE}")
+
+	read -r client_term client_tty pane_tty < \
+		<(tmux display -p "${pane_target[@]}" '#{client_termname} #{client_tty} #{pane_tty}' 2>/dev/null)
+
+	self_tty=$(ps -o tty= -p $$ 2>/dev/null)
+	self_tty=${self_tty//[[:space:]]/}
+
+	if [[ -z ${TMUX_PANE} ]] ||
+		[[ -n ${self_tty} && -n ${pane_tty} && /dev/${self_tty} != "${pane_tty}" ]]; then
+		tmux_popup="yes"
+	fi
 fi
 
 in_tmux_popup() {
-	[[ -n ${TMUX} && -z ${TMUX_PANE} ]]
+	[[ ${tmux_popup} == "yes" ]]
 }
 
 kitty_graphics_available() {

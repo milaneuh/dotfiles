@@ -10,7 +10,7 @@ function M.directories(cwd)
 		cmd = config.FIND_COMMANDS.DIRS,
 		cwd = cwd,
 		fzf_opts = {
-			["--preview"] = "tree -C -L 1 {2}",
+			["--preview"] = "fzf-preview {2}",
 		},
 		previewer = false,
 		query = utils.get_visual_query(),
@@ -33,7 +33,7 @@ function M.files(cwd)
 		cmd = config.FIND_COMMANDS.FILES,
 		cwd = cwd,
 		fzf_opts = {
-			["--preview"] = "bat --color=always --style=numbers {2}",
+			["--preview"] = "fzf-preview {2}",
 		},
 		previewer = false,
 		query = utils.get_visual_query(),

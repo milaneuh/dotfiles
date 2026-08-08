@@ -22,9 +22,24 @@ M.ZET_DIRS = {
 	{ dir = os.getenv("zettelkasten_company"), prefix = "c", name = "company", todo = "20250715102653.md" },
 }
 
+local function shared_popup_size()
+	local state_dir = os.getenv("XDG_STATE_HOME") or (os.getenv("HOME") .. "/.local/state")
+	local path = os.getenv("FZF_DEFAULT_OPTS_FILE") or (state_dir .. "/fzf.conf")
+	local conf = io.open(path)
+
+	if not conf then return nil end
+
+	local content = conf:read("*a")
+	conf:close()
+
+	return content:match("%-%-tmux[=%s]+(%S+)")
+end
+
 local function get_tmux_config()
-	if os.getenv("TMUX") then
-		return "fzf-tmux", { ["--border"] = "rounded", ["--tmux"] = "80%,80%", ["--layout"] = "default" }
+	local popup_size = os.getenv("TMUX") and shared_popup_size()
+
+	if popup_size then
+		return "fzf-tmux", { ["--border"] = "rounded", ["--tmux"] = popup_size, ["--layout"] = "default" }
 	else
 		return "default", { ["--layout"] = "default" }
 	end

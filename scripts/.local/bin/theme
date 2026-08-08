@@ -43,8 +43,7 @@ reload() {
 	mkdir --parents "${STATE_DIR}"
 	printf '%s\n' "${variant}" >"${STATE_FILE}"
 
-	ln --symbolic --force --no-dereference \
-		"${HOME}/.config/fzf/${variant}.conf" "${STATE_DIR}/fzf.conf"
+	fzf-conf "${variant}"
 
 	if tmux has-session 2>/dev/null; then
 		tmux source-file ~/.tmux.conf.d/appearance.conf

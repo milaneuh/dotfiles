@@ -3,19 +3,31 @@ import ranger.api.commands
 from subprocess import PIPE
 
 ROOT_DIR = os.getcwd()
+RG_OPTS = "--delimiter : --preview 'fzf-preview {1} {2}'"
 
 
-def _fzf_cmd():
-    if os.environ.get("FZF_TMUX") == "1":
-        opts = os.environ.get("FZF_TMUX_OPTS", "")
-        return f"fzf-tmux {opts}".strip()
-    return "fzf"
+def _select(fm, cwd, source, opts=""):
+    cmd = f'cd "{cwd}" && {source} | fzf {opts}'.strip()
+    proc = fm.execute_command(cmd, stdout=PIPE)
+    stdout, _ = proc.communicate()
+
+    if proc.returncode != 0:
+        return None
+
+    result = stdout.decode("utf-8").strip()
+    return os.path.normpath(os.path.join(cwd, result)) if result else None
 
 
-def _preview(base=None, field="{}", line=None):
-    target = f'"{base}"/{field}' if base else field
-    line_arg = f" {line}" if line else ""
-    return f"--preview 'fzf-preview {target}{line_arg}'"
+def _select_match(fm, cwd, source):
+    cmd = f'cd "{cwd}" && {source} | fzf {RG_OPTS}'
+    proc = fm.execute_command(cmd, stdout=PIPE)
+    stdout, _ = proc.communicate()
+
+    if proc.returncode != 0:
+        return None
+
+    result = stdout.decode("utf-8").strip().split(":")[0]
+    return os.path.normpath(os.path.join(cwd, result)) if result else None
 
 
 class fzf_project_files(ranger.api.commands.Command):
@@ -25,13 +37,9 @@ class fzf_project_files(ranger.api.commands.Command):
     Fuzzy find files from the directory where ranger was opened.
     """
     def execute(self):
-        fzf = _fzf_cmd()
-        cmd = f"cd \"{ROOT_DIR}\" && find . -type f | {fzf} {_preview(ROOT_DIR)}"
-        proc = self.fm.execute_command(cmd, stdout=PIPE)
-        stdout, _ = proc.communicate()
-        if proc.returncode == 0:
-            result = stdout.decode("utf-8").strip()
-            self.fm.select_file(os.path.normpath(os.path.join(ROOT_DIR, result)))
+        path = _select(self.fm, ROOT_DIR, "find . -type f")
+        if path:
+            self.fm.select_file(path)
 
 
 class fzf_project_rg(ranger.api.commands.Command):
@@ -41,14 +49,9 @@ class fzf_project_rg(ranger.api.commands.Command):
     Ripgrep from the directory where ranger was opened, jump to file.
     """
     def execute(self):
-        fzf = _fzf_cmd()
-        preview = _preview(ROOT_DIR, "{1}", "{2}")
-        cmd = f"cd \"{ROOT_DIR}\" && rg --line-number . | {fzf} --delimiter : {preview}"
-        proc = self.fm.execute_command(cmd, stdout=PIPE)
-        stdout, _ = proc.communicate()
-        if proc.returncode == 0:
-            result = stdout.decode("utf-8").strip().split(":")[0]
-            self.fm.select_file(os.path.normpath(os.path.join(ROOT_DIR, result)))
+        path = _select_match(self.fm, ROOT_DIR, "rg --line-number .")
+        if path:
+            self.fm.select_file(path)
 
 
 class fzf_project_dirs(ranger.api.commands.Command):
@@ -58,13 +61,9 @@ class fzf_project_dirs(ranger.api.commands.Command):
     Fuzzy find directories from the directory where ranger was opened.
     """
     def execute(self):
-        fzf = _fzf_cmd()
-        cmd = f"cd \"{ROOT_DIR}\" && find . -type d | {fzf} {_preview(ROOT_DIR)}"
-        proc = self.fm.execute_command(cmd, stdout=PIPE)
-        stdout, _ = proc.communicate()
-        if proc.returncode == 0:
-            result = stdout.decode("utf-8").strip()
-            self.fm.cd(os.path.normpath(os.path.join(ROOT_DIR, result)))
+        path = _select(self.fm, ROOT_DIR, "find . -type d")
+        if path:
+            self.fm.cd(path)
 
 
 class fzf_dir_files(ranger.api.commands.Command):
@@ -74,14 +73,9 @@ class fzf_dir_files(ranger.api.commands.Command):
     Fuzzy find files from the current directory.
     """
     def execute(self):
-        fzf = _fzf_cmd()
-        cur = self.fm.thisdir.path
-        cmd = f"cd \"{cur}\" && find . -type f | {fzf} {_preview(cur)}"
-        proc = self.fm.execute_command(cmd, stdout=PIPE)
-        stdout, _ = proc.communicate()
-        if proc.returncode == 0:
-            result = stdout.decode("utf-8").strip()
-            self.fm.select_file(os.path.normpath(os.path.join(cur, result)))
+        path = _select(self.fm, self.fm.thisdir.path, "find . -type f")
+        if path:
+            self.fm.select_file(path)
 
 
 class fzf_dir_dirs(ranger.api.commands.Command):
@@ -91,14 +85,9 @@ class fzf_dir_dirs(ranger.api.commands.Command):
     Fuzzy find directories from the current directory.
     """
     def execute(self):
-        fzf = _fzf_cmd()
-        cur = self.fm.thisdir.path
-        cmd = f"cd \"{cur}\" && find . -type d | {fzf} {_preview(cur)}"
-        proc = self.fm.execute_command(cmd, stdout=PIPE)
-        stdout, _ = proc.communicate()
-        if proc.returncode == 0:
-            result = stdout.decode("utf-8").strip()
-            self.fm.cd(os.path.normpath(os.path.join(cur, result)))
+        path = _select(self.fm, self.fm.thisdir.path, "find . -type d")
+        if path:
+            self.fm.cd(path)
 
 
 class fzf_dir_rg(ranger.api.commands.Command):
@@ -108,15 +97,9 @@ class fzf_dir_rg(ranger.api.commands.Command):
     Ripgrep from the current directory, jump to file.
     """
     def execute(self):
-        fzf = _fzf_cmd()
-        cur = self.fm.thisdir.path
-        preview = _preview(cur, "{1}", "{2}")
-        cmd = f"cd \"{cur}\" && rg --line-number . | {fzf} --delimiter : {preview}"
-        proc = self.fm.execute_command(cmd, stdout=PIPE)
-        stdout, _ = proc.communicate()
-        if proc.returncode == 0:
-            result = stdout.decode("utf-8").strip().split(":")[0]
-            self.fm.select_file(os.path.normpath(os.path.join(cur, result)))
+        path = _select_match(self.fm, self.fm.thisdir.path, "rg --line-number .")
+        if path:
+            self.fm.select_file(path)
 
 
 class fzf_z(ranger.api.commands.Command):
@@ -126,9 +109,6 @@ class fzf_z(ranger.api.commands.Command):
     Interactive zoxide jump with fzf.
     """
     def execute(self):
-        fzf = _fzf_cmd()
-        cmd = f"zoxide query -l | {fzf} {_preview()}"
-        proc = self.fm.execute_command(cmd, stdout=PIPE)
-        stdout, _ = proc.communicate()
-        if proc.returncode == 0:
-            self.fm.cd(stdout.decode("utf-8").strip())
+        path = _select(self.fm, self.fm.thisdir.path, "zoxide query -l")
+        if path:
+            self.fm.cd(path)

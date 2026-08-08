@@ -2,9 +2,5 @@
 
 ! command -v fzf >& /dev/null && echo "fzf not installed" && exit 1
 
-[[ -n ${TMUX} ]] && cmd="fzf-tmux ${FZF_TMUX_OPTS}" || cmd="fzf"
-
-path=$(zoxide query --list --score -- "$@" |
-  ${cmd} --preview 'fzf-preview {2}' --layout=default --preview-window=top:wrap)
+path=$(zoxide query --list -- "$@" | fzf)
 [[ -n "${path}" ]] && cd "${path}" || exit
-

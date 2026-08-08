@@ -3,10 +3,8 @@
 ! command -v fzf >& /dev/null && echo "fzf not installed" && exit 1
 ! command -v bat >& /dev/null && echo "bat not installed" && exit 1
 
-[[ -n ${TMUX} ]] && cmd="fzf-tmux ${FZF_TMUX_OPTS}" || cmd="fzf"
-
 file=$(rg --color=always --line-number --no-heading --smart-case "${*:-}" |
-  ${cmd} --ansi \
+  fzf --ansi \
       --delimiter : \
       --preview 'fzf-preview {1} {2}' \
       --preview-window 'up,60%,border-bottom,+{2}+3/3,~3' \

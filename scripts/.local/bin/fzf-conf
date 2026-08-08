@@ -1,0 +1,18 @@
+#!/bin/bash
+
+conf_dir="${HOME}/.config/fzf"
+state_dir="${XDG_STATE_HOME:-${HOME}/.local/state}"
+
+variant=${1}
+[[ -z ${variant} ]] && read -r variant 2>/dev/null <"${state_dir}/theme"
+
+case ${variant} in
+dark | light) ;;
+*) variant="light" ;;
+esac
+
+[[ -f ${conf_dir}/common.conf && -f ${conf_dir}/${variant}.conf ]] || exit 1
+
+mkdir --parents "${state_dir}"
+cat "${conf_dir}/common.conf" "${conf_dir}/${variant}.conf" >"${state_dir}/fzf.conf.new" &&
+	mv "${state_dir}/fzf.conf.new" "${state_dir}/fzf.conf"
