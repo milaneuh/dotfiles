@@ -151,18 +151,8 @@ preview_pdf() {
 	preview_pdf_text "${1}"
 }
 
-bat_theme() {
-	local variant
-
-	if read -r variant 2>/dev/null <"${XDG_STATE_HOME:-${HOME}/.local/state}/theme" && [[ -n ${variant} ]]; then
-		printf 'gruvbox-%s' "${variant}"
-	else
-		printf '%s' "${BAT_THEME:-gruvbox-light}"
-	fi
-}
-
 preview_text() {
-	local args=(--color=always --theme="$(bat_theme)")
+	local args=(--color=always --theme="$(bat-theme)")
 
 	if [[ -n ${line} ]]; then
 		args+=(--style=numbers --highlight-line "${line}")
