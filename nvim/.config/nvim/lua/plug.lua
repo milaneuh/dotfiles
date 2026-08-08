@@ -71,7 +71,7 @@ M.setup = function()
 		gh("ludovicchabant/vim-gutentags"),
 		gh("preservim/tagbar"),
 		gh("szw/vim-maximizer"),
-		gh("christoomey/vim-tmux-navigator"),
+		gh("mrjones2014/smart-splits.nvim"),
 		gh("folke/which-key.nvim"),
 		gh("jghauser/follow-md-links.nvim"),
 

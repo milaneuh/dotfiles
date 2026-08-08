@@ -79,10 +79,6 @@ M.setup = function()
 		virtual_lines = true,
 	})
 
-	-- plugin -------------------------------------------------------------------
-
-	-- This line couldn't be put in after folder
-	vim.g.tmux_navigator_no_mappings = 1
 end
 
 return M

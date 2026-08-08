@@ -10,6 +10,15 @@ M.setup = function()
 		end,
 	})
 
+	vim.api.nvim_create_autocmd("VimResized", {
+		pattern = "*",
+		callback = function()
+			local tabpage = vim.api.nvim_get_current_tabpage()
+			vim.cmd("tabdo wincmd =")
+			vim.api.nvim_set_current_tabpage(tabpage)
+		end,
+	})
+
 	vim.api.nvim_create_autocmd("BufReadPost", {
 		callback = function()
 			bufutils.set_cursor_to_last_position()

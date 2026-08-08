@@ -40,25 +40,14 @@ M.setup = function()
 	vim.keymap.set("n", "zC", "zxzc", { noremap = true, silent = true, desc = "Close all folds under cursor" })
 	vim.keymap.set("n", "zh", "30zh", { noremap = true, silent = true, desc = "Scroll 30 chars left" })
 	vim.keymap.set("n", "zl", "30zl", { noremap = true, silent = true, desc = "Scroll 30 chars right" })
-	vim.keymap.set(
-		"n",
-		"<C-Left>",
-		":vertical resize -2<CR>",
-		{ noremap = true, silent = true, desc = "Decrease window width" }
-	)
-	vim.keymap.set(
-		"n",
-		"<C-Right>",
-		":vertical resize +2<CR>",
-		{ noremap = true, silent = true, desc = "Increase window width" }
-	)
-	vim.keymap.set(
-		"n",
-		"<C-Down>",
-		":resize +2<CR>",
-		{ noremap = true, silent = true, desc = "Increase window height" }
-	)
-	vim.keymap.set("n", "<C-Up>", ":resize -2<CR>", { noremap = true, silent = true, desc = "Decrease window height" })
+	vim.keymap.set("n", "<C-h>", "<C-w>h", { noremap = true, silent = true, desc = "Navigate left" })
+	vim.keymap.set("n", "<C-j>", "<C-w>j", { noremap = true, silent = true, desc = "Navigate down" })
+	vim.keymap.set("n", "<C-k>", "<C-w>k", { noremap = true, silent = true, desc = "Navigate up" })
+	vim.keymap.set("n", "<C-l>", "<C-w>l", { noremap = true, silent = true, desc = "Navigate right" })
+	vim.keymap.set("n", "<C-Left>", "2<C-w><", { noremap = true, silent = true, desc = "Decrease window width" })
+	vim.keymap.set("n", "<C-Right>", "2<C-w>>", { noremap = true, silent = true, desc = "Increase window width" })
+	vim.keymap.set("n", "<C-Up>", "2<C-w>-", { noremap = true, silent = true, desc = "Decrease window height" })
+	vim.keymap.set("n", "<C-Down>", "2<C-w>+", { noremap = true, silent = true, desc = "Increase window height" })
 	vim.keymap.set("n", "<C-S-h>", "<C-w>H", { noremap = true, silent = true, desc = "Move window to far left" })
 	vim.keymap.set("n", "<C-S-j>", "<C-w>J", { noremap = true, silent = true, desc = "Move window to bottom" })
 	vim.keymap.set("n", "<C-S-k>", "<C-w>K", { noremap = true, silent = true, desc = "Move window to top" })
