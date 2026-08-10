@@ -20,5 +20,9 @@ image.setup({
 	window_overlap_clear_ft_ignore = { "cmp_menu", "cmp_docs", "" },
 	editor_only_render_when_focused = true,
 	tmux_show_only_in_active_window = true,
-	hijack_file_patterns = { "*.svg", "*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp" },
+	hijack_file_patterns = {},
 })
+
+vim.keymap.set("n", "<leader>vi", function()
+	require("utils.image_preview").toggle_image_preview(image)
+end, { desc = "Vim: Toggle image rendering" })
