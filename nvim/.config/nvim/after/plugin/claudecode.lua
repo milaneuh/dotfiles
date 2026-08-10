@@ -163,11 +163,17 @@ broadcast_mention = function(mention, line_start, line_end, attempts)
 	end, 300)
 end
 
-local function send_to_claude(path, line_start, line_end)
+local function oil_paths(line_start, line_end)
+	return vim.tbl_map(realpath, require("utils.plugin.oil").get_entry_paths(line_start, line_end))
+end
+
+local function send_to_claude(paths, line_start, line_end)
 	local tmux_ok = in_tmux()
 	local target = tmux_ok and get_claude_target() or nil
 	local base = target and target.path or project_root()
-	broadcast_mention(mention_path_for(path, base), line_start, line_end, 30)
+	for _, path in ipairs(paths) do
+		broadcast_mention(mention_path_for(path, base), line_start, line_end, 30)
+	end
 	if target then
 		tmux("select-window", "-t", target.target)
 	elseif tmux_ok then
@@ -176,24 +182,36 @@ local function send_to_claude(path, line_start, line_end)
 end
 
 local function send_file_to_claude()
+	if vim.bo.filetype == "oil" then
+		local lnum = vim.fn.line(".")
+		send_to_claude(oil_paths(lnum, lnum), nil, nil)
+		return
+	end
 	local path, err = current_buffer_path()
 	if not path then
 		vim.notify(err, vim.log.levels.WARN)
 		return
 	end
-	send_to_claude(path, nil, nil)
+	send_to_claude({ path }, nil, nil)
 end
 
 local function send_selection_to_claude()
 	local line1 = math.min(vim.fn.line("."), vim.fn.line("v"))
 	local line2 = math.max(vim.fn.line("."), vim.fn.line("v"))
+	if vim.bo.filetype == "oil" then
+		local paths = oil_paths(line1, line2)
+		vim.schedule(function()
+			send_to_claude(paths, nil, nil)
+		end)
+		return
+	end
 	local path, err = current_buffer_path()
 	if not path then
 		vim.notify(err, vim.log.levels.WARN)
 		return
 	end
 	vim.schedule(function()
-		send_to_claude(path, line1 - 1, line2 - 1)
+		send_to_claude({ path }, line1 - 1, line2 - 1)
 	end)
 end
 
