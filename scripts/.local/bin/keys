@@ -47,7 +47,7 @@ asusk | ak)
 	OPTS="'caps:escape_shifted_compose', 'custom:compose_shift_space', 'ctrl:swap_lalt_lctl', 'ctrl:swap_ralt_rctl'"
 	;;
 kinesis | k)
-	OPTS="''"
+	OPTS="'custom:compose_shift_space'"
 	;;
 thinkpad | t)
 	OPTS="'ctrl:swap_lalt_lctl', 'ctrl:swap_ralt_rctl', 'altwin:prtsc_rwin', 'caps:escape_shifted_compose', 'custom:compose_shift_space'"
