@@ -13,5 +13,6 @@ ranger/.config/ranger/plugins/*
 !ranger/.config/ranger/plugins/fzf_commands.py
 !ranger/.config/ranger/plugins/kitty_tmux_fix.py
 
-vscode/.config/User/*
+vscode/.config/Code/**
+!vscode/.config/Code/User/
 !vscode/.config/Code/User/settings.json
