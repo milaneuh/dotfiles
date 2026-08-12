@@ -4,7 +4,11 @@ local fzf_lua = require("fzf-lua")
 
 M.PREVIEW_OPTIONS = {
 	no_header = true,
-	multiprocess = false, -- This make `buffers` crash now. Don't know why
+}
+
+M.BUFFERS_OPTIONS = {
+	no_header = true,
+	multiprocess = false, -- `buffers` crashes with multiprocess enabled
 }
 
 M.GIT_COMMANDS = {
@@ -53,7 +57,7 @@ function M.setup()
 		fzf_opts = fzf_opts,
 		fzf_colors = false,
 		files = M.PREVIEW_OPTIONS,
-		buffers = M.PREVIEW_OPTIONS,
+		buffers = M.BUFFERS_OPTIONS,
 		previewers = {
 			tree = {
 				cmd = "tree",
