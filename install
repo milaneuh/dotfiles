@@ -5,8 +5,8 @@ ANKI_VERSION="25.09"
 FORGE_COMMIT="46736af63815b46cadeb1db2988f04d60e6601b8"
 FORGE_UUID="forge@jmmaranan.com"
 JOPLIN_VERSION="v3.5.13"
-NEOVIM_VERSION="v0.12.1"
-RANGER_COMMIT="1719b17507cf10127ac535d5359926eede130160"
+NEOVIM_VERSION="v0.12.5"
+RANGER_COMMIT="3187384e4078d91848bd22ea0dc8eb5fe2866f59"
 ROUNDED_CORNERS_UUID="rounded-window-corners@fxgn"
 ROUNDED_CORNERS_VERSION_TAG="69895"
 RUSTUP_VERSION="1.29.0"
@@ -123,6 +123,7 @@ install_apt_packages() {
 	install bat
 	install entr
 	install fzf
+	install keyd
 	install npm
 	install python3-tk          # Needed to create dial box for python script (ex: screenrecorder)
 	install python3-pip         # Needed by Mason
@@ -151,7 +152,7 @@ install_apt_packages() {
 install_npm_packages() {
 	npm config set prefix "${HOME}/.local/"
 	npm install --global tree-sitter-cli
-	npm install --global mermaid-filter # Need by pandoc to convert mermaid block to img
+	npm install --global @mermaid-js/mermaid-cli # Needed by diagram.nvim to render mermaid blocks
 	npm install --global @anthropic-ai/claude-code
 	npm install --global eslint_d    # Needed by nvim for linting
 	npm install --global prettier    # Needed by nvim for formatting
@@ -216,7 +217,7 @@ install_graphical_software() {
 	snap install inkscape
 	snap install mpv
 	snap install vlc
-	snap install chromium # Needed by mermaid-filter via puppeteer
+	snap install chromium # Needed by mermaid-cli via puppeteer
 	install kitty
 	install flameshot
 	install gnome-shell-extension-manager
@@ -321,6 +322,7 @@ install_from_source() {
 configure_system() {
 	sudo update-alternatives --install /usr/bin/vi vi /usr/local/bin/nvim 60
 	sudo update-alternatives --set vi /usr/local/bin/nvim
+	sudo systemctl enable --now keyd
 }
 
 clone_repositories() {

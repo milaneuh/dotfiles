@@ -21,7 +21,7 @@ Then run :
 mkdir ~/.dotfiles
 cd !$
 ./install
-stow */ # Resolve Potential Conflict with existing file
+./deploy
 ```
 
 ## Credits
