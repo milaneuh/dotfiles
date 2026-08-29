@@ -2,8 +2,8 @@
 
 
 ANKI_VERSION="25.09"
+FORGE_COMMIT="46736af63815b46cadeb1db2988f04d60e6601b8"
 FORGE_UUID="forge@jmmaranan.com"
-FORGE_VERSION_TAG="67175"
 JOPLIN_VERSION="v3.5.13"
 NEOVIM_VERSION="v0.12.1"
 RANGER_COMMIT="1719b17507cf10127ac535d5359926eede130160"
@@ -14,7 +14,6 @@ WHISPER_MODEL="base"
 WHISPER_VERSION="v1.9.1"
 
 ANKI_SHA256="97cbddae74e44944360cac89bbdda06af7cf080a4dc1012dd6dc63952bbbb029"
-FORGE_SHA256="04d19cb1cb5684b81eb9cc84be62e18cfcb14ea311c3c4e19930746b5cddfb4e"
 JOPLIN_SHA256="6bdb0747c02150d221d93bcad459dc2b2b453de9cfdbe380126619159b880809"
 ROUNDED_CORNERS_SHA256="e69e0bd85cf9208a57efbbf0c20edac565404cc3de6bfdff8011a42d6b6c0a1e"
 RUSTUP_SHA256="4acc9acc76d5079515b46346a485974457b5a79893cfb01112423c89aeb5aa10"
@@ -80,6 +79,11 @@ install_joplin_deps() {
 	install libfuse2t64 # Required by Joplin AppImage
 }
 
+install_forge_deps() {
+	install libglib2.0-bin
+	install gettext
+}
+
 install_tmux_tools_deps() {
 	install libgtk-4-dev        # Needed by ripdrag
 	install libgraphene-1.0-dev # Needed by ripdrag
@@ -120,7 +124,7 @@ install_apt_packages() {
 	install entr
 	install fzf
 	install npm
-	install python-tk           # Needed to create dial box for python script (ex: screenrecorder)
+	install python3-tk          # Needed to create dial box for python script (ex: screenrecorder)
 	install python3-pip         # Needed by Mason
 	install rclone
 	install ripgrep
@@ -138,6 +142,7 @@ install_apt_packages() {
 	install_nvim_plugs_deps
 	install_anki_deps
 	install_joplin_deps
+	install_forge_deps
 	install_tmux_tools_deps
 
 	ln --symbolic /usr/bin/batcat ~/.local/bin/bat
@@ -214,15 +219,17 @@ install_graphical_software() {
 	snap install chromium # Needed by mermaid-filter via puppeteer
 	install kitty
 	install flameshot
-	install extension-manager
+	install gnome-shell-extension-manager
 }
 
 
 install_forge() {
-	curl --fail --silent --show-error --location "https://extensions.gnome.org/download-extension/${FORGE_UUID}.shell-extension.zip?version_tag=${FORGE_VERSION_TAG}" --output /tmp/forge.zip
-	verify_sha256 /tmp/forge.zip "${FORGE_SHA256}"
-	gnome-extensions install --force /tmp/forge.zip
-	rm /tmp/forge.zip
+	git clone --quiet https://github.com/forge-ext/forge.git /tmp/forge
+	git -C /tmp/forge checkout --quiet "${FORGE_COMMIT}"
+	verify_commit /tmp/forge "${FORGE_COMMIT}"
+	make --directory /tmp/forge build
+	make --directory /tmp/forge install
+	rm --recursive --force /tmp/forge
 
 	local enabled
 	enabled=$(gsettings get org.gnome.shell enabled-extensions)
@@ -253,6 +260,14 @@ verify_sha256() {
 	local file="$1" expected="$2"
 	echo "${expected}  ${file}" | sha256sum --check --status || {
 		echo "SHA256 mismatch for ${file}, aborting."
+		exit 1
+	}
+}
+
+verify_commit() {
+	local repo="$1" expected="$2"
+	[[ "$(git -C "${repo}" rev-parse HEAD)" == "${expected}" ]] || {
+		echo "Commit mismatch for ${repo}, aborting."
 		exit 1
 	}
 }
