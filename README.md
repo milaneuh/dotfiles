@@ -11,6 +11,13 @@ I highly recommend **not** installing my entire configuration. Instead, feel fre
 - Ubuntu
 - Git
 
+## Layout
+
+Configuration is split in two stow trees:
+
+- `home/` — one package per software, deployed as symlinks into `$HOME`
+- `system/` — one package per software, deployed as symlinks into `/` (requires root)
+
 ## Installation script
 
 Clone this repository under $HOME/.dotfiles.

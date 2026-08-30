@@ -6,11 +6,11 @@ set -o nounset
 cd "$(dirname "$(readlink --canonicalize "${BASH_SOURCE[0]}")")"
 
 deploy_home_packages() {
-	stow --target "${HOME}" --restow -- */
+	(cd home && stow --target "${HOME}" --restow -- */)
 }
 
-deploy_system_package() {
-	sudo stow --target / --no-folding --restow .system
+deploy_system_packages() {
+	(cd system && sudo stow --target / --no-folding --restow -- */)
 }
 
 restart_compose_key_daemon() {
@@ -20,5 +20,5 @@ restart_compose_key_daemon() {
 }
 
 deploy_home_packages
-deploy_system_package
+deploy_system_packages
 restart_compose_key_daemon

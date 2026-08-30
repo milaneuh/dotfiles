@@ -1,18 +1,18 @@
 *.pdf
 __pycache__/
 
-kitty/.config/kitty/theme.conf
-kitty/.config/kitty/current-theme.conf
-kitty/.config/kitty/*.bak
+home/kitty/.config/kitty/theme.conf
+home/kitty/.config/kitty/current-theme.conf
+home/kitty/.config/kitty/*.bak
 
-nvim/.config/nvim/nvim-pack-lock.json
+home/nvim/.config/nvim/nvim-pack-lock.json
 
 tags
 
-ranger/.config/ranger/plugins/*
-!ranger/.config/ranger/plugins/fzf_commands.py
-!ranger/.config/ranger/plugins/kitty_tmux_fix.py
+home/ranger/.config/ranger/plugins/*
+!home/ranger/.config/ranger/plugins/fzf_commands.py
+!home/ranger/.config/ranger/plugins/kitty_tmux_fix.py
 
-vscode/.config/Code/**
-!vscode/.config/Code/User/
-!vscode/.config/Code/User/settings.json
+home/vscode/.config/Code/**
+!home/vscode/.config/Code/User/
+!home/vscode/.config/Code/User/settings.json

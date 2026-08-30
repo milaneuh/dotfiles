@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 ANKI_VERSION="25.09"
 FORGE_COMMIT="46736af63815b46cadeb1db2988f04d60e6601b8"
 FORGE_UUID="forge@jmmaranan.com"
