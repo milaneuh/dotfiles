@@ -1,6 +1,5 @@
 {
   "permissions": {
-    "defaultMode": "plan",
     "allow": [
       "Bash(apt list:*)",
       "Bash(awk:*)",
@@ -43,7 +42,8 @@
     "deny": [
       "Bash(git push:*)",
       "Bash(git commit:*)"
-    ]
+    ],
+    "defaultMode": "plan"
   },
   "model": "opus",
   "worktree": {
@@ -59,10 +59,10 @@
     "typescript-lsp@claude-plugins-official": true,
     "gopls-lsp@claude-plugins-official": true
   },
-  "voiceEnabled": true,
   "voice": {
     "enabled": true,
     "mode": "hold"
   },
-  "theme": "light"
+  "theme": "light",
+  "voiceEnabled": true
 }
