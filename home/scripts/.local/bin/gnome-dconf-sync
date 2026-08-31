@@ -15,6 +15,7 @@ set -o errexit -o nounset -o pipefail
 CONF_DIR="$HOME/.config/gnome-desktop"
 
 FORGE_UUID=forge@jmmaranan.com
+GO_TO_LAST_WORKSPACE_UUID=gnome-shell-go-to-last-workspace@github.com
 FORGE_SCHEMA_DIR="$HOME/.local/share/gnome-shell/extensions/$FORGE_UUID/schemas"
 FORGE_KEYBINDINGS_SCHEMA=org.gnome.shell.extensions.forge.keybindings
 FORGE_KEYBINDINGS_PATH=/org/gnome/shell/extensions/forge/keybindings/
@@ -23,6 +24,7 @@ MANAGED_PATHS=(
   /org/gnome/desktop/wm/keybindings/
   /org/gnome/settings-daemon/plugins/media-keys/
   /org/gnome/shell/extensions/forge/
+  /org/gnome/shell/extensions/go-to-last-workspace/
 )
 
 keyfile_keys() {
@@ -84,6 +86,23 @@ disable_undeclared_forge_keybindings() {
   done < <(forge_setting list-keys)
 }
 
+enable_extension() {
+  local uuid=$1
+  local enabled
+
+  enabled=$(gsettings get org.gnome.shell enabled-extensions)
+
+  if [[ "$enabled" == *"'$uuid'"* ]]; then
+    return 0
+  fi
+
+  if [[ "$enabled" == "@as []" || "$enabled" == "[]" ]]; then
+    gsettings set org.gnome.shell enabled-extensions "['$uuid']"
+  else
+    gsettings set org.gnome.shell enabled-extensions "${enabled%]}, '$uuid']"
+  fi
+}
+
 dconf load / < "$CONF_DIR/desktop.conf"
 dconf load / < "$CONF_DIR/keybindings.conf"
 dconf load / < "$CONF_DIR/forge.conf"
@@ -96,3 +115,5 @@ disable_undeclared_forge_keybindings
 
 gnome-extensions disable "$FORGE_UUID"
 gnome-extensions enable "$FORGE_UUID"
+
+enable_extension "$GO_TO_LAST_WORKSPACE_UUID"
