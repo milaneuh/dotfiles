@@ -1,8 +1,8 @@
 [Desktop Entry]
 Type=Application
 Name=Keyboard Setup
-Comment=Configure keyboard keys for ThinkPad
-Exec=/usr/local/bin/keys
+Comment=Apply the XKB options of the detected keyboard
+Exec=sh -c '"$HOME/.local/bin/keys"'
 Hidden=false
 NoDisplay=false
 X-GNOME-Autostart-enabled=true
