@@ -40,12 +40,11 @@
       "Bash(which:*)"
     ],
     "deny": [
-      "Bash(git push:*)",
-      "Bash(git commit:*)"
+      "Bash(git push:*)"
     ],
     "defaultMode": "plan"
   },
-  "model": "opus",
+  "model": "opus[1m]",
   "worktree": {
     "bgIsolation": "none"
   },
