@@ -1,0 +1,6 @@
+[Unit]
+Description=Nix store garbage collection
+
+[Service]
+Type=oneshot
+ExecStart=/nix/var/nix/profiles/default/bin/nix-collect-garbage --delete-older-than 30d

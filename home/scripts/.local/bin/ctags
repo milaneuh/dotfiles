@@ -1,5 +1,0 @@
-#!/bin/bash
-
-# alias: ctags-universal --fields=+n
-
-ctags-universal --fields=+n "${@}"

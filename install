@@ -1,28 +1,5 @@
 #!/bin/bash
 
-ANKI_VERSION="25.09"
-FORGE_COMMIT="46736af63815b46cadeb1db2988f04d60e6601b8"
-FORGE_UUID="forge@jmmaranan.com"
-GO_TO_LAST_WORKSPACE_UUID="gnome-shell-go-to-last-workspace@github.com"
-GO_TO_LAST_WORKSPACE_VERSION_TAG="71178"
-JOPLIN_VERSION="v3.5.13"
-NEOVIM_VERSION="v0.12.5"
-RANGER_COMMIT="3187384e4078d91848bd22ea0dc8eb5fe2866f59"
-ROUNDED_CORNERS_UUID="rounded-window-corners@fxgn"
-ROUNDED_CORNERS_VERSION_TAG="69895"
-RUSTUP_VERSION="1.29.0"
-WHISPER_MODEL="base"
-WHISPER_VERSION="v1.9.1"
-
-ANKI_SHA256="97cbddae74e44944360cac89bbdda06af7cf080a4dc1012dd6dc63952bbbb029"
-JOPLIN_SHA256="6bdb0747c02150d221d93bcad459dc2b2b453de9cfdbe380126619159b880809"
-GO_TO_LAST_WORKSPACE_SHA256="14d8906f49f46516c9e794a06fbdc5c0e3d0df5d45105153dff00af1bdf5cca3"
-ROUNDED_CORNERS_SHA256="e69e0bd85cf9208a57efbbf0c20edac565404cc3de6bfdff8011a42d6b6c0a1e"
-RUSTUP_SHA256="4acc9acc76d5079515b46346a485974457b5a79893cfb01112423c89aeb5aa10"
-WHISPER_MODEL_SHA256="60ed5bc3dd14eea856493d334349b405782ddcaf0028d4b5df4088345fba2efe"
-
-export GOPATH="${HOME}/.go"
-
 remind_to_copy_ssh_key() {
 	cat <<-'EOF'
 		Add your SSH public key to GitHub and GitLab before continuing.
@@ -37,306 +14,67 @@ install() {
 }
 
 cleanup_default_folders() {
-	[ -e ~/.bashrc ] && rm ~/.bashrc
-	[ -e ~/.profile ] && rm ~/.profile
-	[ -e ~/Bureau ] && rmdir ~/Bureau
-	[ -e ~/Desktop ] && rmdir ~/Desktop
-	[ -e ~/Documents ] && rmdir ~/Documents
-	[ -e ~/Downloads ] && rmdir ~/Downloads
-	[ -e ~/Images ] && rmdir ~/Images
-	[ -e ~/Music ] && rmdir ~/Music
-	[ -e ~/Modèles ] && rmdir ~/Modèles
-	[ -e ~/Musiques ] && rmdir ~/Musiques
-	[ -e ~/Pictures ] && rmdir ~/Pictures
-	[ -e ~/Public ] && rmdir ~/Public
-	[ -e ~/Publics ] && rmdir ~/Publics
-	[ -e ~/Templates ] && rmdir ~/Templates
-	[ -e ~/Téléchargements ] && rmdir ~/Téléchargements
-	[ -e ~/Videos ] && rmdir ~/Videos
-	[ -e ~/Vidéos ] && rmdir ~/Vidéos
-}
-
-create_directories() {
-	mkdir --parents ~/bureau
-	mkdir --parents ~/document
-	mkdir --parents ~/drive
-	mkdir --parents ~/image
-	mkdir --parents ~/logiciels
-	mkdir --parents ~/musique
-	mkdir --parents ~/remoterepos/projects
-	mkdir --parents ~/telechargements
-	mkdir --parents ~/tmp
-	mkdir --parents ~/video
-	mkdir --parents ~/.go
-}
-
-install_anki_deps() {
-	install libxcb-cursor0      # Needed by Anki for Qt platform plugin
-	install libxcb-xinerama0    # Needed by Anki
-	install libnss3             # Needed by Anki
-	install zstd                # Needed to extract Anki archive
-}
-
-install_joplin_deps() {
-	install libfuse2t64 # Required by Joplin AppImage
-}
-
-install_forge_deps() {
-	install libglib2.0-bin
-	install gettext
-}
-
-install_tmux_tools_deps() {
-	install libgtk-4-dev        # Needed by ripdrag
-	install libgraphene-1.0-dev # Needed by ripdrag
-	install ffmpegthumbnailer   # Needed for video preview in ranger
-}
-
-install_nvim_deps() {
-	install cmake               # Needed to build neovim
-	install gettext             # Needed to build neovim
-	install ninja-build         # Needed to build neovim
-	install build-essential     # Needed to build neovim
-}
-
-install_nvim_plugs_deps() {
-	install jq                  # Needed by nvim for linting
-	install shellcheck          # Needed by nvim for linting
-	install imagemagick         # Needed for image preview in NVIM in TMUX
-	install libmagickwand-dev   # Needed for image preview in NVIM in TMUX
-	install luarocks            # Needed for image preview in NVIM in TMUX
+	[[ -e ~/.bashrc ]] && rm ~/.bashrc
+	[[ -e ~/.profile ]] && rm ~/.profile
+	[[ -e ~/Bureau ]] && rmdir ~/Bureau
+	[[ -e ~/Desktop ]] && rmdir ~/Desktop
+	[[ -e ~/Documents ]] && rmdir ~/Documents
+	[[ -e ~/Downloads ]] && rmdir ~/Downloads
+	[[ -e ~/Images ]] && rmdir ~/Images
+	[[ -e ~/Music ]] && rmdir ~/Music
+	[[ -e ~/Modèles ]] && rmdir ~/Modèles
+	[[ -e ~/Musiques ]] && rmdir ~/Musiques
+	[[ -e ~/Pictures ]] && rmdir ~/Pictures
+	[[ -e ~/Public ]] && rmdir ~/Public
+	[[ -e ~/Publics ]] && rmdir ~/Publics
+	[[ -e ~/Templates ]] && rmdir ~/Templates
+	[[ -e ~/Téléchargements ]] && rmdir ~/Téléchargements
+	[[ -e ~/Videos ]] && rmdir ~/Videos
+	[[ -e ~/Vidéos ]] && rmdir ~/Vidéos
 }
 
 install_apt_packages() {
 	sudo --preserve-env apt update
 
-	install ssh
-	install curl
-	install stow
 	install git
-	install alsa-utils          # Needed by speech2text for arecord
-	install ffmpeg              # Needed by screenrecord
-	install golang-go
-	install pandoc
-	install pdf2svg
-	install tesseract-ocr
-	install libtesseract-dev    # Needed for tesseract-ocr
-	install bash-completion
-	install bat
-	install entr
-	install fzf
+	install curl
 	install keyd
-	install npm
-	install python3-tk          # Needed to create dial box for python script (ex: screenrecorder)
-	install python3-pip         # Needed by Mason
-	install rclone
-	install ripgrep
-	install universal-ctags
-	install xclip
-	install sshfs
-	install sshpass
-	install tree
-	install tmux
-	install xournalpp
-	install pipx                # Needed for Python CLI tools
-
-	# Deps
-	install_nvim_deps
-	install_nvim_plugs_deps
-	install_anki_deps
-	install_joplin_deps
-	install_forge_deps
-	install_tmux_tools_deps
-
-	ln --symbolic /usr/bin/batcat ~/.local/bin/bat
 }
 
-install_npm_packages() {
-	npm config set prefix "${HOME}/.local/"
-	npm install --global tree-sitter-cli
-	npm install --global @mermaid-js/mermaid-cli # Needed by diagram.nvim to render mermaid blocks
-	npm install --global @anthropic-ai/claude-code
-	npm install --global eslint_d    # Needed by nvim for linting
-	npm install --global prettier    # Needed by nvim for formatting
+install_nix() {
+	sudo apt purge --yes nix-bin nix-setup-systemd
+	sudo rm --recursive --force /nix
+
+	if getent group nix-users >/dev/null; then
+		sudo groupdel nix-users
+	fi
+
+	sh <(curl --location https://nixos.org/nix/install) --daemon
+
+	if [[ -r /etc/profile.d/nix.sh ]]; then
+		# shellcheck source=/dev/null
+		source /etc/profile.d/nix.sh
+	fi
 }
 
-install_cargo_packages() {
-	curl --fail --silent --show-error --location "https://static.rust-lang.org/rustup/archive/${RUSTUP_VERSION}/x86_64-unknown-linux-gnu/rustup-init" --output /tmp/rustup-init
-	verify_sha256 /tmp/rustup-init "${RUSTUP_SHA256}"
-	chmod +x /tmp/rustup-init
-	/tmp/rustup-init -y --no-modify-path
-	rm /tmp/rustup-init
-	# shellcheck source=/dev/null
-	. "${HOME}/.cargo/env"
-
-	cargo install zoxide --locked
-	cargo install stylua --locked    # Needed by nvim for formatting
-	cargo install typst-cli --locked # Needed by md2pdf as pandoc pdf-engine
-	cargo install ripdrag
-	cargo install difftastic
-}
-
-install_go_packages() {
-	go install github.com/jesseduffield/lazygit@latest
-	go install mvdan.cc/sh/v3/cmd/shfmt@latest            # Needed by nvim for formatting
-	go install github.com/mgechev/revive@latest           # Needed by nvim for Go linting
-}
-
-install_pipx_packages() {
-	pipx install djlint    # Needed by nvim for linting
-	pipx install black     # Needed by nvim for formatting
-}
-
-install_ranger() {
-	pipx install "ranger-fm @ git+https://github.com/ranger/ranger.git@${RANGER_COMMIT}"
-	pipx inject ranger-fm pillow    # Needed by ranger for kitty image previews
-}
-
-install_ranger_plugins() {
-	mkdir --parents ~/.config/ranger/plugins
-	(
-		cd ~/.config/ranger/plugins || exit 1
-		git clone https://github.com/maximtrp/ranger-archives.git
-	)
-}
-
-install_luarocks_packages() {
-	luarocks install magick      # Needed for image.nvim
-	luarocks install luacheck    # Needed by nvim for linting
-}
-
-install_language_packages() {
-	install_npm_packages
-	install_cargo_packages
-	install_go_packages
-	install_pipx_packages
-	install_luarocks_packages
+install_home_manager() {
+	nix --extra-experimental-features 'nix-command flakes' run home-manager/master -- \
+		switch --flake "${HOME}/.dotfiles/nix#${USER}" --backup-extension backup
+	export PATH="${HOME}/.nix-profile/bin:${PATH}"
 }
 
 install_graphical_software() {
-	snap install firefox
-	snap install gimp
-	snap install inkscape
-	snap install mpv
-	snap install vlc
-	snap install chromium # Needed by mermaid-cli via puppeteer
-	install kitty
-	install flameshot
-	install gnome-shell-extension-manager
-}
-
-
-install_forge() {
-	git clone --quiet https://github.com/forge-ext/forge.git /tmp/forge
-	git -C /tmp/forge checkout --quiet "${FORGE_COMMIT}"
-	verify_commit /tmp/forge "${FORGE_COMMIT}"
-	make --directory /tmp/forge build
-	make --directory /tmp/forge install
-	rm --recursive --force /tmp/forge
-
-	local enabled
-	enabled=$(gsettings get org.gnome.shell enabled-extensions)
-	if [[ ${enabled} == "@as []" ]]; then
-		gsettings set org.gnome.shell enabled-extensions "['${FORGE_UUID}']"
-	elif [[ ${enabled} != *"${FORGE_UUID}"* ]]; then
-		gsettings set org.gnome.shell enabled-extensions "${enabled%]}, '${FORGE_UUID}']"
-	fi
-}
-
-install_go_to_last_workspace() {
-	curl --fail --silent --show-error --location "https://extensions.gnome.org/download-extension/${GO_TO_LAST_WORKSPACE_UUID}.shell-extension.zip?version_tag=${GO_TO_LAST_WORKSPACE_VERSION_TAG}" --output /tmp/go-to-last-workspace.zip
-	verify_sha256 /tmp/go-to-last-workspace.zip "${GO_TO_LAST_WORKSPACE_SHA256}"
-	gnome-extensions install --force /tmp/go-to-last-workspace.zip
-	rm /tmp/go-to-last-workspace.zip
-}
-
-install_rounded_corners() {
-	curl --fail --silent --show-error --location "https://extensions.gnome.org/download-extension/${ROUNDED_CORNERS_UUID}.shell-extension.zip?version_tag=${ROUNDED_CORNERS_VERSION_TAG}" --output /tmp/rounded-corners.zip
-	verify_sha256 /tmp/rounded-corners.zip "${ROUNDED_CORNERS_SHA256}"
-	gnome-extensions install --force /tmp/rounded-corners.zip
-	rm /tmp/rounded-corners.zip
-
-	local enabled
-	enabled=$(gsettings get org.gnome.shell enabled-extensions)
-	if [[ ${enabled} == "@as []" ]]; then
-		gsettings set org.gnome.shell enabled-extensions "['${ROUNDED_CORNERS_UUID}']"
-	elif [[ ${enabled} != *"${ROUNDED_CORNERS_UUID}"* ]]; then
-		gsettings set org.gnome.shell enabled-extensions "${enabled%]}, '${ROUNDED_CORNERS_UUID}']"
-	fi
-}
-
-
-verify_sha256() {
-	local file="$1" expected="$2"
-	echo "${expected}  ${file}" | sha256sum --check --status || {
-		echo "SHA256 mismatch for ${file}, aborting."
-		exit 1
-	}
-}
-
-verify_commit() {
-	local repo="$1" expected="$2"
-	[[ "$(git -C "${repo}" rev-parse HEAD)" == "${expected}" ]] || {
-		echo "Commit mismatch for ${repo}, aborting."
-		exit 1
-	}
-}
-
-install_neovim() {
-	git clone --depth 1 --branch "${NEOVIM_VERSION}" https://github.com/neovim/neovim.git ~/logiciels/neovim
-	cd ~/logiciels/neovim || exit 1
-	rm --recursive --force .deps build
-	make CMAKE_BUILD_TYPE=Release
-	sudo make install
-	cd - || exit 1
-}
-
-install_joplin() {
-	curl --fail --silent --show-error --location "https://raw.githubusercontent.com/laurent22/joplin/${JOPLIN_VERSION}/Joplin_install_and_update.sh" --output /tmp/joplin_install.sh
-	verify_sha256 /tmp/joplin_install.sh "${JOPLIN_SHA256}"
-	bash /tmp/joplin_install.sh
-	rm /tmp/joplin_install.sh
-}
-
-install_anki() {
-	curl --fail --silent --show-error --location "https://github.com/ankitects/anki/releases/download/${ANKI_VERSION}/anki-launcher-${ANKI_VERSION}-linux.tar.zst" --output /tmp/anki.tar.zst
-	verify_sha256 /tmp/anki.tar.zst "${ANKI_SHA256}"
-	tar --extract --auto-compress --file /tmp/anki.tar.zst --directory /tmp
-	cd "/tmp/anki-launcher-${ANKI_VERSION}-linux" || exit 1
-	sudo ./install.sh
-	cd - || exit 1
-	rm --recursive --force "/tmp/anki-launcher-${ANKI_VERSION}-linux" /tmp/anki.tar.zst
-}
-
-install_whisper() {
-	git clone --depth 1 --branch "${WHISPER_VERSION}" https://github.com/ggml-org/whisper.cpp.git ~/logiciels/whisper.cpp
-	cmake -DCMAKE_BUILD_TYPE=Release -S ~/logiciels/whisper.cpp -B ~/logiciels/whisper.cpp/build
-	cmake --build ~/logiciels/whisper.cpp/build --config Release
-	~/logiciels/whisper.cpp/models/download-ggml-model.sh "${WHISPER_MODEL}" ~/logiciels/whisper.cpp/models
-	verify_sha256 ~/logiciels/whisper.cpp/models/"ggml-${WHISPER_MODEL}.bin" "${WHISPER_MODEL_SHA256}"
-}
-
-
-install_from_source() {
-	install_forge
-	install_rounded_corners
-	install_go_to_last_workspace
-	install_neovim
-	install_joplin
-	install_anki
-	install_whisper
-	install_ranger
-	install_ranger_plugins
+	snap install firefox # Nix builds cannot use the AppArmor profile that confines the browser
 }
 
 configure_system() {
-	sudo update-alternatives --install /usr/bin/vi vi /usr/local/bin/nvim 60
-	sudo update-alternatives --set vi /usr/local/bin/nvim
-	sudo systemctl enable --now keyd
+	sudo update-alternatives --install /usr/bin/vi vi "${HOME}/.nix-profile/bin/nvim" 60
+	sudo update-alternatives --set vi "${HOME}/.nix-profile/bin/nvim"
 }
 
 clone_repositories() {
 	git clone git@gitlab.com:maxencetholomier/zettelkasten.git ~/remoterepos/zettelkasten/
+	git clone git@gitlab.com:maxencetholomier/secrets.git ~/.password-store
 	git clone git@github.com:maxencetholomier/knowledge.git ~/remoterepos/projects/knowledge
 
 	sudo ~/remoterepos/projects/knowledge/install
@@ -349,18 +87,19 @@ print_manual_steps() {
 		Manual installation required:
 			- Create ~/.gitconfig.local with your git email:
 			    git config --file ~/.gitconfig.local user.email your_email@example.com
+		Log out and back in: the nix profile PATH and the GNOME shell
+		extensions shipped by nix are only picked up by a new session.
 		Reboot to reload gnome application.
 	EOF
 }
 
 remind_to_copy_ssh_key
 cleanup_default_folders
-create_directories
 
 install_apt_packages
-install_language_packages
+install_nix
+install_home_manager
 install_graphical_software
-install_from_source
 configure_system
 clone_repositories
 

@@ -5,20 +5,97 @@ set -o nounset
 
 cd "$(dirname "$(readlink --canonicalize "${BASH_SOURCE[0]}")")"
 
+export PATH="${HOME}/.nix-profile/bin:${PATH}"
+
+SCRIPT_DIRECTORY="${HOME}/.local/bin"
+RANGER_PLUGIN_DIRECTORY="${HOME}/.config/ranger/plugins"
+
+home_paths() {
+	find software/home/*/ -mindepth 1 -printf '%P\n'
+	find scripts -mindepth 1 -maxdepth 1 -printf ".local/bin/%P\n"
+}
+
+system_paths() {
+	find software/system/*/ -mindepth 1 -printf '%P\n'
+}
+
+configure_nix_daemon() {
+	if cmp --silent nix/nix.conf /etc/nix/nix.conf 2>/dev/null; then
+		return
+	fi
+
+	sudo cp nix/nix.conf /etc/nix/nix.conf
+	sudo chmod 644 /etc/nix/nix.conf
+	sudo systemctl restart nix-daemon
+}
+
+create_directories() {
+	mkdir --parents ~/bureau
+	mkdir --parents ~/document
+	mkdir --parents ~/drive
+	mkdir --parents ~/image
+	mkdir --parents ~/logiciels
+	mkdir --parents ~/musique
+	mkdir --parents ~/remoterepos/projects
+	mkdir --parents ~/telechargements
+	mkdir --parents ~/tmp
+	mkdir --parents ~/video
+	mkdir --parents ~/.go
+}
+
+deploy_home_manager() {
+	home-manager switch --flake "${PWD}/nix#${USER}" --backup-extension backup
+}
+
+remove_stale_links() {
+	local root="$1" privileged="${2:-}"
+	local relative link
+
+	while read -r relative; do
+		link="${root%/}/${relative}"
+		if [[ -L ${link} && ! -e ${link} ]]; then
+			case "$(readlink "${link}")" in
+			.dotfiles/* | */.dotfiles/*) ${privileged} rm "${link}" ;;
+			esac
+		fi
+	done
+}
+
+deploy_scripts() {
+	mkdir --parents "${SCRIPT_DIRECTORY}"
+	stow --target "${SCRIPT_DIRECTORY}" --restow scripts
+}
+
 deploy_home_packages() {
-	(cd home && stow --target "${HOME}" --restow -- */)
+	mkdir --parents "${RANGER_PLUGIN_DIRECTORY}"
+	# shellcheck disable=SC2035 # stow rejects ./*/ as package names
+	(cd software/home && stow --target "${HOME}" --restow */)
 }
 
 deploy_system_packages() {
-	(cd system && sudo stow --target / --no-folding --restow -- */)
+	# shellcheck disable=SC2035 # stow rejects ./*/ as package names
+	(cd software/system && sudo "$(command -v stow)" --target / --no-folding --restow */)
 }
 
-restart_compose_key_daemon() {
+enable_compose_key_daemon() {
 	if systemctl cat keyd.service >/dev/null 2>&1; then
+		sudo systemctl enable keyd
 		sudo systemctl restart keyd
 	fi
 }
 
+enable_store_garbage_collection() {
+	sudo systemctl daemon-reload
+	sudo systemctl enable --now nix-gc.timer
+}
+
+configure_nix_daemon
+create_directories
+deploy_home_manager
+home_paths | sort --unique | remove_stale_links "${HOME}"
+deploy_scripts
 deploy_home_packages
+system_paths | sort --unique | remove_stale_links / sudo
 deploy_system_packages
-restart_compose_key_daemon
+enable_compose_key_daemon
+enable_store_garbage_collection

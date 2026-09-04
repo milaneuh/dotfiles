@@ -13,10 +13,24 @@ I highly recommend **not** installing my entire configuration. Instead, feel fre
 
 ## Layout
 
-Configuration is split in two stow trees:
+Three directories, one per question:
 
-- `home/` — one package per software, deployed as symlinks into `$HOME`
-- `system/` — one package per software, deployed as symlinks into `/` (requires root)
+- `nix/` — what is installed: a pinned flake applied by home-manager, see `nix/README.md`
+- `software/` — how each piece of software is configured, one directory per software
+- `scripts/` — what I wrote, deployed as a whole into `~/.local/bin`
+
+`software/` holds two stow trees, one per deployment target, each with one package
+per software:
+
+```
+software/home/fzf/.config/fzf/common.conf      -> ~/.config/fzf/common.conf
+software/home/fzf/.bashrc.d/tools/fzf.bash     -> ~/.bashrc.d/tools/fzf.bash
+software/system/keyd/etc/keyd/default.conf     -> /etc/keyd/default.conf
+scripts/speech2text                            -> ~/.local/bin/speech2text
+```
+
+Each tree is stowed in a single command, so stow sees every package at once and
+splits open a shared directory such as `.bashrc.d/tools` on its own.
 
 ## Installation script
 
