@@ -10,7 +10,7 @@ remind_to_copy_ssh_key() {
 }
 
 install() {
-	sudo --preserve-env apt --yes install "$@"
+	sudo apt --yes install "$@"
 }
 
 cleanup_default_folders() {
@@ -34,7 +34,7 @@ cleanup_default_folders() {
 }
 
 install_apt_packages() {
-	sudo --preserve-env apt update
+	sudo apt update
 
 	install git
 	install curl
