@@ -69,7 +69,7 @@ deploy_scripts() {
 deploy_home_packages() {
 	mkdir --parents "${RANGER_PLUGIN_DIRECTORY}"
 	# shellcheck disable=SC2035 # stow rejects ./*/ as package names
-	(cd software/home && stow --target "${HOME}" --restow */)
+	(cd software/home && stow --target "${HOME}" --no-folding --restow */)
 }
 
 deploy_system_packages() {
