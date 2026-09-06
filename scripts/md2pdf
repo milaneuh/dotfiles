@@ -2,12 +2,9 @@
 
 [[ -z "${1}" ]] && echo "Missing argument" && exit 1
 
-echo '{"args":["--no-sandbox"]}' > .puppeteer.json
-
 pandoc \
     --variable mainfont="DejaVu Sans" \
     --pdf-engine=typst \
     --highlight-style zenburn \
 	"${1}" --output "${1//md/pdf}"
 
-rm --force .puppeteer.json
