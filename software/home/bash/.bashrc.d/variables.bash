@@ -1,8 +1,7 @@
 # System variables -------------------------------------------------------------
 export HISTCONTROL=ignoreboth:erasedups
 export HISTFILESIZE=100000
-export HISTIGNORE+="vif *:vit *:vig *"
-export HISTIGNORE="rm*:*--force*:"
+export HISTIGNORE="rm*:*--force*:vif *:vit *:vig *"
 export HISTSIZE=100000
 export PATH="${PATH}":"${HOME}"/.local/bin
 PROMPT_COMMAND=('history -a; history -c; history -r')
