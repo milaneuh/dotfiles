@@ -44,7 +44,15 @@ create_directories() {
 }
 
 deploy_home_manager() {
-	home-manager switch --flake "${PWD}/nix#${USER}" --backup-extension backup
+	if command -v home-manager >/dev/null; then
+		home-manager switch --flake "${PWD}/nix#${USER}" -b backup
+		return
+	fi
+
+	local activation
+	activation="$(nix --extra-experimental-features 'nix-command flakes' build --no-link \
+		--print-out-paths "${PWD}/nix#homeConfigurations.${USER}.activationPackage")"
+	HOME_MANAGER_BACKUP_EXT=backup "${activation}/activate"
 }
 
 remove_stale_links() {
