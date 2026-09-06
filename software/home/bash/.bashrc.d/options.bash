@@ -4,6 +4,8 @@ stty -ixon lnext undef # Disable Ctrl+S freezing and Ctrl+V quoting
 
 # set -o vi
 
+umask 022
+
 shopt -s histappend
 shopt -s checkwinsize
 
