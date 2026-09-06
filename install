@@ -87,12 +87,29 @@ install_graphical_software() {
 configure_system() {
 	sudo update-alternatives --install /usr/bin/vi vi "${HOME}/.nix-profile/bin/nvim" 60
 	sudo update-alternatives --set vi "${HOME}/.nix-profile/bin/nvim"
+
+	if grep --quiet '^[[:space:]]*GSSAPIAuthentication' /etc/ssh/ssh_config; then
+		sudo sed --in-place 's/^\([[:space:]]*\)\(GSSAPIAuthentication\)/\1#\2/' /etc/ssh/ssh_config
+	fi
+}
+
+remind_to_import_gpg_key() {
+	cat <<-'EOF'
+		Import your GPG key from the Dashlane secure note before continuing.
+		  gpg --import
+		  gpg --import-ownertrust
+	EOF
+	read -r -p "Key imported? [y/N] " response
+	[[ "${response}" =~ ^[Yy]$ ]] || exit 1
 }
 
 clone_repositories() {
-	git clone git@gitlab.com:maxencetholomier/zettelkasten.git ~/remoterepos/zettelkasten/
-	git clone git@gitlab.com:maxencetholomier/secrets.git ~/.password-store
-	git clone git@github.com:maxencetholomier/knowledge.git ~/remoterepos/projects/knowledge
+	[[ -d ~/remoterepos/zettelkasten ]] ||
+		git clone git@gitlab.com:maxencetholomier/zettelkasten.git ~/remoterepos/zettelkasten/
+	[[ -d ~/.password-store ]] ||
+		git clone git@gitlab.com:maxencetholomier/secrets.git ~/.password-store
+	[[ -d ~/remoterepos/projects/knowledge ]] ||
+		git clone git@github.com:maxencetholomier/knowledge.git ~/remoterepos/projects/knowledge
 
 	sudo ~/remoterepos/projects/knowledge/install
 }
@@ -104,6 +121,8 @@ print_manual_steps() {
 		Manual installation required:
 			- Create ~/.gitconfig.local with your git email:
 			    git config --file ~/.gitconfig.local user.email your_email@example.com
+			- Check the password store works:
+			    pass show raspi/luks
 		Log out and back in: the nix profile PATH and the GNOME shell
 		extensions shipped by nix are only picked up by a new session.
 		Reboot to reload gnome application.
@@ -118,6 +137,7 @@ install_nix
 install_home_manager
 install_graphical_software
 configure_system
+remind_to_import_gpg_key
 clone_repositories
 
 print_manual_steps
