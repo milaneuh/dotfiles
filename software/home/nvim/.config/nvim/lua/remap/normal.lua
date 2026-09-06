@@ -59,7 +59,13 @@ M.setup = function()
 		{ noremap = true, silent = true, desc = "Yank selection instead of pasting" }
 	)
 	vim.keymap.set("n", "<C-S>", ":w<CR>", { desc = "Save file" })
-	vim.keymap.set("n", "<C-BS>", ":q<CR>", { noremap = true, silent = true, desc = "Quit window" })
+	vim.keymap.set({ "n", "v" }, "<C-BS>", "<Esc>:q<CR>", { noremap = true, silent = true, desc = "Quit window" })
+	vim.keymap.set(
+		{ "n", "v" },
+		"<C-q>",
+		"<Nop>",
+		{ noremap = true, silent = true, desc = "Disable blockwise visual (use <C-v>)" }
+	)
 	vim.keymap.set("n", "!$", ":%!", { desc = "Pipe entire file through command" })
 	vim.keymap.set("v", "g/", "<Esc>/\\%V", { desc = "Search within visual selection" })
 	vim.keymap.set("n", "#", "#N", { noremap = true, silent = true, desc = "Search word backward (stay on word)" })
