@@ -80,6 +80,25 @@ deploy_home_packages() {
 	(cd software/home && stow --target "${HOME}" --no-folding --restow */)
 }
 
+deploy_ssh_hosts() {
+	local config="${HOME}/.ssh/config"
+	local directory="${HOME}/.ssh/config.d"
+
+	mkdir --parents "${directory}"
+	chmod 700 "${directory}"
+
+	if [[ ! -e "${directory}/raspi" ]]; then
+		(umask 077 && pass show raspi/host >"${directory}/raspi") ||
+			rm --force "${directory}/raspi"
+	fi
+
+	if [[ ! -s "${config}" ]]; then
+		(umask 077 && printf 'Include ~/.ssh/config.d/*\n' >"${config}")
+	elif ! grep --quiet '^Include ~/.ssh/config.d/\*$' "${config}"; then
+		sed --in-place '1i Include ~/.ssh/config.d/*' "${config}"
+	fi
+}
+
 deploy_system_packages() {
 	# shellcheck disable=SC2035 # stow rejects ./*/ as package names
 	(cd software/system && sudo "$(command -v stow)" --target / --no-folding --restow */)
@@ -103,6 +122,7 @@ deploy_home_manager
 home_paths | sort --unique | remove_stale_links "${HOME}"
 deploy_scripts
 deploy_home_packages
+deploy_ssh_hosts
 system_paths | sort --unique | remove_stale_links / sudo
 deploy_system_packages
 enable_compose_key_daemon
