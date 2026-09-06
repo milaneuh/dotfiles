@@ -5,8 +5,6 @@ software/home/kitty/.config/kitty/theme.conf
 software/home/kitty/.config/kitty/current-theme.conf
 software/home/kitty/.config/kitty/*.bak
 
-software/home/nvim/.config/nvim/nvim-pack-lock.json
-
 tags
 
 software/home/ranger/.config/ranger/plugins/*

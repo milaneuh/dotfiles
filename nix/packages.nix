@@ -17,6 +17,11 @@ let
     hash = "sha256-HEJ+8KlG++PK0vVpEYptbyuPZAKllX5PeyaTBKcf+8M=";
   };
 
+  mermaid = pkgs.fetchurl {
+    url = "https://cdn.jsdelivr.net/npm/mermaid@11.17.2/dist/mermaid.min.js";
+    hash = "sha256-WB7X10vZBI0OOpE2OSfXLvIpQtdyJUayf3zCnjU5Drg=";
+  };
+
   whisperModels = pkgs.linkFarm "whisper-cpp-models" [
     {
       name = "share/whisper-cpp/models/ggml-small-q5_1.bin";
@@ -121,7 +126,7 @@ let
   ];
 in
 {
-  inherit rangerArchives;
+  inherit rangerArchives mermaid;
 
   commandLine =
     systemTools

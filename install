@@ -1,5 +1,8 @@
 #!/bin/bash
 
+NIX_VERSION="2.34.3"
+NIX_INSTALLER_SHA256="15af988e88ffc16d5d4abd6e1d100eba8b0dff6a41c6e03a7718c2b4a87e0cd6"
+
 remind_to_copy_ssh_key() {
 	cat <<-'EOF'
 		Add your SSH public key to GitHub and GitLab before continuing.
@@ -49,7 +52,19 @@ install_nix() {
 		sudo groupdel nix-users
 	fi
 
-	sh <(curl --location https://nixos.org/nix/install) --daemon
+	local installer
+	installer="$(mktemp)"
+	curl --location --fail --output "${installer}" \
+		"https://releases.nixos.org/nix/nix-${NIX_VERSION}/install"
+
+	if ! echo "${NIX_INSTALLER_SHA256}  ${installer}" | sha256sum --check --status; then
+		echo "nix installer checksum mismatch, aborting" >&2
+		rm --force "${installer}"
+		exit 1
+	fi
+
+	sh "${installer}" --daemon
+	rm --force "${installer}"
 
 	if [[ -r /etc/profile.d/nix.sh ]]; then
 		# shellcheck source=/dev/null
@@ -58,8 +73,10 @@ install_nix() {
 }
 
 install_home_manager() {
-	nix --extra-experimental-features 'nix-command flakes' run home-manager/master -- \
-		switch --flake "${HOME}/.dotfiles/nix#${USER}" -b backup
+	local activation
+	activation="$(nix --extra-experimental-features 'nix-command flakes' build --no-link \
+		--print-out-paths "${HOME}/.dotfiles/nix#homeConfigurations.${USER}.activationPackage")"
+	HOME_MANAGER_BACKUP_EXT=backup "${activation}/activate"
 	export PATH="${HOME}/.nix-profile/bin:${PATH}"
 }
 

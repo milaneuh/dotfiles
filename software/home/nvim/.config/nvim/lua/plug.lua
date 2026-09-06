@@ -3,6 +3,19 @@ local M = {}
 M.setup = function()
 	local gh = function(x) return "https://github.com/" .. x end
 
+	local override_bundled_mermaid = function(plugin_path)
+		local source = vim.fs.joinpath(vim.fn.stdpath("data"), "mermaid.min.js")
+		local target = vim.fs.joinpath(plugin_path, "app", "_static", "mermaid.min.js")
+
+		if vim.uv.fs_stat(source) == nil then
+			vim.notify("mermaid.min.js missing, run home-manager switch", vim.log.levels.ERROR)
+			return
+		end
+
+		vim.fn.delete(target)
+		vim.uv.fs_symlink(source, target)
+	end
+
 	-- Netrw (replaced by oil.nvim), couldn't be put in after folder
 	vim.g.loaded_netrw = 1
 	vim.g.loaded_netrwPlugin = 1
@@ -23,11 +36,7 @@ M.setup = function()
 				vim.system({ "make", "install_jsregexp" }, { cwd = ev.data.path })
 			elseif name == "markdown-preview.nvim" then
 				vim.fn["mkdp#util#install"]()
-				vim.system({
-					"curl", "-Lo",
-					ev.data.path .. "/app/_static/mermaid.min.js",
-					"https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js",
-				})
+				override_bundled_mermaid(ev.data.path)
 			end
 		end,
 	})

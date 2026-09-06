@@ -29,6 +29,7 @@ in
     ++ map config.lib.nixGL.wrap packages.graphical;
 
   xdg.configFile."ranger/plugins/ranger-archives".source = packages.rangerArchives;
+  xdg.dataFile."nvim/mermaid.min.js".source = packages.mermaid;
 
   systemd.user.services.home-manager-expire = {
     Unit.Description = "Expire home-manager generations older than 30 days";
