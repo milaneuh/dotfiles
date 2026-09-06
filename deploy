@@ -81,21 +81,15 @@ deploy_home_packages() {
 }
 
 deploy_ssh_hosts() {
-	local config="${HOME}/.ssh/config"
 	local directory="${HOME}/.ssh/config.d"
 
+	chmod 600 software/home/ssh/.ssh/config
 	mkdir --parents "${directory}"
 	chmod 700 "${directory}"
 
 	if [[ ! -e "${directory}/raspi" ]]; then
 		(umask 077 && pass show raspi/host >"${directory}/raspi") ||
 			rm --force "${directory}/raspi"
-	fi
-
-	if [[ ! -s "${config}" ]]; then
-		(umask 077 && printf 'Include ~/.ssh/config.d/*\n' >"${config}")
-	elif ! grep --quiet '^Include ~/.ssh/config.d/\*$' "${config}"; then
-		sed --in-place '1i Include ~/.ssh/config.d/*' "${config}"
 	fi
 }
 
