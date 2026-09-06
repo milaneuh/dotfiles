@@ -6,7 +6,7 @@ NIX_INSTALLER_SHA256="15af988e88ffc16d5d4abd6e1d100eba8b0dff6a41c6e03a7718c2b4a8
 host_accepts_ssh_key() {
 	local host="$1"
 
-	ssh -T -o ConnectTimeout=10 "git@${host}" 2>&1 |
+	ssh -o RequestTTY=no -o ConnectTimeout=10 "git@${host}" 2>&1 |
 		grep --quiet --extended-regexp 'Welcome to GitLab|successfully authenticated'
 }
 
@@ -111,17 +111,19 @@ configure_system() {
 }
 
 gpg_key_is_usable() {
-	local fingerprint
+	local fingerprint validity
 
 	fingerprint="$(gpg --list-secret-keys --with-colons 2>/dev/null |
-		awk -F: '/^fpr:/{print $10; exit}')"
+		grep --max-count=1 '^fpr:' | cut --delimiter=: --fields=10)"
 
 	if [[ -z "${fingerprint}" ]]; then
 		return 1
 	fi
 
-	gpg --list-keys --with-colons "${fingerprint}" 2>/dev/null |
-		awk -F: '/^pub:/{exit ($2 == "u") ? 0 : 1}'
+	validity="$(gpg --list-keys --with-colons "${fingerprint}" 2>/dev/null |
+		grep --max-count=1 '^pub:' | cut --delimiter=: --fields=2)"
+
+	[[ "${validity}" == "u" ]]
 }
 
 require_gpg_key() {
