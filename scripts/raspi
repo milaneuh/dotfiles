@@ -45,26 +45,51 @@ fi
 
 # script -----------------------------------------------------------------------
 
-case ${1} in
-mount)
+unlock_remote_disk() {
 	ssh -t "${SSH_HOST}" "
 		test -e /dev/mapper/${MAPPER} || sudo cryptsetup open ${DEVICE} ${MAPPER} || exit 1
 		sudo mkdir --parents ${REMOTE_MOUNT}
 		mountpoint --quiet ${REMOTE_MOUNT} || sudo mount /dev/mapper/${MAPPER} ${REMOTE_MOUNT} || exit 1
-	" || exit 1
-	mountpoint --quiet "${LOCAL_MOUNT}" && echo "already mounted: ${LOCAL_MOUNT}" && exit 0
-	"${FUSERMOUNT}" -u "${LOCAL_MOUNT}" 2> /dev/null
-	mkdir --parents "${LOCAL_MOUNT}"
-	sshfs -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3 \
-		"${SSH_HOST}:${REMOTE_MOUNT}" "${LOCAL_MOUNT}" || exit 1
-	echo "mounted: ${LOCAL_MOUNT}"
-	;;
-umount)
-	"${FUSERMOUNT}" -u "${LOCAL_MOUNT}" 2> /dev/null
+	"
+}
+
+lock_remote_disk() {
 	ssh -t "${SSH_HOST}" "
 		! mountpoint --quiet ${REMOTE_MOUNT} || sudo umount ${REMOTE_MOUNT} || exit 1
 		! test -e /dev/mapper/${MAPPER} || sudo cryptsetup close ${MAPPER} || exit 1
-	" || exit 1
+	"
+}
+
+attach_local_mount() {
+	mkdir --parents "${LOCAL_MOUNT}"
+	sshfs -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3 \
+		"${SSH_HOST}:${REMOTE_MOUNT}" "${LOCAL_MOUNT}"
+}
+
+detach_local_mount() {
+	"${FUSERMOUNT}" -u "${LOCAL_MOUNT}" 2> /dev/null
+}
+
+mount_drive() {
+	unlock_remote_disk || exit 1
+
+	if mountpoint --quiet "${LOCAL_MOUNT}"; then
+		echo "already mounted: ${LOCAL_MOUNT}"
+		exit 0
+	fi
+
+	detach_local_mount
+	attach_local_mount || exit 1
+	echo "mounted: ${LOCAL_MOUNT}"
+}
+
+umount_drive() {
+	detach_local_mount
+	lock_remote_disk || exit 1
 	echo "unmounted: ${LOCAL_MOUNT}"
-	;;
+}
+
+case ${1} in
+mount) mount_drive ;;
+umount) umount_drive ;;
 esac
