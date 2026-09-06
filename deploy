@@ -31,7 +31,7 @@ configure_nix_daemon() {
 
 create_directories() {
 	mkdir --parents ~/bureau
-	mkdir --parents ~/document
+	mkdir --parents ~/documents
 	mkdir --parents ~/drive
 	mkdir --parents ~/image
 	mkdir --parents ~/logiciels
