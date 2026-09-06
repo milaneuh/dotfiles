@@ -48,6 +48,7 @@ let
     alsa-utils
     bash-completion
     curl
+    gnupg
     openssh
     sshfs
     stow

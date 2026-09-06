@@ -33,6 +33,15 @@ in
 
   home.sessionVariables.ALSA_PLUGIN_DIR = "${pkgs.pipewire}/lib/alsa-lib";
 
+  programs.gpg.enable = true;
+
+  services.gpg-agent = {
+    enable = true;
+    pinentry.package = pkgs.pinentry-gnome3;
+    defaultCacheTtl = 3600;
+    maxCacheTtl = 28800;
+  };
+
   systemd.user.services.home-manager-expire = {
     Unit.Description = "Expire home-manager generations older than 30 days";
     Service = {
