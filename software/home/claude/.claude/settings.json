@@ -38,7 +38,8 @@
       "Bash(which:*)"
     ],
     "deny": [
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(git commit:*)"
     ],
     "defaultMode": "plan"
   },
