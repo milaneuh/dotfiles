@@ -104,12 +104,17 @@ remind_to_import_gpg_key() {
 }
 
 clone_repositories() {
-	[[ -d ~/remoterepos/zettelkasten ]] ||
+	if [[ ! -d ~/remoterepos/zettelkasten ]]; then
 		git clone git@gitlab.com:maxencetholomier/zettelkasten.git ~/remoterepos/zettelkasten/
-	[[ -d ~/.password-store ]] ||
+	fi
+
+	if [[ ! -d ~/.password-store ]]; then
 		git clone git@gitlab.com:maxencetholomier/secrets.git ~/.password-store
-	[[ -d ~/remoterepos/projects/knowledge ]] ||
+	fi
+
+	if [[ ! -d ~/remoterepos/projects/knowledge ]]; then
 		git clone git@github.com:maxencetholomier/knowledge.git ~/remoterepos/projects/knowledge
+	fi
 
 	sudo ~/remoterepos/projects/knowledge/install
 }

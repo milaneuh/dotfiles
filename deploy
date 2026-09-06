@@ -87,9 +87,12 @@ deploy_ssh_hosts() {
 	mkdir --parents "${directory}"
 	chmod 700 "${directory}"
 
-	if [[ ! -e "${directory}/raspi" ]]; then
-		(umask 077 && pass show raspi/host >"${directory}/raspi") ||
-			rm --force "${directory}/raspi"
+	if [[ -e "${directory}/raspi" ]]; then
+		return
+	fi
+
+	if ! (umask 077 && pass show raspi/host >"${directory}/raspi"); then
+		rm --force "${directory}/raspi"
 	fi
 }
 
