@@ -14,15 +14,14 @@ M.setup = function()
 			return
 		end
 
-		-- TODO clean this mess
-		local cmd = "tmux display-popup -d '%s' -w 90%% -h 90%% -E "
-			.. "'ranger --choosefile=/tmp/rangerfile; "
-			.. "if [ -f /tmp/rangerfile ]; then echo $(cat /tmp/rangerfile); fi'"
-		vim.fn.system(string.format(cmd, directory))
-		local chosen_file = vim.fn.system("cat /tmp/rangerfile 2>/dev/null"):gsub("\n", "")
+		local choice = vim.fn.tempname()
+		local cmd = "tmux display-popup -d '%s' -w 90%% -h 90%% -E 'ranger --choosefile=%s'"
+		vim.fn.system(string.format(cmd, directory, choice))
+
+		local chosen_file = vim.fn.filereadable(choice) == 1 and vim.fn.readfile(choice)[1] or ""
+		vim.fn.delete(choice)
 		if chosen_file ~= "" and vim.fn.filereadable(chosen_file) == 1 then
 			vim.cmd("edit " .. chosen_file)
-			vim.fn.system("rm -f /tmp/rangerfile")
 		end
 	end
 

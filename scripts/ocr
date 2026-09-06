@@ -1,7 +1,12 @@
 #!/bin/bash
 
-input="/tmp/ocr_input.png"
-output="/tmp/ocr_ouput.png"
+umask 077
+
+workdir="$(mktemp --directory)"
+trap 'rm --recursive --force "${workdir}"' EXIT
+
+input="${workdir}/input.png"
+output="${workdir}/output"
 
 ! which flameshot && echo "flameshot is not installed"
 ! which tesseract && echo "tesseract is not installed"
@@ -9,9 +14,5 @@ output="/tmp/ocr_ouput.png"
 # TODO: why tesseract a txt extension on debian ?
 flameshot gui --path "${input}" >/dev/null 2>&1
 tesseract "${input}" "${output}" -l eng
-[[ -f "${output}.txt" ]] && xclip -in -selection clipboard "${output}.txt"
-[[ -f "${output}" ]] && xclip -in -selection clipboard "${output}"
-
-rm "${input}"
-rm "${output}"
-rm "${output}.txt"
+[[ -f "${output}.txt" ]] && xclip -in -selection clipboard <"${output}.txt"
+[[ -f "${output}" ]] && xclip -in -selection clipboard <"${output}"
