@@ -3,18 +3,18 @@
 NIX_VERSION="2.34.3"
 NIX_INSTALLER_SHA256="15af988e88ffc16d5d4abd6e1d100eba8b0dff6a41c6e03a7718c2b4a87e0cd6"
 
-forge_accepts_ssh_key() {
+host_accepts_ssh_key() {
 	local host="$1"
 
 	ssh -T -o ConnectTimeout=10 "git@${host}" 2>&1 |
 		grep --quiet --extended-regexp 'Welcome to GitLab|successfully authenticated'
 }
 
-require_forge_ssh_keys() {
+require_ssh_keys() {
 	local host
 
 	for host in gitlab.com github.com; do
-		while ! forge_accepts_ssh_key "${host}"; do
+		while ! host_accepts_ssh_key "${host}"; do
 			cat <<-EOF
 				${host} did not accept your SSH key. Create one if needed, then add
 				the public key to your account:
@@ -174,7 +174,7 @@ print_manual_steps() {
 	EOF
 }
 
-require_forge_ssh_keys
+require_ssh_keys
 cleanup_default_folders
 
 install_apt_packages
