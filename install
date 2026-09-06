@@ -1,17 +1,40 @@
 #!/bin/bash
 
+set -o errexit
+set -o nounset
+set -o pipefail
+
 NIX_VERSION="2.34.3"
 NIX_INSTALLER_SHA256="15af988e88ffc16d5d4abd6e1d100eba8b0dff6a41c6e03a7718c2b4a87e0cd6"
 
-host_accepts_ssh_key() {
-	local host="$1"
+DEFAULT_FOLDERS=(
+	Bureau
+	Desktop
+	Documents
+	Downloads
+	Images
+	Music
+	Modèles
+	Musiques
+	Pictures
+	Public
+	Publics
+	Templates
+	Téléchargements
+	Videos
+	Vidéos
+)
 
-	ssh -o RequestTTY=no -o ConnectTimeout=10 "git@${host}" 2>&1 |
-		grep --quiet --extended-regexp 'Welcome to GitLab|successfully authenticated'
+host_accepts_ssh_key() {
+	local host="$1" output
+
+	output="$(ssh -o RequestTTY=no -o ConnectTimeout=10 "git@${host}" 2>&1 || true)"
+
+	grep --quiet --extended-regexp 'Welcome to GitLab|successfully authenticated' <<<"${output}"
 }
 
 require_ssh_keys() {
-	local host
+	local host response
 
 	for host in gitlab.com github.com; do
 		while ! host_accepts_ssh_key "${host}"; do
@@ -34,23 +57,13 @@ install() {
 }
 
 cleanup_default_folders() {
-	[[ -e ~/.bashrc ]] && rm ~/.bashrc
-	[[ -e ~/.profile ]] && rm ~/.profile
-	[[ -e ~/Bureau ]] && rmdir ~/Bureau
-	[[ -e ~/Desktop ]] && rmdir ~/Desktop
-	[[ -e ~/Documents ]] && rmdir ~/Documents
-	[[ -e ~/Downloads ]] && rmdir ~/Downloads
-	[[ -e ~/Images ]] && rmdir ~/Images
-	[[ -e ~/Music ]] && rmdir ~/Music
-	[[ -e ~/Modèles ]] && rmdir ~/Modèles
-	[[ -e ~/Musiques ]] && rmdir ~/Musiques
-	[[ -e ~/Pictures ]] && rmdir ~/Pictures
-	[[ -e ~/Public ]] && rmdir ~/Public
-	[[ -e ~/Publics ]] && rmdir ~/Publics
-	[[ -e ~/Templates ]] && rmdir ~/Templates
-	[[ -e ~/Téléchargements ]] && rmdir ~/Téléchargements
-	[[ -e ~/Videos ]] && rmdir ~/Videos
-	[[ -e ~/Vidéos ]] && rmdir ~/Vidéos
+	local entry
+
+	rm --force ~/.bashrc ~/.profile
+
+	for entry in "${DEFAULT_FOLDERS[@]}"; do
+		rmdir ~/"${entry}" 2>/dev/null || true
+	done
 }
 
 install_apt_packages() {
@@ -84,8 +97,10 @@ install_nix() {
 	rm --force "${installer}"
 
 	if [[ -r /etc/profile.d/nix.sh ]]; then
+		set +o nounset
 		# shellcheck source=/dev/null
 		source /etc/profile.d/nix.sh
+		set -o nounset
 	fi
 }
 
@@ -98,7 +113,7 @@ install_home_manager() {
 }
 
 install_graphical_software() {
-	snap install firefox # Nix builds cannot use the AppArmor profile that confines the browser
+	sudo snap install firefox # Nix builds cannot use the AppArmor profile that confines the browser
 }
 
 configure_system() {
@@ -114,19 +129,21 @@ gpg_key_is_usable() {
 	local fingerprint validity
 
 	fingerprint="$(gpg --list-secret-keys --with-colons 2>/dev/null |
-		grep --max-count=1 '^fpr:' | cut --delimiter=: --fields=10)"
+		grep --max-count=1 '^fpr:' | cut --delimiter=: --fields=10 || true)"
 
 	if [[ -z "${fingerprint}" ]]; then
 		return 1
 	fi
 
 	validity="$(gpg --list-keys --with-colons "${fingerprint}" 2>/dev/null |
-		grep --max-count=1 '^pub:' | cut --delimiter=: --fields=2)"
+		grep --max-count=1 '^pub:' | cut --delimiter=: --fields=2 || true)"
 
 	[[ "${validity}" == "u" ]]
 }
 
 require_gpg_key() {
+	local response
+
 	while ! gpg_key_is_usable; do
 		cat <<-'EOF'
 			The password store needs your GPG key. Import both blocks from your
