@@ -31,6 +31,8 @@ in
   xdg.configFile."ranger/plugins/ranger-archives".source = packages.rangerArchives;
   xdg.dataFile."nvim/mermaid.min.js".source = packages.mermaid;
 
+  home.sessionVariables.ALSA_PLUGIN_DIR = "${pkgs.pipewire}/lib/alsa-lib";
+
   systemd.user.services.home-manager-expire = {
     Unit.Description = "Expire home-manager generations older than 30 days";
     Service = {
