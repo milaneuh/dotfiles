@@ -93,14 +93,37 @@ configure_system() {
 	fi
 }
 
-remind_to_import_gpg_key() {
-	cat <<-'EOF'
-		Import your GPG key from the Dashlane secure note before continuing.
-		  gpg --import
-		  gpg --import-ownertrust
-	EOF
-	read -r -p "Key imported? [y/N] " response
-	[[ "${response}" =~ ^[Yy]$ ]] || exit 1
+gpg_key_is_usable() {
+	local fingerprint
+
+	fingerprint="$(gpg --list-secret-keys --with-colons 2>/dev/null |
+		awk -F: '/^fpr:/{print $10; exit}')"
+
+	if [[ -z "${fingerprint}" ]]; then
+		return 1
+	fi
+
+	gpg --list-keys --with-colons "${fingerprint}" 2>/dev/null |
+		awk -F: '/^pub:/{exit ($2 == "u") ? 0 : 1}'
+}
+
+require_gpg_key() {
+	while ! gpg_key_is_usable; do
+		cat <<-'EOF'
+			The password store needs your GPG key. Import both blocks from your
+			backup:
+			  gpg --import
+			  gpg --import-ownertrust
+
+			The ownertrust is not optional. Without it the store is read only:
+			pass show works, pass insert fails with "unusable public key". To set
+			it by hand run gpg --edit-key <fingerprint>, then trust, 5, y, quit.
+		EOF
+		read -r -p "Retry? [y/N] " response
+		if [[ ! "${response}" =~ ^[Yy]$ ]]; then
+			exit 1
+		fi
+	done
 }
 
 clone_repositories() {
@@ -142,7 +165,7 @@ install_nix
 install_home_manager
 install_graphical_software
 configure_system
-remind_to_import_gpg_key
+require_gpg_key
 clone_repositories
 
 print_manual_steps
