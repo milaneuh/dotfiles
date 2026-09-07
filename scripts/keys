@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Completion -------------------------------------------------------------------
+# Arguments --------------------------------------------------------------------
 
 declare -a COMMANDS=(kinesis asus asusk thinkpad)
 declare -a COMMANDS_SHORT=(k a ak t)
@@ -20,13 +20,6 @@ detect_keyboard() {
 	grep --ignore-case --quiet "asus" /sys/class/dmi/id/sys_vendor 2>/dev/null || { echo "thinkpad"; return; }
 	compgen -G "/dev/input/by-id/*usb*kbd*" > /dev/null 2>&1 && echo "asusk" || echo "asus"
 }
-
-if [[ -n ${COMP_LINE} ]]; then
-	for c in "${COMMANDS[@]}"; do
-		[[ ${c:0:${#2}} == "${2,,}" ]] && echo "${c}"
-	done
-	exit
-fi
 
 # Auto-detect keyboard if no argument provided
 if [[ -z "${1}" ]]; then

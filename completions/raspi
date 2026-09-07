@@ -1,0 +1,5 @@
+_raspi() {
+	mapfile -t COMPREPLY < <(compgen -W "mount umount" -- "${COMP_WORDS[COMP_CWORD]}")
+}
+
+complete -F _raspi raspi

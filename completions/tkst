@@ -1,0 +1,2 @@
+# shellcheck source=completions/tast
+source "${BASH_SOURCE[0]%/*}/tast"

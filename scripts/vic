@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Help and completion ----------------------------------------------------------
+# Help and arguments -----------------------------------------------------------
 
 help() {
 	cat <<-EOF
@@ -19,13 +19,6 @@ check_args() {
 	done
 	return 1
 }
-
-if [[ -n "${COMP_LINE}" ]]; then
-	for c in "${COMMANDS[@]}"; do
-		[[ ${c:0:${#2}} == "${2,,}" ]] && echo "$c"
-	done
-	exit
-fi
 
 if ! check_args "${1}"; then
 	help

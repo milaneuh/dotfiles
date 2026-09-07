@@ -8,11 +8,13 @@ cd "$(dirname "$(readlink --canonicalize "${BASH_SOURCE[0]}")")"
 export PATH="${HOME}/.nix-profile/bin:${PATH}"
 
 SCRIPT_DIRECTORY="${HOME}/.local/bin"
+COMPLETION_DIRECTORY="${HOME}/.local/share/bash-completion/completions"
 RANGER_PLUGIN_DIRECTORY="${HOME}/.config/ranger/plugins"
 
 home_paths() {
 	find software/home/*/ -mindepth 1 -printf '%P\n'
 	find scripts -mindepth 1 -maxdepth 1 -printf ".local/bin/%P\n"
+	find completions -mindepth 1 -maxdepth 1 -printf ".local/share/bash-completion/completions/%P\n"
 }
 
 system_paths() {
@@ -70,8 +72,9 @@ remove_stale_links() {
 }
 
 deploy_scripts() {
-	mkdir --parents "${SCRIPT_DIRECTORY}"
+	mkdir --parents "${SCRIPT_DIRECTORY}" "${COMPLETION_DIRECTORY}"
 	stow --target "${SCRIPT_DIRECTORY}" --restow scripts
+	stow --target "${COMPLETION_DIRECTORY}" --restow completions
 }
 
 deploy_home_packages() {

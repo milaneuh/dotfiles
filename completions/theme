@@ -1,0 +1,5 @@
+_theme() {
+	mapfile -t COMPREPLY < <(compgen -W "toggle reload monitor" -- "${COMP_WORDS[COMP_CWORD]}")
+}
+
+complete -F _theme theme

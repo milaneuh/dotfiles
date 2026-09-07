@@ -1,16 +1,5 @@
 #!/bin/bash
 
-# Completion -------------------------------------------------------------------
-
-declare -a COMMANDS=(toggle reload monitor)
-
-if [[ -n ${COMP_LINE} ]]; then
-	for c in "${COMMANDS[@]}"; do
-		[[ ${c:0:${#2}} == "${2,,}" ]] && echo "${c}"
-	done
-	exit
-fi
-
 # Script -----------------------------------------------------------------------
 
 STATE_DIR="${XDG_STATE_HOME:-${HOME}/.local/state}"

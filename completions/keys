@@ -1,0 +1,5 @@
+_keys() {
+	mapfile -t COMPREPLY < <(compgen -W "kinesis asus asusk thinkpad" -- "${COMP_WORDS[COMP_CWORD]}")
+}
+
+complete -F _keys keys

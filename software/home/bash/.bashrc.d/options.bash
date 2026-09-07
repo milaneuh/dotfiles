@@ -8,8 +8,3 @@ umask 022
 
 shopt -s histappend
 shopt -s checkwinsize
-
-for f in ~/.local/share/bash-completion/completions/*; do
-	# shellcheck source=/dev/null
-	[[ -r "$f" ]] && source "$f"
-done

@@ -1,0 +1,12 @@
+_tast() {
+	local sessions
+	sessions=$(tmux list-sessions 2>/dev/null | sed "s/:.*//g")
+
+	if [[ -n $sessions ]]; then
+		mapfile -t COMPREPLY < <(compgen -W "$sessions" -- "${COMP_WORDS[COMP_CWORD]}")
+	else
+		COMPREPLY=()
+	fi
+}
+
+complete -F _tast tast tkst
