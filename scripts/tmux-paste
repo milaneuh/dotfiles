@@ -21,12 +21,12 @@ do_paste() {
 		return
 	fi
 
-	if pane_has 'claude' && clipboard_has_image; then
+	if pane_has 'claude|\.claude-wrapped' && clipboard_has_image; then
 		tmux send-keys -t "$TMUX_PANE" C-v
 		return
 	fi
 
-	if pane_has 'claude'; then
+	if pane_has 'claude|\.claude-wrapped'; then
 		paste_text --no-newline
 		return
 	fi
