@@ -44,6 +44,19 @@ let
     ps.tkinter
   ]);
 
+  expert = pkgs.stdenvNoCC.mkDerivation {
+    pname = "expert";
+    version = "0.1.9";
+
+    src = pkgs.fetchurl {
+      url = "https://github.com/expert-lsp/expert/releases/download/v0.1.9/expert_linux_amd64";
+      hash = "sha256-99WQW8PwmxKNSUHHdpYz8tEIvmN/Io7kMentE30sVWM=";
+    };
+
+    dontUnpack = true;
+    installPhase = "install -Dm755 $src $out/bin/expert";
+  };
+
   systemTools = with pkgs; [
     alsa-utils
     bash-completion
@@ -117,6 +130,21 @@ let
     shellcheck
   ];
 
+  languageServers = [
+    expert
+  ]
+  ++ (with pkgs; [
+    bash-language-server
+    gopls
+    jinja-lsp
+    lemminx
+    lua-language-server
+    marksman
+    pyright
+    typescript-language-server
+    vscode-langservers-extracted
+  ]);
+
   languageRuntimes = [
     pkgs.go
     pythonWithTkinterForScripts
@@ -138,6 +166,7 @@ in
     ++ editorTools
     ++ formatters
     ++ linters
+    ++ languageServers
     ++ languageRuntimes
     ++ commandLineApplications;
 

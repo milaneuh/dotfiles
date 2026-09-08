@@ -71,8 +71,6 @@ M.setup = function()
 		gh("mfussenegger/nvim-lint"),
 		gh("neovim/nvim-lspconfig"),
 		gh("stevearc/conform.nvim"),
-		gh("williamboman/mason-lspconfig.nvim"),
-		gh("williamboman/mason.nvim"),
 
 		-- Navigation (Files, Windows, Buffers, Tags, ...)
 		gh("ibhagwan/fzf-lua"),

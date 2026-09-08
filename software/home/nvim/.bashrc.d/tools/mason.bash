@@ -1,1 +1,0 @@
-[[ -d ~/.local/share/nvim/mason/bin ]] && export PATH="${PATH}":~/.local/share/nvim/mason/bin
