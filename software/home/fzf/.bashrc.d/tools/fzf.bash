@@ -28,7 +28,11 @@ if command -v fzf >&/dev/null; then
 
 	export FZF_CTRL_R_OPTS="--preview-window=hidden --history=${HOME}/.bash_history --history-size=100000"
 
+	fzf_cd() {
+		eval "$(__fzf_cd__)"
+	}
+
 	bind -r '\ec'
-	bind -x '"\C-g": __fzf_cd__'
+	bind -x '"\C-g": fzf_cd'
 
 fi

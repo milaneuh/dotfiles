@@ -14,7 +14,6 @@ M.setup = function()
 	vim.keymap.set("n", "[B", ":bfirst<CR>", { noremap = true, silent = true, desc = "Go to first buffer" })
 	vim.keymap.set("n", "[F", ":cfirst<CR>", { noremap = true, silent = true, desc = "Go to first quickfix item" })
 	vim.keymap.set("n", "]L", ":llast<CR>", { noremap = true, silent = true, desc = "Go to last location list item" })
-	vim.keymap.set("n", "[Q", ":cfirst<CR>", { noremap = true, silent = true, desc = "Go to first quickfix item" })
 	vim.keymap.set("n", "[T", ":tfirst<CR>", { noremap = true, silent = true, desc = "Go to first tag" })
 
 	vim.keymap.set("n", "[b", ":bp<CR>", { noremap = true, silent = true, desc = "Go to previous buffer" })

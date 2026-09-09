@@ -122,7 +122,6 @@ M.setup = function()
 	vim.keymap.set("v", "<leader>fg", "y:lgrep <C-R>0 %", { desc = "Grep selection in current file" })
 
 	-- Project
-	vim.keymap.set("n", "<Leader>pT", ":tags<CR>", { desc = "Show tag stack" })
 	vim.keymap.set("n", "<Leader>pf", ":find *", { desc = "Find file in project" })
 	vim.keymap.set("n", "<Leader>pt", ":tag", { desc = "Jump to tag" })
 	vim.keymap.set("n", "<leader>pg", ':grep ""<left>', { desc = "Grep in project" })
@@ -150,7 +149,6 @@ M.setup = function()
 	vim.keymap.set({ "n", "v" }, "<leader>yi", regutils.yank_ref, { desc = "Yank file reference" })
 
 	-- Git
-	vim.keymap.set("n", "<leader>gD", ":DiffviewFileHistory %", { desc = "Show file history in diffview" })
 	vim.keymap.set("n", "<Leader>G", open_lazygit_popup, { noremap = true, silent = true, desc = "Open lazygit popup" })
 
 	-- Make
@@ -171,12 +169,7 @@ M.setup = function()
 	vim.keymap.set("n", "<leader>L", winutils.toggle_location_list, { desc = "Toggle location list" })
 
 	-- Search
-	vim.keymap.set(
-		"n",
-		"<leader>/",
-		":noh<CR>:clear<CR>",
-		{ noremap = true, silent = true, desc = "Clear search highlight" }
-	)
+	vim.keymap.set("n", "<leader>/", ":noh<CR>", { noremap = true, silent = true, desc = "Clear search highlight" })
 	vim.keymap.set(
 		"n",
 		"<leader>fr",

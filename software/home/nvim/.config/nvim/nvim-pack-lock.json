@@ -65,17 +65,9 @@
       "rev": "29fa617fc10307a1e0ae82a8761114e465d17b06",
       "src": "https://github.com/AndrewRadev/linediff.vim"
     },
-    "live-preview.nvim": {
-      "rev": "5977060965161f7b3be3166467d03e09d10c68ea",
-      "src": "https://github.com/brianhuster/live-preview.nvim"
-    },
     "markdown-preview.nvim": {
       "rev": "a923f5fc5ba36a3b17e289dc35dc17f66d0548ee",
       "src": "https://github.com/iamcco/markdown-preview.nvim"
-    },
-    "mason-nvim-lint": {
-      "rev": "cafbc5d82d8eb4af0daf0057332a325ddf2f436b",
-      "src": "https://github.com/rshkarin/mason-nvim-lint"
     },
     "nvim-autopairs": {
       "rev": "59bce2eef357189c3305e25bc6dd2d138c1683f5",
@@ -166,10 +158,6 @@
     "vim-table-mode": {
       "rev": "bb025308a45c67c7c8f0763ba37bc2ee3f534df0",
       "src": "https://github.com/dhruvasagar/vim-table-mode"
-    },
-    "vim-tmux-navigator": {
-      "rev": "e41c431a0c7b7388ae7ba341f01a0d217eb3a432",
-      "src": "https://github.com/christoomey/vim-tmux-navigator"
     },
     "which-key.nvim": {
       "rev": "3aab2147e74890957785941f0c1ad87d0a44c15a",

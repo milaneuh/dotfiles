@@ -11,11 +11,9 @@ wk.add({
 	{ "<leader>gc", group = "quickfix" },
 	{ "<leader>gcl", group = "quickfix log" },
 	{ "<leader>gl", group = "log" },
-	{ "<leader>gw", group = "worktree" },
 	{ "<leader>i", group = "ai" },
 	{ "<leader>k", group = "zettelkasten" },
 	{ "<leader>l", group = "lsp" },
-	{ "<leader>m", group = "markdown" },
 	{ "<leader>p", group = "project" },
 	{ "<leader>t", group = "tmux" },
 	{ "<leader>v", group = "vim" },
@@ -23,6 +21,5 @@ wk.add({
 	{ "gb", group = "global" },
 	{ "gl", group = "repl" },
 	{ "go", group = "sort" },
-	{ "gr", group = "rename" },
 	{ "gs", group = "substitute" },
 })

@@ -44,7 +44,6 @@ M.setup = function()
 	vim.pack.add({
 		-- AI
 		gh("coder/claudecode.nvim"),
-		-- gh("NickvanDyke/opencode.nvim"),
 
 		-- AST
 		{ src = gh("nvim-treesitter/nvim-treesitter"), version = "main" },
