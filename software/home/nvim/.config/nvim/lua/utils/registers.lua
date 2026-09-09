@@ -2,13 +2,44 @@ local M = {}
 
 local bufutils = require("utils.buffers")
 
-local function yank(path, message)
-	local expanded_path = vim.fn.expand(path)
+local function strip_trailing_slash(path)
+	return (path:gsub("(.)/$", "%1"))
+end
+
+local function oil_entry_path()
+	local lnum = vim.fn.line(".")
+	local paths = require("utils.plugin.oil").get_entry_paths(lnum, lnum)
+	return paths[1]
+end
+
+local oil_modifiers = {
+	[":p"] = "",
+	[":p:h"] = ":h",
+	[":t"] = ":t",
+	[":."] = ":.",
+	[":h"] = ":.:h",
+}
+
+local function resolve(modifier)
+	if bufutils.is_oil_buffer() then
+		local path = oil_entry_path()
+		if path then
+			local oil_modifier = oil_modifiers[modifier] or modifier
+			if oil_modifier == "" then
+				return path
+			end
+			return strip_trailing_slash(vim.fn.fnamemodify(path, oil_modifier))
+		end
+	end
+	return vim.fn.expand("%" .. modifier)
+end
+
+local function yank(modifier, message)
+	local expanded_path = resolve(modifier)
 	vim.fn.setreg("+", expanded_path)
 	vim.fn.setreg('"', expanded_path)
 
 	if vim.env.TMUX then
-    vim.print("here")
 		vim.fn.system("tmux set-buffer '" .. expanded_path:gsub("'", "'\\''") .. "'")
 	end
 
@@ -16,24 +47,24 @@ local function yank(path, message)
 end
 
 M.yank_file_name = function()
-	yank("%:t", "Yank File Name")
+	yank(":t", "Yank File Name")
 end
 
 ---@param with_file? boolean
 M.yank_full_path = function(with_file)
 	if with_file == false then
-		yank("%:p:h", "Yank Full Dir Path")
+		yank(":p:h", "Yank Full Dir Path")
 	else
-		yank("%:p", "Yank Full File Path")
+		yank(":p", "Yank Full File Path")
 	end
 end
 
 ---@param with_file? boolean
 M.yank_relative_path = function(with_file)
 	if with_file == false then
-		yank("%:h", "Yank Relative Dir Path")
+		yank(":h", "Yank Relative Dir Path")
 	else
-		yank("%:.", "Yank Relative File Path")
+		yank(":.", "Yank Relative File Path")
 	end
 end
 
@@ -95,7 +126,7 @@ end
 
 M.yank_ref = function()
 	local mode = vim.fn.mode()
-	local path = vim.fn.expand("%:.")
+	local path = resolve(":.")
 	local result
 	if mode == "v" or mode == "V" or mode == "\22" then
 		local start_line = vim.fn.line("v")
