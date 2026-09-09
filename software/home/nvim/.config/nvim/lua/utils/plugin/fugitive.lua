@@ -13,7 +13,7 @@ end
 function M.open_git_status()
 	local buf = vim.api.nvim_get_current_buf()
 	local buf_name = vim.api.nvim_buf_get_name(buf)
-	local modified = vim.api.nvim_buf_get_option(buf, "modified")
+	local modified = vim.bo[buf].modified
 	local line_count = vim.api.nvim_buf_line_count(buf)
 	local first_line = vim.api.nvim_buf_get_lines(buf, 0, 1, false)[1] or ""
 	vim.cmd("G")

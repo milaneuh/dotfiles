@@ -8,7 +8,7 @@ local function raw_label(tabpage, bufnr)
 
 	local buf_name = vim.api.nvim_buf_get_name(bufnr)
 	if buf_name == "" then
-		local buftype = vim.api.nvim_buf_get_option(bufnr, "buftype")
+		local buftype = vim.bo[bufnr].buftype
 		return buftype == "" and "No Name" or ("<" .. buftype .. ">")
 	end
 
@@ -39,7 +39,7 @@ M.tab_label = function(tabnr)
 		return "Invalid Tab"
 	end
 	local bufnr = vim.api.nvim_win_get_buf(win)
-	local modified = vim.api.nvim_buf_get_option(bufnr, "modified")
+	local modified = vim.bo[bufnr].modified
 
 	local label = raw_label(tabpage, bufnr)
 

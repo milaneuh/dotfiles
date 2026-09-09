@@ -1,5 +1,4 @@
-local loaded = require("utils.pack").loaded
-if not require("utils.pack").loaded("nvim-lint") or loaded("mason-nvim-lint") then return end
+if not require("utils.pack").loaded("nvim-lint") then return end
 
 local lint = require("lint")
 
