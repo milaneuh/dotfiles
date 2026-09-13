@@ -24,7 +24,23 @@ if ! command -v hx >/dev/null 2>&1; then
     aarch64) HX_TARGET="aarch64-linux" ;;
     *) echo "unsupported arch: $ARCH, skipping helix install"; exit 0 ;;
   esac
-  curl -L "https://github.com/helix-editor/helix/releases/download/${HX_VERSION}/helix-${HX_VERSION}-${HX_TARGET}.tar.xz" -o /tmp/hx.tar.xz
+  # Retried because this download has been observed arriving truncated when
+  # this script runs concurrently with DevPod's other container-startup work
+  # (curl reports 100%, but the file is short — a race, not a bad URL).
+  HX_URL="https://github.com/helix-editor/helix/releases/download/${HX_VERSION}/helix-${HX_VERSION}-${HX_TARGET}.tar.xz"
+  for attempt in 1 2 3; do
+    curl -fL --retry 3 "$HX_URL" -o /tmp/hx.tar.xz
+    if tar -tJf /tmp/hx.tar.xz >/dev/null 2>&1; then
+      break
+    fi
+    echo "helix download looked corrupt (attempt $attempt/3), retrying..."
+    rm -f /tmp/hx.tar.xz
+    if [ "$attempt" = 3 ]; then
+      echo "helix install failed after 3 attempts — run 'bash ~/dotfiles/install.sh' again later" >&2
+      exit 0
+    fi
+    sleep 2
+  done
   mkdir -p "$HOME/.local/share/helix" "$HOME/.local/bin"
   tar -xJf /tmp/hx.tar.xz -C "$HOME/.local/share/helix" --strip-components=1
   ln -sf "$HOME/.local/share/helix/hx" "$HOME/.local/bin/hx"
