@@ -1,8 +1,6 @@
 [user]
-	# Fill in before your first commit inside a container — deliberately
-	# left blank rather than guessed, so commits don't get the wrong author.
-	name =
-	email =
+	name = milaneuh
+	email = milanrgmnt@gmail.com
 
 [init]
 	defaultBranch = main
