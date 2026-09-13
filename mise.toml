@@ -1,0 +1,5 @@
+[tools]
+tmux = "latest"
+fzf = "latest"
+zoxide = "latest"
+helix = "latest"

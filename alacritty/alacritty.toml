@@ -1,0 +1,20 @@
+[general]
+import = ["~/.config/alacritty/themes/gruvbox_material_medium_dark.toml"]
+
+[terminal]
+shell = { program = "/bin/sh", args = ["-c", 'exec "$HOME/.local/share/mise/shims/tmux" new-session -A -s main'] }
+
+[font]
+size = 13.0
+
+[font.normal]
+family = "JetBrainsMono Nerd Font Mono"
+style = "Regular"
+
+[font.bold]
+family = "JetBrainsMono Nerd Font Mono"
+style = "Bold"
+
+[font.italic]
+family = "JetBrainsMono Nerd Font Mono"
+style = "Italic"
