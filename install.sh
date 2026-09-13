@@ -10,6 +10,19 @@ echo "==> Linking shell + git config"
 ln -sf "$DOTFILES_DIR/zshrc"     "$HOME/.zshrc"
 ln -sf "$DOTFILES_DIR/gitconfig" "$HOME/.gitconfig"
 
+echo "==> Setting default shell to zsh"
+# The base image's login shell is bash, so a plain new SSH/devpod session (and,
+# without tmux.conf's own default-shell override, every new tmux pane) would
+# otherwise never see zshrc — no starship prompt, no aliases, no $EDITOR.
+if command -v zsh >/dev/null 2>&1; then
+  if [ "$(getent passwd "$(whoami)" | cut -d: -f7)" != "$(command -v zsh)" ]; then
+    sudo chsh -s "$(command -v zsh)" "$(whoami)" ||
+      echo "couldn't chsh to zsh — set it manually with: chsh -s $(command -v zsh)" >&2
+  fi
+else
+  echo "zsh not found — skipping default-shell change" >&2
+fi
+
 echo "==> Pulling helix config"
 if [ ! -d "$HOME/.config/helix" ]; then
   git clone --depth 1 https://github.com/milaneuh/helix-config.git "$HOME/.config/helix"
@@ -47,4 +60,34 @@ if ! command -v hx >/dev/null 2>&1; then
   rm /tmp/hx.tar.xz
 fi
 
-echo "==> Done. Run 'exec zsh' to pick up the new shell config."
+# tmux + plugins last, and self-contained: a transient failure anywhere in here
+# (network blip, GitHub rate limit) must not take down the script and skip the
+# shell/git/helix setup above — same tolerance the helix block above gives itself.
+install_tmux_stack() {
+  echo "==> Installing tmux + fzf + zoxide via mise"
+  # fzf and zoxide are hard requirements for the tmux-session-wizard plugin below,
+  # not just nice-to-haves — https://github.com/27medkamal/tmux-session-wizard#required
+  # mise is already on PATH in this image (see base/Dockerfile) — same OS-agnostic
+  # install path used on the host in dev-container/bootstrap.sh, no apt needed.
+  if ! mise use -g tmux@latest fzf@latest zoxide@latest; then
+    echo "tmux/fzf/zoxide install failed (network?) — run 'bash ~/dotfiles/install.sh' again later" >&2
+    return 0
+  fi
+
+  echo "==> Linking tmux config"
+  ln -sf "$DOTFILES_DIR/tmux.conf" "$HOME/.tmux.conf"
+
+  echo "==> Installing tmux plugins (tpm, tmux-fingers, tmux-session-wizard)"
+  if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
+    if ! git clone --depth 1 https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"; then
+      echo "tpm clone failed (network?) — run 'bash ~/dotfiles/install.sh' again later" >&2
+      return 0
+    fi
+  fi
+  "$HOME/.tmux/plugins/tpm/bin/install_plugins" ||
+    echo "tmux plugin install failed — run 'bash ~/dotfiles/install.sh' again later" >&2
+}
+install_tmux_stack
+
+echo "==> Done. This shell is still bash — run 'exec zsh' to pick it up now;"
+echo "    new sessions will default to zsh automatically from here on."
