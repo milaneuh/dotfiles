@@ -22,8 +22,7 @@ M.FIND_COMMANDS = {
 }
 
 local function shared_popup_size()
-	local state_dir = os.getenv("XDG_STATE_HOME") or (os.getenv("HOME") .. "/.local/state")
-	local path = os.getenv("FZF_DEFAULT_OPTS_FILE") or (state_dir .. "/fzf.conf")
+	local path = os.getenv("FZF_DEFAULT_OPTS_FILE") or (os.getenv("HOME") .. "/.config/fzf/fzf.conf")
 	local conf = io.open(path)
 
 	if not conf then return nil end

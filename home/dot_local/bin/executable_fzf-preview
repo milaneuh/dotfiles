@@ -168,7 +168,7 @@ preview_pdf() {
 }
 
 preview_text() {
-	local args=(--color=always --theme="$(bat-theme)")
+	local args=(--color=always --theme=gruvbox-dark)
 
 	if [[ -n ${line} ]]; then
 		args+=(--style=numbers --highlight-line "${line}")

@@ -19,7 +19,7 @@ Two directories, one per question:
 - `home/` — how each piece of software is configured: a chezmoi source tree mirroring `$HOME`
 
 ```
-home/dot_config/fzf/common.conf               -> ~/.config/fzf/common.conf
+home/dot_config/fzf/fzf.conf                  -> ~/.config/fzf/fzf.conf
 home/dot_bashrc.d/tools/fzf.bash              -> ~/.bashrc.d/tools/fzf.bash
 home/dot_local/bin/executable_lg              -> ~/.local/bin/lg
 ```

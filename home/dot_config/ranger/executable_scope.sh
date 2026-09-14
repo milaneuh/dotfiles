@@ -312,7 +312,7 @@ handle_mime() {
                 --out-format="${highlight_format}" \
                 --force -- "${FILE_PATH}" && exit 5
             env COLORTERM=8bit bat --color=always --style="plain" \
-                --theme="$(bat-theme)" -- "${FILE_PATH}" && exit 5
+                --theme=gruvbox-dark -- "${FILE_PATH}" && exit 5
             pygmentize -f "${pygmentize_format}" -O "style=${PYGMENTIZE_STYLE}"\
                 -- "${FILE_PATH}" && exit 5
             exit 2;;

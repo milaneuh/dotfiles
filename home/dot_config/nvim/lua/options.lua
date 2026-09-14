@@ -13,7 +13,8 @@ M.setup = function()
 	vim.o.path = ".,," -- Only index the current file/folder
 
 	-- Appearance
-	require("theme").apply()
+	vim.o.background = "dark"
+	vim.env.BAT_THEME = "gruvbox-dark"
 	vim.o.wrap = false -- Don't wrap text when the window is too small
 	vim.o.showmatch = true -- Show matching braces/parentheses
 

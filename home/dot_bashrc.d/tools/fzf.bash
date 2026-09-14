@@ -7,22 +7,8 @@ unset fzf_integration
 
 if command -v fzf >&/dev/null; then
 
-	fzf_opts_file="${XDG_STATE_HOME:-${HOME}/.local/state}/fzf.conf"
-	fzf_common_conf="${HOME}/.config/fzf/common.conf"
-
-	if [[ ! -e ${fzf_opts_file} || -L ${fzf_opts_file} || ${fzf_opts_file} -ot ${fzf_common_conf} ]]; then
-		fzf-conf
-	fi
-
 	unset FZF_DEFAULT_OPTS
-
-	if [[ -e ${fzf_opts_file} ]]; then
-		export FZF_DEFAULT_OPTS_FILE="${fzf_opts_file}"
-	else
-		unset FZF_DEFAULT_OPTS_FILE
-	fi
-
-	unset fzf_opts_file fzf_common_conf
+	export FZF_DEFAULT_OPTS_FILE="${HOME}/.config/fzf/fzf.conf"
 
 	export FZF_DEFAULT_COMMAND="rg --files --hidden --glob '!.git' --follow"
 
