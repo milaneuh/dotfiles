@@ -63,7 +63,7 @@ M.setup = function()
 	vim.o.listchars = "nbsp:!" -- Show non-breaking spaces
 
 	-- Spelling
-	vim.o.spelllang = "fr" -- Set French as the spellcheck language
+	vim.o.spelllang = "en" -- Set English as the spellcheck language
 
 	-- Autocompletion
 	vim.o.wildmenu = true -- Enable completion in command mode

@@ -1,12 +1,9 @@
 local M = {}
 
-local config = require("utils.plugin.fzf.config")
 local utils = require("utils.plugin.fzf.utils")
 local files = require("utils.plugin.fzf.files")
 local git = require("utils.plugin.fzf.git")
-local zettelkasten = require("utils.plugin.fzf.zettelkasten")
 local navigation = require("utils.plugin.fzf.navigation")
-local winutils = require("utils.windows")
 
 local fzf_functions_to_add_visual = {
 	{ func = "btags", mode = { "n", "v" }, remap = "<leader>ft", desc = "FZF: Find tags in current buffer" },
@@ -77,50 +74,6 @@ local additional_keymaps = {
 	},
 }
 
-local zettelkasten_keymaps = {
-	{
-		mode = "n",
-		suffix = "n",
-		desc = "Zettelkasten: Create new %s note",
-		make = function(entry)
-			return function()
-				zettelkasten.k_new(entry.dir)
-			end
-		end,
-	},
-	{
-		mode = { "n", "x" },
-		suffix = "f",
-		desc = "Zettelkasten: Find %s note",
-		make = function(entry)
-			return function()
-				zettelkasten.k_find(entry.dir)
-			end
-		end,
-	},
-	{
-		mode = { "n", "x" },
-		suffix = "r",
-		desc = "Zettelkasten: Grep in %s notes",
-		make = function(entry)
-			return function()
-				files.grep_local(entry.dir)
-			end
-		end,
-	},
-	{
-		mode = "n",
-		suffix = "t",
-		desc = "Zettelkasten: Toggle %s TODO",
-		make = function(entry)
-			return function()
-				local todo_path = vim.fn.fnamemodify(entry.dir .. "/" .. entry.todo, ":p")
-				winutils.toggle_file_window(todo_path, entry.dir, entry.todo)
-			end
-		end,
-	},
-}
-
 function M.setup()
 	for _, entry in ipairs(fzf_functions_to_add_visual) do
 		local func_name = entry.func
@@ -130,15 +83,6 @@ function M.setup()
 
 	for _, entry in ipairs(additional_keymaps) do
 		vim.keymap.set(entry.mode, entry.remap, entry.func, { desc = entry.desc })
-	end
-
-	for _, entry in ipairs(config.ZET_DIRS) do
-		local name = entry.name or entry.prefix
-		for _, keymap in ipairs(zettelkasten_keymaps) do
-			vim.keymap.set(keymap.mode, "<leader>" .. entry.prefix .. keymap.suffix, keymap.make(entry), {
-				desc = keymap.desc:format(name),
-			})
-		end
 	end
 end
 

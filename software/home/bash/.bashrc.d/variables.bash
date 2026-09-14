@@ -13,11 +13,3 @@ export PAGER="less"
 export SUDO_EDITOR="nvim"
 export TERMINAL="kitty"
 export VISUAL="nvim"
-
-# Personal variables -----------------------------------------------------------
-export remoterepos=~/remoterepos
-export dotfiles=~/.dotfiles
-export logiciels=~/logiciels
-
-export projects="${remoterepos}"/projects
-export zettelkasten="${remoterepos}"/zettelkasten/notes

@@ -17,14 +17,6 @@ local function raw_label(tabpage, bufnr)
 		return buf_name:match("fugitive") and "G status" or "No Name"
 	end
 
-	if buf_name:match("zettelkasten") and buf_name:match("%.md$") then
-		local first_line = vim.api.nvim_buf_get_lines(bufnr, 0, 1, false)[1] or ""
-		local title = first_line:match("^#%s+(.+)")
-		if title and title ~= "" then
-			return title
-		end
-	end
-
 	return filename
 end
 

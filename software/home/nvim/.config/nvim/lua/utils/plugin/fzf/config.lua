@@ -21,11 +21,6 @@ M.FIND_COMMANDS = {
 	FILES = "find . -type f ",
 }
 
-M.ZET_DIRS = {
-	{ dir = os.getenv("zettelkasten"), prefix = "k", name = "personal", todo = "20250716233520.md" },
-	{ dir = os.getenv("zettelkasten_company"), prefix = "c", name = "company", todo = "20250715102653.md" },
-}
-
 local function shared_popup_size()
 	local state_dir = os.getenv("XDG_STATE_HOME") or (os.getenv("HOME") .. "/.local/state")
 	local path = os.getenv("FZF_DEFAULT_OPTS_FILE") or (state_dir .. "/fzf.conf")

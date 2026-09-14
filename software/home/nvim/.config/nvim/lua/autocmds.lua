@@ -48,18 +48,6 @@ M.setup = function()
 			vim.bo.makeprg = "mix compile"
 		end,
 	})
-
-	vim.api.nvim_create_autocmd("BufEnter", {
-		pattern = "*",
-		callback = function()
-			local buf_path = vim.api.nvim_buf_get_name(0)
-			if buf_path:match("zettelkasten") then
-				vim.opt_local.spelllang = "fr"
-			else
-				vim.opt_local.spelllang = "en"
-			end
-		end,
-	})
 end
 
 return M
