@@ -9,6 +9,10 @@ NIX_INSTALLER_SHA256="9adda97297d9e8ab360df95c729eabff4f4f93d6db091953c3a68f29e3
 
 DOTFILES_REPOSITORY="milaneuh/dotfiles"
 
+in_container() {
+	[[ -n ${DEVPOD:-} || -n ${REMOTE_CONTAINERS:-} || -f /.dockerenv ]]
+}
+
 nix_command() {
 	nix --extra-experimental-features 'nix-command flakes' "$@"
 }
@@ -22,14 +26,18 @@ sha256_of() {
 }
 
 load_nix() {
-	local profile="/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
+	local profile
 
-	if [[ -r ${profile} ]]; then
-		set +o nounset
-		# shellcheck source=/dev/null
-		source "${profile}"
-		set -o nounset
-	fi
+	for profile in /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh \
+		"${HOME}/.nix-profile/etc/profile.d/nix.sh"; do
+		if [[ -r ${profile} ]]; then
+			set +o nounset
+			# shellcheck source=/dev/null
+			source "${profile}"
+			set -o nounset
+			break
+		fi
+	done
 
 	export PATH="${HOME}/.nix-profile/bin:${PATH}"
 }
@@ -51,7 +59,11 @@ install_nix() {
 		exit 1
 	fi
 
-	sh "${installer}" --daemon --yes --no-channel-add </dev/tty
+	if in_container; then
+		sh "${installer}" --no-daemon --yes --no-channel-add
+	else
+		sh "${installer}" --daemon --yes --no-channel-add </dev/tty
+	fi
 	rm -f "${installer}"
 
 	load_nix
@@ -69,9 +81,45 @@ install_rosetta() {
 	sudo softwareupdate --install-rosetta --agree-to-license
 }
 
+chezmoi_command() {
+	if command -v chezmoi >/dev/null; then
+		chezmoi "$@"
+	else
+		nix_command run nixpkgs#chezmoi -- "$@"
+	fi
+}
+
+checkout_directory() {
+	local directory
+	directory="$(cd "$(dirname "${BASH_SOURCE[0]:-.}")" 2>/dev/null && pwd)"
+
+	if [[ -f "${directory}/.chezmoiroot" ]]; then
+		echo "${directory}"
+	fi
+}
+
 apply_dotfiles() {
-	nix_command run nixpkgs#chezmoi -- init --apply --use-builtin-git true \
-		"https://github.com/${DOTFILES_REPOSITORY}.git" </dev/tty
+	local checkout
+	checkout="$(checkout_directory)"
+
+	if [[ -n ${checkout} ]]; then
+		mkdir -p "${HOME}/.config/chezmoi"
+		printf 'sourceDir = "%s"\n' "${checkout}" >"${HOME}/.config/chezmoi/chezmoi.toml"
+	fi
+
+	if in_container; then
+		if [[ -n ${checkout} ]]; then
+			chezmoi_command apply --force --no-tty
+		else
+			chezmoi_command init --apply --force --no-tty --use-builtin-git true \
+				"https://github.com/${DOTFILES_REPOSITORY}.git"
+		fi
+	elif [[ -n ${checkout} ]]; then
+		chezmoi_command apply </dev/tty
+	else
+		chezmoi_command init --apply --use-builtin-git true \
+			"https://github.com/${DOTFILES_REPOSITORY}.git" </dev/tty
+	fi
 }
 
 github_accepts_ssh_key() {
@@ -112,6 +160,12 @@ print_manual_steps() {
 install_nix
 install_rosetta
 apply_dotfiles
+
+if in_container; then
+	echo "Dotfiles applied"
+	exit
+fi
+
 setup_github_ssh
 set_login_shell
 
