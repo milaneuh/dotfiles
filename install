@@ -4,27 +4,6 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-NIX_VERSION="2.34.3"
-NIX_INSTALLER_SHA256="15af988e88ffc16d5d4abd6e1d100eba8b0dff6a41c6e03a7718c2b4a87e0cd6"
-
-DEFAULT_FOLDERS=(
-	Bureau
-	Desktop
-	Documents
-	Downloads
-	Images
-	Music
-	Modèles
-	Musiques
-	Pictures
-	Public
-	Publics
-	Templates
-	Téléchargements
-	Videos
-	Vidéos
-)
-
 host_accepts_ssh_key() {
 	local host="$1" output
 
@@ -52,77 +31,12 @@ require_ssh_keys() {
 	done
 }
 
-install() {
-	sudo apt --yes install "$@"
-}
-
-cleanup_default_folders() {
-	local entry
-
-	rm --force ~/.bashrc ~/.profile
-
-	for entry in "${DEFAULT_FOLDERS[@]}"; do
-		rmdir ~/"${entry}" 2>/dev/null || true
-	done
-}
-
-install_apt_packages() {
-	sudo apt update
-
-	install git
-	install curl
-	install keyd
-}
-
-install_nix() {
-	sudo apt purge --yes nix-bin nix-setup-systemd
-	sudo rm --recursive --force /nix
-
-	if getent group nix-users >/dev/null; then
-		sudo groupdel nix-users
-	fi
-
-	local installer
-	installer="$(mktemp)"
-	curl --location --fail --output "${installer}" \
-		"https://releases.nixos.org/nix/nix-${NIX_VERSION}/install"
-
-	if ! echo "${NIX_INSTALLER_SHA256}  ${installer}" | sha256sum --check --status; then
-		echo "nix installer checksum mismatch, aborting" >&2
-		rm --force "${installer}"
-		exit 1
-	fi
-
-	sh "${installer}" --daemon
-	rm --force "${installer}"
-
-	if [[ -r /etc/profile.d/nix.sh ]]; then
-		set +o nounset
-		# shellcheck source=/dev/null
-		source /etc/profile.d/nix.sh
-		set -o nounset
-	fi
-}
-
 install_home_manager() {
 	local activation
 	activation="$(nix --extra-experimental-features 'nix-command flakes' build --no-link \
 		--print-out-paths "${HOME}/.dotfiles/nix#homeConfigurations.${USER}.activationPackage")"
 	HOME_MANAGER_BACKUP_EXT=backup "${activation}/activate"
 	export PATH="${HOME}/.nix-profile/bin:${PATH}"
-}
-
-install_graphical_software() {
-	sudo snap install firefox # Nix builds cannot use the AppArmor profile that confines the browser
-}
-
-configure_system() {
-	sudo update-alternatives --install /usr/bin/vi vi "${HOME}/.nix-profile/bin/nvim" 60
-	sudo update-alternatives --set vi "${HOME}/.nix-profile/bin/nvim"
-
-	if grep --quiet '^[[:space:]]*GSSAPIAuthentication' /etc/ssh/ssh_config; then
-		sudo sed --in-place 's/^\([[:space:]]*\)\(GSSAPIAuthentication\)/\1#\2/' /etc/ssh/ssh_config
-	fi
 }
 
 gpg_key_is_usable() {
@@ -187,20 +101,12 @@ print_manual_steps() {
 			    git config --file ~/.gitconfig.local user.email your_email@example.com
 			- Check the password store works:
 			    pass show raspi/luks
-		Log out and back in: the nix profile PATH and the GNOME shell
-		extensions shipped by nix are only picked up by a new session.
-		Reboot to reload gnome application.
+		Open a new shell: the nix profile PATH is only picked up by a new session.
 	EOF
 }
 
 require_ssh_keys
-cleanup_default_folders
-
-install_apt_packages
-install_nix
 install_home_manager
-install_graphical_software
-configure_system
 require_gpg_key
 clone_repositories
 

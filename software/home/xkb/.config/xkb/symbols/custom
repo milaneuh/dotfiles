@@ -1,7 +1,0 @@
-partial function_keys
-xkb_symbols "compose_ctrl_space" {
-    key <FK13> {
-        type[Group1] = "ONE_LEVEL",
-        symbols[Group1] = [ Multi_key ]
-    };
-};

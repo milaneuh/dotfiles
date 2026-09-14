@@ -6,7 +6,6 @@ case $- in
 esac
 
 [[ -r ~/.bashrc.d/variables.bash ]] && source ~/.bashrc.d/variables.bash
-[[ -r ~/.bashrc.d/remove-nix-store-from-path.bash ]] && source ~/.bashrc.d/remove-nix-store-from-path.bash
 [[ -r ~/.bashrc.d/theme.bash ]] && source ~/.bashrc.d/theme.bash
 [[ -r ~/.bashrc.d/options.bash ]] && source ~/.bashrc.d/options.bash
 [[ -r ~/.bashrc.d/completion-cache.bash ]] && source ~/.bashrc.d/completion-cache.bash

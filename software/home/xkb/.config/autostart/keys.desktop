@@ -1,9 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=Keyboard Setup
-Comment=Apply the XKB options of the detected keyboard
-Exec=sh -c '"$HOME/.local/bin/keys"'
-Hidden=false
-NoDisplay=false
-X-GNOME-Autostart-enabled=true
-StartupNotify=false

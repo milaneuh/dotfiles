@@ -1,4 +1,0 @@
-! include %S/evdev
-
-! option = symbols
-  custom:compose_ctrl_space = +custom(compose_ctrl_space)

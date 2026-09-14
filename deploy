@@ -17,20 +17,6 @@ home_paths() {
 	find completions -mindepth 1 -maxdepth 1 -printf ".local/share/bash-completion/completions/%P\n"
 }
 
-system_paths() {
-	find software/system/*/ -mindepth 1 -printf '%P\n'
-}
-
-configure_nix_daemon() {
-	if cmp --silent nix/nix.conf /etc/nix/nix.conf 2>/dev/null; then
-		return
-	fi
-
-	sudo cp nix/nix.conf /etc/nix/nix.conf
-	sudo chmod 644 /etc/nix/nix.conf
-	sudo systemctl restart nix-daemon
-}
-
 create_directories() {
 	mkdir --parents ~/bureau
 	mkdir --parents ~/documents
@@ -99,31 +85,9 @@ deploy_ssh_hosts() {
 	fi
 }
 
-deploy_system_packages() {
-	# shellcheck disable=SC2035 # stow rejects ./*/ as package names
-	(cd software/system && sudo "$(command -v stow)" --target / --no-folding --restow */)
-}
-
-enable_compose_key_daemon() {
-	if systemctl cat keyd.service >/dev/null 2>&1; then
-		sudo systemctl enable keyd
-		sudo systemctl restart keyd
-	fi
-}
-
-enable_store_garbage_collection() {
-	sudo systemctl daemon-reload
-	sudo systemctl enable --now nix-gc.timer
-}
-
-configure_nix_daemon
 create_directories
 deploy_home_manager
 home_paths | sort --unique | remove_stale_links "${HOME}"
 deploy_scripts
 deploy_home_packages
 deploy_ssh_hosts
-system_paths | sort --unique | remove_stale_links / sudo
-deploy_system_packages
-enable_compose_key_daemon
-enable_store_garbage_collection

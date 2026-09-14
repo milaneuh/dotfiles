@@ -1,5 +1,0 @@
-#!/bin/bash
-
-# alias: xdg-open "${@}"
-
-xdg-open "${@}"
