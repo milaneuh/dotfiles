@@ -55,10 +55,6 @@ let
     ++ lib.optionals platform.isLinux [ pkgs.xclip ];
 
   fileManagerTools = with pkgs; [
-    chafa
-    ffmpegthumbnailer
-    imagemagick
-    pandoc
     ranger
   ];
 
@@ -127,8 +123,12 @@ in
 
   host = with pkgs; [
     alacritty
+    chafa
     devpod
+    ffmpegthumbnailer
+    imagemagick
     nerd-fonts.jetbrains-mono
+    pandoc
     ripdrag
   ];
 }
