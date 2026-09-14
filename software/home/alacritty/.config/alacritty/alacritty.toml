@@ -1,0 +1,32 @@
+[general]
+import = ["~/.config/alacritty/themes/gruvbox_material_medium_dark.toml"]
+
+[terminal]
+shell = { program = "/bin/sh", args = ["-c", 'exec "$HOME/.nix-profile/bin/tmux" new-session -A -s main'] }
+
+[window]
+option_as_alt = "Both"
+
+[font]
+size = 13.0
+
+[font.normal]
+family = "JetBrainsMono Nerd Font Mono"
+style = "Regular"
+
+[font.bold]
+family = "JetBrainsMono Nerd Font Mono"
+style = "Bold"
+
+[font.italic]
+family = "JetBrainsMono Nerd Font Mono"
+style = "Italic"
+
+[keyboard]
+bindings = [
+  { key = "[", mods = "Alt", chars = "\u001b[777~" },
+  { key = "Enter", mods = "Control", chars = "\u001b[13;5u" },
+  { key = "Backspace", mods = "Control", chars = "\u001b[127;5u" },
+  { key = "Backspace", mods = "Alt", chars = "\u001b[127;3u" },
+  { key = "Q", mods = "Control|Shift", chars = "\u001b[778~" },
+]

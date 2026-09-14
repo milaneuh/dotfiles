@@ -86,7 +86,6 @@ M.setup = function()
 		gh("honza/vim-snippets"),
 
 		-- Theme and GUI/TUI
-		gh("3rd/image.nvim"),
 		gh("ellisonleao/gruvbox.nvim"),
 		gh("hakonharnes/img-clip.nvim"),
 		gh("nvim-tree/nvim-web-devicons"),

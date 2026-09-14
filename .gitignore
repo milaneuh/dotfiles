@@ -1,15 +1,10 @@
 *.pdf
 __pycache__/
 
-software/home/kitty/.config/kitty/theme.conf
-software/home/kitty/.config/kitty/current-theme.conf
-software/home/kitty/.config/kitty/*.bak
-
 tags
 
 software/home/ranger/.config/ranger/plugins/*
 !software/home/ranger/.config/ranger/plugins/fzf_commands.py
-!software/home/ranger/.config/ranger/plugins/kitty_tmux_fix.py
 !software/home/ranger/.config/ranger/plugins/theme_previews.py
 
 software/home/vscode/.config/Code/**

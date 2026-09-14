@@ -1,15 +1,6 @@
 { pkgs }:
 
 let
-  neovimWithMagick = pkgs.wrapNeovimUnstable pkgs.neovim-unwrapped (
-    (pkgs.neovimUtils.makeNeovimConfig {
-      extraLuaPackages = ps: [ ps.magick ];
-    })
-    // {
-      wrapRc = false;
-    }
-  );
-
   rangerArchives = pkgs.fetchFromGitHub {
     owner = "maximtrp";
     repo = "ranger-archives";
@@ -97,6 +88,7 @@ let
   ]);
 
   fileManagerTools = with pkgs; [
+    chafa
     ffmpegthumbnailer
     ranger
     ripdrag
@@ -107,13 +99,11 @@ let
     lazygit
   ];
 
-  editorTools = [
-    neovimWithMagick
-  ]
-  ++ (with pkgs; [
+  editorTools = with pkgs; [
+    neovim
     tree-sitter
     universal-ctags
-  ]);
+  ];
 
   formatters = with pkgs; [
     black
@@ -171,6 +161,7 @@ in
     ++ commandLineApplications;
 
   graphical = with pkgs; [
+    alacritty
     anki
     chromium
     flameshot
@@ -178,7 +169,6 @@ in
     gnome-extension-manager
     inkscape
     joplin-desktop
-    kitty
     mpv
     vlc
     xournalpp
