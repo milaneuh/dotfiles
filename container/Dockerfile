@@ -11,6 +11,8 @@ COPY --chown=vscode:vscode . /tmp/dotfiles
 RUN DEVPOD=true /tmp/dotfiles/install \
     && rm -rf /tmp/dotfiles "${HOME}/.config/chezmoi"
 
+ENV PATH="/home/vscode/.local/share/mise/shims:/home/vscode/.nix-profile/bin:${PATH}"
+
 USER root
 
 RUN echo /home/vscode/.nix-profile/bin/bash >> /etc/shells \

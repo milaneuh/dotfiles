@@ -30,6 +30,15 @@ in
   home.file.".tmux/plugins/tmux-fingers".source = "${pkgs.tmuxPlugins.fingers}/share/tmux-plugins/tmux-fingers";
   xdg.dataFile."nvim/mermaid.min.js".source = packages.mermaid;
 
+  programs.mise = {
+    enable = true;
+    enableBashIntegration = false;
+    enableMutableConfig = true;
+    globalConfig = lib.optionalAttrs (role == "container") {
+      settings.trusted_config_paths = [ "/workspaces" ];
+    };
+  };
+
   services.home-manager.autoExpire = {
     enable = true;
     timestamp = "-30 days";
