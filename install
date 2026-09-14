@@ -4,34 +4,115 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-github_accepts_ssh_key() {
-	ssh -o RequestTTY=no -o ConnectTimeout=10 git@github.com 2>&1 |
-		grep --quiet 'successfully authenticated'
+NIX_VERSION="2.35.2"
+NIX_INSTALLER_SHA256="9adda97297d9e8ab360df95c729eabff4f4f93d6db091953c3a68f29e3fb130c"
+
+DOTFILES_REPOSITORY="milaneuh/dotfiles"
+
+nix_command() {
+	nix --extra-experimental-features 'nix-command flakes' "$@"
 }
 
-require_ssh_key() {
-	local response
+sha256_of() {
+	if command -v sha256sum >/dev/null; then
+		sha256sum "$1" | cut -d ' ' -f 1
+	else
+		shasum -a 256 "$1" | cut -d ' ' -f 1
+	fi
+}
 
-	while ! github_accepts_ssh_key; do
-		cat <<-EOF
-			github.com did not accept your SSH key. Create one if needed, then add
-			the public key to your account:
-			  ssh-keygen -t ed25519 -C "your_email@example.com"
-			  cat ~/.ssh/id_ed25519.pub
-		EOF
-		read -r -p "Retry? [y/N] " response
-		if [[ ! "${response}" =~ ^[Yy]$ ]]; then
-			exit 1
-		fi
-	done
+load_nix() {
+	local profile="/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
+
+	if [[ -r ${profile} ]]; then
+		set +o nounset
+		# shellcheck source=/dev/null
+		source "${profile}"
+		set -o nounset
+	fi
+
+	export PATH="${HOME}/.nix-profile/bin:${PATH}"
+}
+
+install_nix() {
+	if [[ -d /nix/store ]]; then
+		load_nix
+		return
+	fi
+
+	local installer
+	installer="$(mktemp)"
+	curl --location --fail --silent --show-error --output "${installer}" \
+		"https://releases.nixos.org/nix/nix-${NIX_VERSION}/install"
+
+	if [[ "$(sha256_of "${installer}")" != "${NIX_INSTALLER_SHA256}" ]]; then
+		echo "nix installer checksum mismatch, aborting" >&2
+		rm -f "${installer}"
+		exit 1
+	fi
+
+	sh "${installer}" --daemon --yes --no-channel-add </dev/tty
+	rm -f "${installer}"
+
+	load_nix
+}
+
+install_rosetta() {
+	if [[ "$(uname -s)" != "Darwin" || "$(uname -m)" != "arm64" ]]; then
+		return
+	fi
+
+	if /usr/bin/pgrep -q oahd; then
+		return
+	fi
+
+	sudo softwareupdate --install-rosetta --agree-to-license
 }
 
 apply_dotfiles() {
-	nix --extra-experimental-features 'nix-command flakes' run nixpkgs#chezmoi -- \
-		init --apply git@github.com:milaneuh/dotfiles.git
+	nix_command run nixpkgs#chezmoi -- init --apply --use-builtin-git true \
+		"https://github.com/${DOTFILES_REPOSITORY}.git" </dev/tty
 }
 
-require_ssh_key
-apply_dotfiles
+github_accepts_ssh_key() {
+	ssh -o RequestTTY=no -o ConnectTimeout=10 -o StrictHostKeyChecking=accept-new git@github.com 2>&1 |
+		grep -q 'successfully authenticated'
+}
 
-echo "Installation finished. Open a new shell: the nix profile PATH is only picked up by a new session."
+setup_github_ssh() {
+	if ! github_accepts_ssh_key; then
+		gh auth login --hostname github.com --git-protocol ssh --web </dev/tty
+	fi
+
+	chezmoi git -- remote set-url origin "git@github.com:${DOTFILES_REPOSITORY}.git"
+}
+
+set_login_shell() {
+	local shell="${HOME}/.nix-profile/bin/bash"
+
+	if ! grep -qxF "${shell}" /etc/shells; then
+		echo "${shell}" | sudo tee -a /etc/shells >/dev/null
+	fi
+
+	if [[ "${SHELL:-}" != "${shell}" ]]; then
+		chsh -s "${shell}" </dev/tty
+	fi
+}
+
+print_manual_steps() {
+	cat <<-'EOF'
+		Installation finished
+
+		Log out and back in so the new login shell and session variables apply.
+		On macOS, Alacritty is in ~/Applications/Home Manager Apps and Colima starts
+		at login; check it with: colima status
+	EOF
+}
+
+install_nix
+install_rosetta
+apply_dotfiles
+setup_github_ssh
+set_login_shell
+
+print_manual_steps

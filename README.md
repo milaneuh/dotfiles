@@ -8,8 +8,8 @@ I highly recommend **not** installing my entire configuration. Instead, feel fre
 
 ## Dependancy
 
-- macOS
-- Git
+- macOS or Linux
+- curl
 
 ## Layout
 
@@ -29,10 +29,13 @@ home/dot_local/bin/executable_lg              -> ~/.local/bin/lg
 ## Installation script
 
 ```bash
-./install
+curl -fsSL https://raw.githubusercontent.com/milaneuh/dotfiles/main/install | bash
 ```
 
-It checks your GitHub SSH key, then runs `chezmoi init --apply` on this repository.
+It installs a pinned Nix version, Rosetta on Apple Silicon, then runs `chezmoi init --apply`
+on this repository. It finally sets up a GitHub SSH key with `gh` and makes Nix's bash the
+login shell.
+
 Afterwards, pull and apply changes with `chezmoi update`.
 
 ## Credits

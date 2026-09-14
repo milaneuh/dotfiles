@@ -22,6 +22,7 @@ let
       bashInteractive
       chezmoi
       curl
+      git
       gnupg
       openssh
     ])
