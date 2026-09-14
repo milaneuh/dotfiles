@@ -38,6 +38,14 @@ login shell.
 
 Afterwards, pull and apply changes with `chezmoi update`.
 
+## Devcontainer image
+
+`container/Dockerfile` builds `ghcr.io/milaneuh/devcontainer-base` with Nix and the container
+home-manager profile already installed, so devpod workspaces only have to apply the dotfiles.
+GitHub Actions rebuilds it for amd64 and arm64 whenever `nix/`, `install` or the Dockerfile change.
+
+Use `install` as the devpod dotfiles script; inside a container it skips the host-only steps.
+
 ## Credits
 
 Much of my configuration is inspired by:

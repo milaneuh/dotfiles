@@ -19,7 +19,10 @@ in
 
   programs.home-manager.enable = true;
 
-  targets.genericLinux.enable = platform.isLinux;
+  targets.genericLinux = {
+    enable = platform.isLinux;
+    gpu.enable = platform.isLinux && role == "host";
+  };
 
   home.packages = packages.common ++ lib.optionals (role == "host") packages.host;
 
