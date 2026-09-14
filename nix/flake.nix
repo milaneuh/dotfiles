@@ -20,14 +20,17 @@
         {
           system = "aarch64-darwin";
           username = "milan";
+          role = "host";
         }
         {
           system = "aarch64-linux";
           username = "vscode";
+          role = "container";
         }
         {
           system = "x86_64-linux";
           username = "vscode";
+          role = "container";
         }
       ];
 
@@ -46,7 +49,7 @@
           name = "${machine.username}-${machine.system}";
           value = home-manager.lib.homeManagerConfiguration {
             pkgs = pkgsFor machine.system;
-            extraSpecialArgs = { inherit (machine) username; };
+            extraSpecialArgs = { inherit (machine) username role; };
             modules = [ ./home.nix ];
           };
         }) machines
@@ -54,7 +57,7 @@
 
       devShells = nixpkgs.lib.genAttrs systems (system: {
         default = (pkgsFor system).mkShell {
-          packages = (import ./packages.nix { pkgs = pkgsFor system; }).commandLine;
+          packages = (import ./packages.nix { pkgs = pkgsFor system; }).common;
         };
       });
     };

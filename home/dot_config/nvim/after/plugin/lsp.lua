@@ -3,8 +3,11 @@ if not require("utils.pack").loaded("nvim-lspconfig") then return end
 vim.lsp.enable({
 	"bashls",
 	"cssls",
+	"docker_compose_language_service",
+	"dockerls",
 	"expert",
 	"gopls",
+	"helm_ls",
 	"html",
 	"jinja_lsp",
 	"jsonls",
@@ -12,7 +15,9 @@ vim.lsp.enable({
 	"lua_ls",
 	"marksman",
 	"pyright",
+	"terraformls",
 	"ts_ls",
+	"yamlls",
 })
 
 local function hover_with_man_fallback()

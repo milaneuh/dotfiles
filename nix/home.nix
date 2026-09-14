@@ -2,6 +2,7 @@
   lib,
   pkgs,
   username,
+  role,
   ...
 }:
 
@@ -18,7 +19,7 @@ in
 
   targets.genericLinux.enable = platform.isLinux;
 
-  home.packages = packages.commandLine ++ lib.optionals platform.isDarwin packages.graphical;
+  home.packages = packages.common ++ lib.optionals (role == "host") packages.host;
 
   xdg.configFile."ranger/plugins/ranger-archives".source = packages.rangerArchives;
   home.file.".tmux/plugins/tmux-fingers".source = "${pkgs.tmuxPlugins.fingers}/share/tmux-plugins/tmux-fingers";

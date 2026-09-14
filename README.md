@@ -39,7 +39,6 @@ Afterwards, pull and apply changes with `chezmoi update`.
 
 Much of my configuration is inspired by:
 
-- [Chewie](https://github.com/Chewie)
 - [Chris\@machine](https://github.com/ChristianChiarulli)
 - [Dereck Taylor](https://gitlab.com/dwt1)
 - [Gavin Freeborn](https://github.com/Gavinok)

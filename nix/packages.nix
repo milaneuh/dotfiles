@@ -16,39 +16,6 @@ let
     hash = "sha256-WB7X10vZBI0OOpE2OSfXLvIpQtdyJUayf3zCnjU5Drg=";
   };
 
-  pythonWithTkinterForScripts = pkgs.python3.withPackages (ps: [
-    ps.pip
-    ps.tkinter
-  ]);
-
-  expertReleases = {
-    aarch64-darwin = {
-      asset = "expert_darwin_arm64";
-      hash = "sha256-Gj2pB81H1m1g76Yr1vnrC/8q8jrrbxNM/RKKoCPewB4=";
-    };
-    aarch64-linux = {
-      asset = "expert_linux_arm64";
-      hash = "sha256-hT+uiZ5T3ulpwJ69ryYrgg0WhYLYSomch7ELHyH2p2g=";
-    };
-    x86_64-linux = {
-      asset = "expert_linux_amd64";
-      hash = "sha256-99WQW8PwmxKNSUHHdpYz8tEIvmN/Io7kMentE30sVWM=";
-    };
-  };
-
-  expert = pkgs.stdenvNoCC.mkDerivation {
-    pname = "expert";
-    version = "0.1.9";
-
-    src = pkgs.fetchurl {
-      url = "https://github.com/expert-lsp/expert/releases/download/v0.1.9/${expertReleases.${platform.system}.asset}";
-      inherit (expertReleases.${platform.system}) hash;
-    };
-
-    dontUnpack = true;
-    installPhase = "install -Dm755 $src $out/bin/expert";
-  };
-
   systemTools = with pkgs; [
     bash-completion
     chezmoi
@@ -61,32 +28,28 @@ let
     (with pkgs; [
       bat
       entr
+      fd
       fzf
       jq
       ripgrep
       tmux
       tree
+      yq-go
       zoxide
     ])
     ++ lib.optionals platform.isLinux [ pkgs.xclip ];
 
-  documentTools = with pkgs; [
-    ffmpeg
-    imagemagick
-    mermaid-cli
-    pandoc
-    pdf2svg
-  ];
-
   fileManagerTools = with pkgs; [
     chafa
     ffmpegthumbnailer
+    imagemagick
+    pandoc
     ranger
-    ripdrag
   ];
 
   versionControlTools = with pkgs; [
     difftastic
+    gh
     lazygit
   ];
 
@@ -97,38 +60,35 @@ let
   ];
 
   formatters = with pkgs; [
-    black
-    prettier
     shfmt
     stylua
   ];
 
   linters = with pkgs; [
-    djlint
-    eslint_d
+    hadolint
     lua51Packages.luacheck
-    revive
     shellcheck
   ];
 
-  languageServers = [
-    expert
-  ]
-  ++ (with pkgs; [
+  languageServers = with pkgs; [
     bash-language-server
+    docker-compose-language-service
+    dockerfile-language-server
     gopls
+    helm-ls
     jinja-lsp
     lemminx
     lua-language-server
     marksman
     pyright
+    terraform-ls
     typescript-language-server
     vscode-langservers-extracted
-  ]);
+    yaml-language-server
+  ];
 
-  languageRuntimes = [
-    pkgs.go
-    pythonWithTkinterForScripts
+  devopsTools = with pkgs; [
+    k9s
   ];
 
   commandLineApplications = with pkgs; [
@@ -138,20 +98,21 @@ in
 {
   inherit rangerArchives mermaid;
 
-  commandLine =
+  common =
     systemTools
     ++ shellTools
-    ++ documentTools
     ++ fileManagerTools
     ++ versionControlTools
     ++ editorTools
     ++ formatters
     ++ linters
     ++ languageServers
-    ++ languageRuntimes
+    ++ devopsTools
     ++ commandLineApplications;
 
-  graphical = with pkgs; [
+  host = with pkgs; [
     alacritty
+    devpod
+    ripdrag
   ];
 }
