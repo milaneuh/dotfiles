@@ -10,11 +10,14 @@ echo "==> Applying home-manager configuration (${nix_config_hash:0:12})"
 
 export PATH="${HOME}/.nix-profile/bin:${PATH}"
 
+system="$(nix --extra-experimental-features 'nix-command flakes' eval --impure --raw --expr builtins.currentSystem)"
+configuration="${USER}-${system}"
+
 if command -v home-manager >/dev/null; then
-	home-manager switch --flake "${flake_dir}#${USER}" -b backup
+	home-manager switch --flake "${flake_dir}#${configuration}" -b backup
 	exit
 fi
 
 activation="$(nix --extra-experimental-features 'nix-command flakes' build --no-link \
-	--print-out-paths "${flake_dir}#homeConfigurations.${USER}.activationPackage")"
+	--print-out-paths "${flake_dir}#homeConfigurations.${configuration}.activationPackage")"
 HOME_MANAGER_BACKUP_EXT=backup "${activation}/activate"

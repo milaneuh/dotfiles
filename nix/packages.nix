@@ -1,6 +1,9 @@
 { pkgs }:
 
 let
+  inherit (pkgs) lib;
+  platform = pkgs.stdenv.hostPlatform;
+
   rangerArchives = pkgs.fetchFromGitHub {
     owner = "maximtrp";
     repo = "ranger-archives";
@@ -13,35 +16,33 @@ let
     hash = "sha256-WB7X10vZBI0OOpE2OSfXLvIpQtdyJUayf3zCnjU5Drg=";
   };
 
-  whisperModels = pkgs.linkFarm "whisper-cpp-models" [
-    {
-      name = "share/whisper-cpp/models/ggml-small-q5_1.bin";
-      path = pkgs.fetchurl {
-        url = "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-small-q5_1.bin";
-        hash = "sha256-roXkqTXXpWe9EC/lWvwWu1lb22GOEbL8dZG8CBIEEbs=";
-      };
-    }
-    {
-      name = "share/whisper-cpp/models/ggml-silero-v6.2.0.bin";
-      path = pkgs.fetchurl {
-        url = "https://huggingface.co/ggml-org/whisper-vad/resolve/main/ggml-silero-v6.2.0.bin";
-        hash = "sha256-KqJpt4XutTqCmDogUB3ffB2cSOM6tjpBORrGyff7aYc=";
-      };
-    }
-  ];
-
   pythonWithTkinterForScripts = pkgs.python3.withPackages (ps: [
     ps.pip
     ps.tkinter
   ]);
+
+  expertReleases = {
+    aarch64-darwin = {
+      asset = "expert_darwin_arm64";
+      hash = "sha256-Gj2pB81H1m1g76Yr1vnrC/8q8jrrbxNM/RKKoCPewB4=";
+    };
+    aarch64-linux = {
+      asset = "expert_linux_arm64";
+      hash = "sha256-hT+uiZ5T3ulpwJ69ryYrgg0WhYLYSomch7ELHyH2p2g=";
+    };
+    x86_64-linux = {
+      asset = "expert_linux_amd64";
+      hash = "sha256-99WQW8PwmxKNSUHHdpYz8tEIvmN/Io7kMentE30sVWM=";
+    };
+  };
 
   expert = pkgs.stdenvNoCC.mkDerivation {
     pname = "expert";
     version = "0.1.9";
 
     src = pkgs.fetchurl {
-      url = "https://github.com/expert-lsp/expert/releases/download/v0.1.9/expert_linux_amd64";
-      hash = "sha256-99WQW8PwmxKNSUHHdpYz8tEIvmN/Io7kMentE30sVWM=";
+      url = "https://github.com/expert-lsp/expert/releases/download/v0.1.9/${expertReleases.${platform.system}.asset}";
+      inherit (expertReleases.${platform.system}) hash;
     };
 
     dontUnpack = true;
@@ -49,43 +50,33 @@ let
   };
 
   systemTools = with pkgs; [
-    alsa-utils
     bash-completion
     chezmoi
     curl
     gnupg
     openssh
-    sshfs
   ];
 
-  shellTools = with pkgs; [
-    bat
-    entr
-    fzf
-    jq
-    pass
-    rclone
-    ripgrep
-    sshpass
-    tmux
-    tree
-    xclip
-    zoxide
-  ];
+  shellTools =
+    (with pkgs; [
+      bat
+      entr
+      fzf
+      jq
+      ripgrep
+      tmux
+      tree
+      zoxide
+    ])
+    ++ lib.optionals platform.isLinux [ pkgs.xclip ];
 
-  documentTools = [
-    whisperModels
-  ]
-  ++ (with pkgs; [
+  documentTools = with pkgs; [
     ffmpeg
     imagemagick
     mermaid-cli
     pandoc
     pdf2svg
-    tesseract
-    typst
-    whisper-cpp
-  ]);
+  ];
 
   fileManagerTools = with pkgs; [
     chafa
@@ -162,21 +153,5 @@ in
 
   graphical = with pkgs; [
     alacritty
-    anki
-    chromium
-    flameshot
-    gimp
-    gnome-extension-manager
-    inkscape
-    joplin-desktop
-    mpv
-    vlc
-    xournalpp
-  ];
-
-  gnomeShellExtensions = [
-    pkgs.gnome49Extensions."forge@jmmaranan.com"
-    pkgs.gnome49Extensions."gnome-shell-go-to-last-workspace@github.com"
-    pkgs.gnome49Extensions."rounded-window-corners@fxgn"
   ];
 }

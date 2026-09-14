@@ -1,71 +1,32 @@
 {
-  config,
   lib,
   pkgs,
-  nixgl,
   username,
   ...
 }:
 
 let
   packages = import ./packages.nix { inherit pkgs; };
+  platform = pkgs.stdenv.hostPlatform;
 in
 {
   home.username = username;
-  home.homeDirectory = "/home/${username}";
+  home.homeDirectory = if platform.isDarwin then "/Users/${username}" else "/home/${username}";
   home.stateVersion = "26.05";
 
   programs.home-manager.enable = true;
 
-  targets.genericLinux = {
-    enable = true;
-    nixGL.packages = nixgl.packages;
-    nixGL.defaultWrapper = "mesa";
-  };
+  targets.genericLinux.enable = platform.isLinux;
 
-  home.packages =
-    packages.commandLine
-    ++ packages.gnomeShellExtensions
-    ++ map config.lib.nixGL.wrap packages.graphical;
+  home.packages = packages.commandLine ++ lib.optionals platform.isDarwin packages.graphical;
 
   xdg.configFile."ranger/plugins/ranger-archives".source = packages.rangerArchives;
   home.file.".tmux/plugins/tmux-fingers".source = "${pkgs.tmuxPlugins.fingers}/share/tmux-plugins/tmux-fingers";
   xdg.dataFile."nvim/mermaid.min.js".source = packages.mermaid;
 
-  home.sessionVariables.ALSA_PLUGIN_DIR = "${pkgs.pipewire}/lib/alsa-lib";
-
-  programs.gpg.enable = true;
-
-  services.gpg-agent = {
+  services.home-manager.autoExpire = {
     enable = true;
-    pinentry.package = pkgs.pinentry-gnome3;
-    defaultCacheTtl = 3600;
-    maxCacheTtl = 28800;
-  };
-
-  systemd.user.services.home-manager-expire = {
-    Unit.Description = "Expire home-manager generations older than 30 days";
-    Service = {
-      Type = "oneshot";
-      Environment = [
-        "PATH=${
-          lib.makeBinPath [
-            pkgs.coreutils
-            pkgs.gnugrep
-            pkgs.gnused
-          ]
-        }:/nix/var/nix/profiles/default/bin"
-      ];
-      ExecStart = "${config.home.profileDirectory}/bin/home-manager expire-generations '-30 days'";
-    };
-  };
-
-  systemd.user.timers.home-manager-expire = {
-    Unit.Description = "Weekly expiry of home-manager generations";
-    Timer = {
-      OnCalendar = "weekly";
-      Persistent = true;
-    };
-    Install.WantedBy = [ "timers.target" ];
+    timestamp = "-30 days";
+    frequency = "weekly";
   };
 }
