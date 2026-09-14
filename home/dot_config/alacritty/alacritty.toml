@@ -2,7 +2,7 @@
 import = ["~/.config/alacritty/themes/gruvbox_material_medium_dark.toml"]
 
 [terminal]
-shell = { program = "/bin/sh", args = ["-c", 'exec "$HOME/.nix-profile/bin/tmux" new-session -A -s main'] }
+shell = { program = "/bin/sh", args = ["-c", 'exec "$HOME/.nix-profile/bin/bash" -lic "exec tmux new-session -A -s main"'] }
 
 [window]
 option_as_alt = "Both"

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 conf_dir="${HOME}/.config/fzf"
 state_dir="${XDG_STATE_HOME:-${HOME}/.local/state}"

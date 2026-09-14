@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 pane_tty=$(tmux display-message -p '#{pane_tty}')
-ps --tty "${pane_tty#/dev/}" --format args= 2>/dev/null |
+ps -t "${pane_tty#/dev/}" -o args= 2>/dev/null |
 	awk '{print $1, $2}' |
 	grep --quiet --extended-regexp '(^| )[^ ]*/ranger$'

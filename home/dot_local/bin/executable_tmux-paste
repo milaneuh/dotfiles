@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 paste_text() {
 	local content
@@ -36,6 +36,6 @@ do_paste() {
 
 
 pane_tty=$(tmux display-message -p '#{pane_tty}')
-pane_procs=$(ps --tty "${pane_tty#/dev/}" --format comm= 2>/dev/null)
+pane_procs=$(ps -t "${pane_tty#/dev/}" -o comm= 2>/dev/null | sed 's|.*/||')
 
 do_paste

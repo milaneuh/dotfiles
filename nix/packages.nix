@@ -16,13 +16,27 @@ let
     hash = "sha256-WB7X10vZBI0OOpE2OSfXLvIpQtdyJUayf3zCnjU5Drg=";
   };
 
-  systemTools = with pkgs; [
-    bash-completion
-    chezmoi
-    curl
-    gnupg
-    openssh
-  ];
+  systemTools =
+    (with pkgs; [
+      bash-completion
+      bashInteractive
+      chezmoi
+      curl
+      gnupg
+      openssh
+    ])
+    ++ lib.optionals platform.isDarwin (
+      with pkgs;
+      [
+        coreutils
+        findutils
+        gawk
+        gnugrep
+        gnused
+        gnutar
+        ncurses
+      ]
+    );
 
   shellTools =
     (with pkgs; [
