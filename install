@@ -123,8 +123,10 @@ apply_dotfiles() {
 }
 
 github_accepts_ssh_key() {
-	ssh -o RequestTTY=no -o ConnectTimeout=10 -o StrictHostKeyChecking=accept-new git@github.com 2>&1 |
-		grep -q 'successfully authenticated'
+	local output
+	output="$(ssh -o RequestTTY=no -o ConnectTimeout=10 -o StrictHostKeyChecking=accept-new git@github.com 2>&1 || true)"
+
+	grep -q 'successfully authenticated' <<<"${output}"
 }
 
 setup_github_ssh() {
@@ -140,9 +142,13 @@ configure_devpod() {
 		devpod provider add docker
 	fi
 
+	mkdir -p "${HOME}/.ssh/config.d"
+	chmod 700 "${HOME}/.ssh/config.d"
+
 	devpod context set-options \
 		-o DOTFILES_URL="https://github.com/${DOTFILES_REPOSITORY}" \
-		-o DOTFILES_SCRIPT=install
+		-o DOTFILES_SCRIPT=install \
+		-o SSH_CONFIG_PATH="${HOME}/.ssh/config.d/devpod"
 	devpod ide use none
 }
 
