@@ -113,6 +113,7 @@ in
   host = with pkgs; [
     alacritty
     devpod
+    nerd-fonts.jetbrains-mono
     ripdrag
   ];
 }
