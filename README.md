@@ -1,5 +1,7 @@
 # Dotfiles
 
+Forked from [maxencetholomier/dotfiles](https://gitlab.com/maxencetholomier/dotfiles) and adapted to macOS, chezmoi and devpod.
+
 This repository contains the dotfiles of the software I'm using.
 
 I will make frequent modifications to this repository.

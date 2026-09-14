@@ -1,5 +1,8 @@
 FROM mcr.microsoft.com/devcontainers/base:ubuntu-24.04
 
+LABEL org.opencontainers.image.source="https://github.com/milaneuh/dotfiles"
+LABEL org.opencontainers.image.description="Devcontainer base image with the dotfiles' Nix home-manager profile"
+
 USER vscode
 ENV USER=vscode
 
