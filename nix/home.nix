@@ -29,6 +29,7 @@ in
     ++ map config.lib.nixGL.wrap packages.graphical;
 
   xdg.configFile."ranger/plugins/ranger-archives".source = packages.rangerArchives;
+  home.file.".tmux/plugins/tmux-fingers".source = "${pkgs.tmuxPlugins.fingers}/share/tmux-plugins/tmux-fingers";
   xdg.dataFile."nvim/mermaid.min.js".source = packages.mermaid;
 
   home.sessionVariables.ALSA_PLUGIN_DIR = "${pkgs.pipewire}/lib/alsa-lib";
