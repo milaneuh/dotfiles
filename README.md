@@ -13,35 +13,27 @@ I highly recommend **not** installing my entire configuration. Instead, feel fre
 
 ## Layout
 
-Three directories, one per question:
+Two directories, one per question:
 
-- `nix/` — what is installed: a pinned flake applied by home-manager, see `nix/README.md`
-- `software/` — how each piece of software is configured, one directory per software
-- `scripts/` — what I wrote, deployed as a whole into `~/.local/bin`
-
-`software/home` is a stow tree with one package per software:
+- `nix/` — what is installed: a pinned flake applied by home-manager
+- `home/` — how each piece of software is configured: a chezmoi source tree mirroring `$HOME`
 
 ```
-software/home/fzf/.config/fzf/common.conf      -> ~/.config/fzf/common.conf
-software/home/fzf/.bashrc.d/tools/fzf.bash     -> ~/.bashrc.d/tools/fzf.bash
-scripts/speech2text                            -> ~/.local/bin/speech2text
+home/dot_config/fzf/common.conf               -> ~/.config/fzf/common.conf
+home/dot_bashrc.d/tools/fzf.bash              -> ~/.bashrc.d/tools/fzf.bash
+home/dot_local/bin/executable_speech2text     -> ~/.local/bin/speech2text
 ```
 
-The tree is stowed in a single command, so stow sees every package at once and
-splits open a shared directory such as `.bashrc.d/tools` on its own.
+`chezmoi apply` places the files and runs `home-manager switch` whenever a file in `nix/` changes.
 
 ## Installation script
 
-Clone this repository under $HOME/.dotfiles.
-
-Then run :
-
 ```bash
-mkdir ~/.dotfiles
-cd !$
 ./install
-./deploy
 ```
+
+It checks your GitHub SSH key, then runs `chezmoi init --apply` on this repository.
+Afterwards, pull and apply changes with `chezmoi update`.
 
 ## Credits
 

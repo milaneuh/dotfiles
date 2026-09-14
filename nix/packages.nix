@@ -51,11 +51,11 @@ let
   systemTools = with pkgs; [
     alsa-utils
     bash-completion
+    chezmoi
     curl
     gnupg
     openssh
     sshfs
-    stow
   ];
 
   shellTools = with pkgs; [

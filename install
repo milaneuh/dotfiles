@@ -26,15 +26,12 @@ require_ssh_key() {
 	done
 }
 
-install_home_manager() {
-	local activation
-	activation="$(nix --extra-experimental-features 'nix-command flakes' build --no-link \
-		--print-out-paths "${HOME}/.dotfiles/nix#homeConfigurations.${USER}.activationPackage")"
-	HOME_MANAGER_BACKUP_EXT=backup "${activation}/activate"
-	export PATH="${HOME}/.nix-profile/bin:${PATH}"
+apply_dotfiles() {
+	nix --extra-experimental-features 'nix-command flakes' run nixpkgs#chezmoi -- \
+		init --apply git@github.com:milaneuh/dotfiles.git
 }
 
 require_ssh_key
-install_home_manager
+apply_dotfiles
 
 echo "Installation finished. Open a new shell: the nix profile PATH is only picked up by a new session."

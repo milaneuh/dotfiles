@@ -2,24 +2,3 @@
 __pycache__/
 
 tags
-
-software/home/ranger/.config/ranger/plugins/*
-!software/home/ranger/.config/ranger/plugins/fzf_commands.py
-!software/home/ranger/.config/ranger/plugins/theme_previews.py
-
-software/home/vscode/.config/Code/**
-!software/home/vscode/.config/Code/User/
-!software/home/vscode/.config/Code/User/settings.json
-
-**/.claude/.credentials.json
-**/.claude/history.jsonl
-**/.claude/projects/
-**/.claude/todos/
-**/.claude/shell-snapshots/
-**/.claude/statsig/
-**/.ssh/id_*
-**/.ssh/known_hosts*
-**/.ssh/authorized_keys
-**/.ssh/config.d/
-.gitconfig.local
-.bashrc.local

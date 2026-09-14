@@ -1,0 +1,20 @@
+#!/bin/bash
+
+set -o errexit
+set -o nounset
+
+nix_config_hash="{{ list (include "../nix/flake.nix") (include "../nix/flake.lock") (include "../nix/home.nix") (include "../nix/packages.nix") | join "" | sha256sum }}"
+flake_dir="{{ .chezmoi.workingTree }}/nix"
+
+echo "==> Applying home-manager configuration (${nix_config_hash:0:12})"
+
+export PATH="${HOME}/.nix-profile/bin:${PATH}"
+
+if command -v home-manager >/dev/null; then
+	home-manager switch --flake "${flake_dir}#${USER}" -b backup
+	exit
+fi
+
+activation="$(nix --extra-experimental-features 'nix-command flakes' build --no-link \
+	--print-out-paths "${flake_dir}#homeConfigurations.${USER}.activationPackage")"
+HOME_MANAGER_BACKUP_EXT=backup "${activation}/activate"
