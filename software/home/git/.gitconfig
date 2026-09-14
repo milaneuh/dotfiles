@@ -10,7 +10,8 @@
 	defaultBranch = main
 
 [user]
-	name = maxence
+	name = milaneuh
+	email = milanrgmnt@gmail.com
 
 [include]
     path = ~/.gitconfig.local

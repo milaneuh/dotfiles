@@ -18,16 +18,6 @@ home_paths() {
 }
 
 create_directories() {
-	mkdir --parents ~/bureau
-	mkdir --parents ~/documents
-	mkdir --parents ~/drive
-	mkdir --parents ~/image
-	mkdir --parents ~/logiciels
-	mkdir --parents ~/musique
-	mkdir --parents ~/remoterepos/projects
-	mkdir --parents ~/telechargements
-	mkdir --parents ~/tmp
-	mkdir --parents ~/video
 	mkdir --parents ~/.go
 }
 
@@ -69,20 +59,10 @@ deploy_home_packages() {
 	(cd software/home && stow --target "${HOME}" --no-folding --restow */)
 }
 
-deploy_ssh_hosts() {
-	local directory="${HOME}/.ssh/config.d"
-
+deploy_ssh_config() {
 	chmod 600 software/home/ssh/.ssh/config
-	mkdir --parents "${directory}"
-	chmod 700 "${directory}"
-
-	if [[ -e "${directory}/raspi" ]]; then
-		return
-	fi
-
-	if ! (umask 077 && pass show raspi/host >"${directory}/raspi"); then
-		rm --force "${directory}/raspi"
-	fi
+	mkdir --parents "${HOME}/.ssh/config.d"
+	chmod 700 "${HOME}/.ssh/config.d"
 }
 
 create_directories
@@ -90,4 +70,4 @@ deploy_home_manager
 home_paths | sort --unique | remove_stale_links "${HOME}"
 deploy_scripts
 deploy_home_packages
-deploy_ssh_hosts
+deploy_ssh_config

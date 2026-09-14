@@ -4,30 +4,25 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-host_accepts_ssh_key() {
-	local host="$1" output
-
-	output="$(ssh -o RequestTTY=no -o ConnectTimeout=10 "git@${host}" 2>&1 || true)"
-
-	grep --quiet --extended-regexp 'Welcome to GitLab|successfully authenticated' <<<"${output}"
+github_accepts_ssh_key() {
+	ssh -o RequestTTY=no -o ConnectTimeout=10 git@github.com 2>&1 |
+		grep --quiet 'successfully authenticated'
 }
 
-require_ssh_keys() {
-	local host response
+require_ssh_key() {
+	local response
 
-	for host in gitlab.com github.com; do
-		while ! host_accepts_ssh_key "${host}"; do
-			cat <<-EOF
-				${host} did not accept your SSH key. Create one if needed, then add
-				the public key to your account:
-				  ssh-keygen -t ed25519 -C "your_email@example.com"
-				  cat ~/.ssh/id_ed25519.pub
-			EOF
-			read -r -p "Retry? [y/N] " response
-			if [[ ! "${response}" =~ ^[Yy]$ ]]; then
-				exit 1
-			fi
-		done
+	while ! github_accepts_ssh_key; do
+		cat <<-EOF
+			github.com did not accept your SSH key. Create one if needed, then add
+			the public key to your account:
+			  ssh-keygen -t ed25519 -C "your_email@example.com"
+			  cat ~/.ssh/id_ed25519.pub
+		EOF
+		read -r -p "Retry? [y/N] " response
+		if [[ ! "${response}" =~ ^[Yy]$ ]]; then
+			exit 1
+		fi
 	done
 }
 
@@ -39,75 +34,7 @@ install_home_manager() {
 	export PATH="${HOME}/.nix-profile/bin:${PATH}"
 }
 
-gpg_key_is_usable() {
-	local fingerprint validity
-
-	fingerprint="$(gpg --list-secret-keys --with-colons 2>/dev/null |
-		grep --max-count=1 '^fpr:' | cut --delimiter=: --fields=10 || true)"
-
-	if [[ -z "${fingerprint}" ]]; then
-		return 1
-	fi
-
-	validity="$(gpg --list-keys --with-colons "${fingerprint}" 2>/dev/null |
-		grep --max-count=1 '^pub:' | cut --delimiter=: --fields=2 || true)"
-
-	[[ "${validity}" == "u" ]]
-}
-
-require_gpg_key() {
-	local response
-
-	while ! gpg_key_is_usable; do
-		cat <<-'EOF'
-			The password store needs your GPG key. Import both blocks from your
-			backup:
-			  gpg --import
-			  gpg --import-ownertrust
-
-			The ownertrust is not optional. Without it the store is read only:
-			pass show works, pass insert fails with "unusable public key". To set
-			it by hand run gpg --edit-key <fingerprint>, then trust, 5, y, quit.
-		EOF
-		read -r -p "Retry? [y/N] " response
-		if [[ ! "${response}" =~ ^[Yy]$ ]]; then
-			exit 1
-		fi
-	done
-}
-
-clone_repositories() {
-	if [[ ! -d ~/remoterepos/zettelkasten ]]; then
-		git clone git@gitlab.com:maxencetholomier/zettelkasten.git ~/remoterepos/zettelkasten/
-	fi
-
-	if [[ ! -d ~/.password-store ]]; then
-		git clone git@gitlab.com:maxencetholomier/secrets.git ~/.password-store
-	fi
-
-	if [[ ! -d ~/remoterepos/projects/knowledge ]]; then
-		git clone git@github.com:maxencetholomier/knowledge.git ~/remoterepos/projects/knowledge
-	fi
-
-	sudo ~/remoterepos/projects/knowledge/install
-}
-
-print_manual_steps() {
-	cat <<-'EOF'
-		Installation finished
-
-		Manual installation required:
-			- Create ~/.gitconfig.local with your git email:
-			    git config --file ~/.gitconfig.local user.email your_email@example.com
-			- Check the password store works:
-			    pass show raspi/luks
-		Open a new shell: the nix profile PATH is only picked up by a new session.
-	EOF
-}
-
-require_ssh_keys
+require_ssh_key
 install_home_manager
-require_gpg_key
-clone_repositories
 
-print_manual_steps
+echo "Installation finished. Open a new shell: the nix profile PATH is only picked up by a new session."
