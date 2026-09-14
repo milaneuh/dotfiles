@@ -135,6 +135,17 @@ setup_github_ssh() {
 	chezmoi git -- remote set-url origin "git@github.com:${DOTFILES_REPOSITORY}.git"
 }
 
+configure_devpod() {
+	if ! devpod provider list --output json | grep -q '"docker"'; then
+		devpod provider add docker
+	fi
+
+	devpod context set-options \
+		-o DOTFILES_URL="https://github.com/${DOTFILES_REPOSITORY}" \
+		-o DOTFILES_SCRIPT=install
+	devpod ide use none
+}
+
 set_login_shell() {
 	local shell="${HOME}/.nix-profile/bin/bash"
 
@@ -167,6 +178,7 @@ if in_container; then
 fi
 
 setup_github_ssh
+configure_devpod
 set_login_shell
 
 print_manual_steps
