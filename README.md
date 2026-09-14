@@ -21,7 +21,7 @@ Two directories, one per question:
 ```
 home/dot_config/fzf/common.conf               -> ~/.config/fzf/common.conf
 home/dot_bashrc.d/tools/fzf.bash              -> ~/.bashrc.d/tools/fzf.bash
-home/dot_local/bin/executable_speech2text     -> ~/.local/bin/speech2text
+home/dot_local/bin/executable_lg              -> ~/.local/bin/lg
 ```
 
 `chezmoi apply` places the files and runs `home-manager switch` whenever a file in `nix/` changes.

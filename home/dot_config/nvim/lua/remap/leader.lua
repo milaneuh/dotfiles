@@ -35,19 +35,6 @@ M.setup = function()
 		vim.fn.system(string.format(cmd, vim.fn.getcwd()))
 	end
 
-	local function generate_pdf_and_open()
-		local filepath = vim.fn.expand("%:p")
-		local filedir = vim.fn.expand("%:p:h")
-		local filename = vim.fn.expand("%:t")
-		local output = filepath:gsub("%.md$", ".pdf")
-
-		vim.notify("Compiling PDF...", vim.log.levels.INFO)
-		vim.fn.jobstart(
-			string.format("md2pdf %s && xdg-open %s", filename, output),
-			{ detach = true, cwd = filedir }
-		)
-	end
-
 	-- Tmux splits
 	vim.keymap.set(
 		"n",
@@ -100,12 +87,6 @@ M.setup = function()
 	})
 
 	-- File
-	vim.keymap.set(
-		"n",
-		"<leader>fp",
-		generate_pdf_and_open,
-		{ noremap = true, silent = true, desc = "Generate PDF and open it" }
-	)
 	vim.keymap.set(
 		"n",
 		"<leader>fdg",
