@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+if [[ -n ${TMUX} ]]; then
+	tmux load-buffer -w -
+elif command -v pbcopy >/dev/null; then
+	pbcopy
+elif [[ -n ${DISPLAY} ]] && command -v xclip >/dev/null; then
+	xclip -in -selection clipboard
+else
+	printf '\e]52;c;%s\a' "$(base64 | tr -d '\n')" >/dev/tty
+fi

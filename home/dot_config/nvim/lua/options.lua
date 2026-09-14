@@ -23,7 +23,9 @@ M.setup = function()
 
 	-- System Interaction
 	vim.opt.clipboard = "unnamedplus"
-	vim.g.clipboard = "xclip"
+	if vim.fn.has("mac") == 0 and vim.env.DISPLAY == nil and vim.env.WAYLAND_DISPLAY == nil then
+		vim.g.clipboard = "osc52"
+	end
 	vim.o.encoding = "utf-8" -- Set UTF-8 encoding
 	vim.o.compatible = false -- Disable vi compatibility
 	vim.o.timeoutlen = 300 -- Set timeout for mappings

@@ -1,6 +1,3 @@
 #!/usr/bin/env bash
 
-# alias: xclip -selection clipboard "${@}"
-
-pwd | tmux load-buffer -
-pwd | xclip -selection clipboard
+pwd | clipboard-copy

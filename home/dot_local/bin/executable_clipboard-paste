@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+if command -v pbpaste >/dev/null; then
+	pbpaste
+elif [[ -n ${DISPLAY} ]] && command -v xclip >/dev/null; then
+	xclip -out -selection clipboard
+elif [[ -n ${TMUX} ]]; then
+	tmux save-buffer - 2>/dev/null
+fi

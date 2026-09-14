@@ -2,7 +2,7 @@
 
 paste_text() {
 	local content
-	content=$(xclip -out -selection clipboard)
+	content=$(clipboard-paste)
 	if [[ "$1" == "--no-newline" ]]; then
 		content=$(printf '%s' "$content" | tr --delete '\r' | sed --null-data 's/\n$//')
 	fi
@@ -10,7 +10,11 @@ paste_text() {
 }
 
 clipboard_has_image() {
-	xclip -selection clipboard -target TARGETS -out 2>/dev/null | tr '\000' '\n' | grep --quiet --ignore-case 'image'
+	if command -v osascript >/dev/null; then
+		osascript -e 'clipboard info' 2>/dev/null | grep --quiet --extended-regexp 'PNGf|TIFF|JPEG'
+	else
+		xclip -selection clipboard -target TARGETS -out 2>/dev/null | tr '\000' '\n' | grep --quiet --ignore-case 'image'
+	fi
 }
 
 pane_has() { echo "$pane_procs" | grep --quiet --line-regexp --extended-regexp "$1"; }
