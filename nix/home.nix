@@ -11,6 +11,8 @@ let
   platform = pkgs.stdenv.hostPlatform;
 in
 {
+  imports = [ ./containers.nix ];
+
   home.username = username;
   home.homeDirectory = if platform.isDarwin then "/Users/${username}" else "/home/${username}";
   home.stateVersion = "26.05";
