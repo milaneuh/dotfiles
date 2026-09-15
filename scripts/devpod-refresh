@@ -41,7 +41,11 @@ fi
 name="$(basename "${workspace}" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9-]/-/g')"
 cache="vsc-${name}-${path_hash}"
 
+previous_base="$(docker image inspect --format '{{.Id}}' "${image}" 2>/dev/null || true)"
+
 docker pull "${image}"
+
+current_base="$(docker image inspect --format '{{.Id}}' "${image}" 2>/dev/null || true)"
 
 read -r -a cached_tags <<<"$(docker images --filter "reference=${cache}:*" --format '{{.Repository}}:{{.Tag}}' | tr '\n' ' ')"
 read -r -a cached_ids <<<"$(docker images --filter "reference=${cache}:*" --quiet | sort -u | tr '\n' ' ')"
@@ -56,6 +60,12 @@ devpod up "${workspace}" --recreate "$@" || status=$?
 
 if ((${#cached_ids[@]})); then
 	docker rmi "${cached_ids[@]}" >/dev/null 2>&1 || true
+fi
+
+if [[ -n ${previous_base} && ${previous_base} != "${current_base}" ]]; then
+	if docker rmi "${previous_base}" >/dev/null 2>&1; then
+		echo "Removed previous base image ${previous_base:7:12}"
+	fi
 fi
 
 exit "${status}"
