@@ -1,10 +1,6 @@
 alias man="LANG=en man"
 
-if command -v rg >&/dev/null; then
-	alias grep='rg --ignore-case'
-else
-	alias grep='grep --color=auto --ignore-case'
-fi
+alias grep='grep --color=auto --ignore-case'
 
 claude() {
 	if [[ -n ${TMUX} ]]; then

@@ -2,4 +2,9 @@
 
 # alias: vi -c ':G|only'
 
-[[ -d .git ]] && vi -c ':G|only'
+git rev-parse --git-dir >/dev/null 2>&1 || {
+	echo "Not a git repository" >&2
+	exit 1
+}
+
+exec vi -c ':G|only'
