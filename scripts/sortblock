@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
 
-# Add a key at the beginning of each block to search it  and then remove it
-cat - | awk --assign RS= --assign ORS='\n\n\0' 1 | sort --zero-terminated | tr --delete '\0'
-
-
+# Add a key at the beginning of each block to sort on, then strip it back out
+awk --assign RS= --assign ORS='\n\n\0' 1 | sort --zero-terminated | tr --delete '\0'
