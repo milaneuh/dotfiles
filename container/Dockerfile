@@ -8,8 +8,11 @@ ENV USER=vscode
 
 COPY --chown=vscode:vscode . /tmp/dotfiles
 
+# Keep ~/.config/chezmoi/chezmoistate.boltdb: it records that the home-manager
+# run_onchange script already ran, so containers skip it. Only the chezmoi.toml
+# sourceDir pointer is stale once /tmp/dotfiles is gone.
 RUN DEVPOD=true /tmp/dotfiles/install \
-    && rm -rf /tmp/dotfiles "${HOME}/.config/chezmoi"
+    && rm -rf /tmp/dotfiles "${HOME}/.config/chezmoi/chezmoi.toml"
 
 ENV PATH="/home/vscode/.local/share/mise/shims:/home/vscode/.nix-profile/bin:${PATH}"
 
