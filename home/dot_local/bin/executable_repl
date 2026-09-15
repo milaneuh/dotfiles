@@ -7,7 +7,7 @@
 input=$(cat)
 
 # Determine target pane based on right pane position
-target_pane="left"
+target_pane='{left-of}'
 
 # Get the currently active (focused) right pane
 active_right_pane=$(tmux display-message -p '#{pane_id}')
