@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-# alias : tmux attach-session -t "${1}"
-
-! command -v tmux >& /dev/null && echo "tmux not installed" && exit 1
-
-tmux attach-session -t "${1}"
