@@ -3,11 +3,12 @@ export HISTCONTROL=ignoreboth:erasedups
 export HISTFILESIZE=100000
 export HISTIGNORE="rm*:*--force*:vif *:vit *:vig *"
 export HISTSIZE=100000
-local_bin="${HOME}/.local/bin"
-if [[ -d ${local_bin} && ":${PATH}:" != *":${local_bin}:"* ]]; then
-	export PATH="${PATH}:${local_bin}"
-fi
-unset local_bin
+for bin_dir in "${HOME}/.local/bin" "${HOME}/.local/scripts"; do
+	if [[ -d ${bin_dir} && ":${PATH}:" != *":${bin_dir}:"* ]]; then
+		export PATH="${PATH}:${bin_dir}"
+	fi
+done
+unset bin_dir
 PROMPT_COMMAND=('history -a; history -c; history -r')
 
 export BROWSER="firefox"

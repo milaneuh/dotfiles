@@ -15,18 +15,23 @@ I highly recommend **not** installing my entire configuration. Instead, feel fre
 
 ## Layout
 
-Two directories, one per question:
+Three directories, one per question:
 
 - `nix/` — what is installed: a pinned flake applied by home-manager
 - `home/` — how each piece of software is configured: a chezmoi source tree mirroring `$HOME`
+- `scripts/` — what I wrote, deployed as a whole into `~/.local/scripts`
 
 ```
 home/dot_config/fzf/fzf.conf                  -> ~/.config/fzf/fzf.conf
 home/dot_bashrc.d/tools/fzf.bash              -> ~/.bashrc.d/tools/fzf.bash
-home/dot_local/bin/executable_lg              -> ~/.local/bin/lg
+scripts/lg                                    -> ~/.local/scripts/lg
 ```
 
 `chezmoi apply` places the files and runs `home-manager switch` whenever a file in `nix/` changes.
+
+`~/.local/scripts` is a single symlink to this repository's `scripts/`, so edits there take
+effect immediately without `chezmoi apply`. `~/.local/bin` is left alone for binaries other
+installers drop in it.
 
 ## Installation script
 
