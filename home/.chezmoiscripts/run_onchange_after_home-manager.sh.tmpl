@@ -4,7 +4,7 @@ set -o errexit
 set -o nounset
 
 nix_config_hash="{{ list (include "../nix/flake.nix") (include "../nix/flake.lock") (include "../nix/home.nix") (include "../nix/packages.nix") | join "" | sha256sum }}"
-flake_dir="{{ .chezmoi.workingTree }}/nix"
+flake_dir="${CHEZMOI_WORKING_TREE}/nix"
 
 echo "==> Applying home-manager configuration (${nix_config_hash:0:12})"
 

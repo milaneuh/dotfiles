@@ -8,6 +8,7 @@ on:
       - .github/workflows/devcontainer-image.yml
       - .dockerignore
       - container/**
+      - home/.chezmoiscripts/**
       - install
       - nix/**
   workflow_dispatch:
