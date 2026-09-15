@@ -88,6 +88,7 @@ in
     ffmpegthumbnailer
     imagemagick
     nerd-fonts.jetbrains-mono
+    obsidian
     pandoc
     ripdrag
   ];
