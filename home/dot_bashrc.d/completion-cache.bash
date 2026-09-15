@@ -4,7 +4,7 @@ cache_completion() {
 	bin=$(command -v "${name}") || return
 	cache="${HOME}/.cache/bash/${name}-completion.bash"
 	if [[ ! -s ${cache} || ${bin} -nt ${cache} ]]; then
-		mkdir --parents "${cache%/*}"
+		mkdir -p "${cache%/*}"
 		"${name}" completion bash >"${cache}"
 	fi
 	# shellcheck source=/dev/null
