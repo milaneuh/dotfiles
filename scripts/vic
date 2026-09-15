@@ -1,34 +1,10 @@
 #!/usr/bin/env bash
 
-# Help and arguments -----------------------------------------------------------
-
-help() {
-	cat <<-EOF
-		vic : vic [args]
-		    description of the script
-		    args:
-		        command  program install on the system
-	EOF
-}
-
-mapfile -t COMMANDS < <(compgen -c)
-
-check_args() {
-	for c in "${COMMANDS[@]}"; do
-		[[ "${c}" == "${1}" ]] && return 0
-	done
-	return 1
-}
-
-if ! check_args "${1}"; then
-	help
-	exit 1
-fi
-
-[[ ${1} == "help" ]] && help && exit 1
-
-# script -----------------------------------------------------------------------
-
 # alias: vi $(command -v "${1}")
 
-vi "$(command -v "${1}")"
+target=$(command -v "${1}") || {
+	echo "usage: vic <command>" >&2
+	exit 1
+}
+
+exec vi "${target}"

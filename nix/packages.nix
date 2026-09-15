@@ -15,16 +15,57 @@ let
     url = "https://cdn.jsdelivr.net/npm/mermaid@11.17.2/dist/mermaid.min.js";
     hash = "sha256-WB7X10vZBI0OOpE2OSfXLvIpQtdyJUayf3zCnjU5Drg=";
   };
+in
+{
+  inherit rangerArchives mermaid;
 
-  systemTools =
+  common =
     (with pkgs; [
       bash-completion
+      bash-language-server
       bashInteractive
+      bat
       chezmoi
+      claude-code
       curl
+      difftastic
+      docker-compose-language-service
+      dockerfile-language-server
+      entr
+      fd
+      fzf
+      gh
       git
       gnupg
+      gopls
+      hadolint
+      helm-ls
+      jinja-lsp
+      jq
+      k9s
+      lazygit
+      lemminx
+      lua-language-server
+      lua51Packages.luacheck
+      marksman
+      neovim
       openssh
+      pyright
+      ranger
+      ripgrep
+      shellcheck
+      shfmt
+      stylua
+      terraform-ls
+      tmux
+      tree
+      tree-sitter
+      typescript-language-server
+      universal-ctags
+      vscode-langservers-extracted
+      yaml-language-server
+      yq-go
+      zoxide
     ])
     ++ lib.optionals platform.isDarwin (
       with pkgs;
@@ -37,89 +78,8 @@ let
         gnutar
         ncurses
       ]
-    );
-
-  shellTools =
-    (with pkgs; [
-      bat
-      entr
-      fd
-      fzf
-      jq
-      ripgrep
-      tmux
-      tree
-      yq-go
-      zoxide
-    ])
+    )
     ++ lib.optionals platform.isLinux [ pkgs.xclip ];
-
-  fileManagerTools = with pkgs; [
-    ranger
-  ];
-
-  versionControlTools = with pkgs; [
-    difftastic
-    gh
-    lazygit
-  ];
-
-  editorTools = with pkgs; [
-    neovim
-    tree-sitter
-    universal-ctags
-  ];
-
-  formatters = with pkgs; [
-    shfmt
-    stylua
-  ];
-
-  linters = with pkgs; [
-    hadolint
-    lua51Packages.luacheck
-    shellcheck
-  ];
-
-  languageServers = with pkgs; [
-    bash-language-server
-    docker-compose-language-service
-    dockerfile-language-server
-    gopls
-    helm-ls
-    jinja-lsp
-    lemminx
-    lua-language-server
-    marksman
-    pyright
-    terraform-ls
-    typescript-language-server
-    vscode-langservers-extracted
-    yaml-language-server
-  ];
-
-  devopsTools = with pkgs; [
-    k9s
-  ];
-
-  commandLineApplications = with pkgs; [
-    claude-code
-  ];
-in
-{
-  inherit rangerArchives mermaid;
-
-  common =
-    systemTools
-    ++ shellTools
-    ++ fileManagerTools
-    ++ versionControlTools
-    ++ editorTools
-    ++ formatters
-    ++ linters
-    ++ languageServers
-    ++ devopsTools
-    ++ commandLineApplications;
 
   host = with pkgs; [
     alacritty

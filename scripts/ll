@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-# alias: ls -l -a --color=auto
-
-ls -l --color=auto
