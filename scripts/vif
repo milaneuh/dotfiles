@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
 
-! command -v fzf >& /dev/null && echo "fzf not installed" && exit 1
-! command -v bat >& /dev/null && echo "bat not installed" && exit 1
+! command -v fzf >&/dev/null && echo "fzf not installed" && exit 1
 
 file=$(fzf)
+[[ -z ${file} ]] && exit 0
 
-# TODO: ne fonctionne pas dans tmux
-[[ -n ${file} ]] && echo "vi ${file}" >>~/.bash_history
+echo "vi ${file}" >>~/.bash_history
 
-[[ -n ${file} ]] && vi "${file}"
+exec vi "${file}"

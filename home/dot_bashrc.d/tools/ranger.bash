@@ -19,8 +19,5 @@ if command -v ranger >&/dev/null; then
 		command rm --force -- "$tempfile" 2>/dev/null
 	}
 
-
-  if command -v ranger >&/dev/null; then
-    alias rr='ranger'
-  fi
+	alias rr='ranger'
 fi
