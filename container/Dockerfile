@@ -18,7 +18,8 @@ ENV PATH="/home/vscode/.local/share/mise/shims:/home/vscode/.nix-profile/bin:${P
 
 USER root
 
-RUN echo /home/vscode/.nix-profile/bin/bash >> /etc/shells \
+RUN echo "PATH=\"${PATH}\"" > /etc/environment \
+    && echo /home/vscode/.nix-profile/bin/bash >> /etc/shells \
     && usermod --shell /home/vscode/.nix-profile/bin/bash vscode
 
 USER vscode
