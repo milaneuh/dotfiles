@@ -14,10 +14,10 @@ system="$(nix --extra-experimental-features 'nix-command flakes' eval --impure -
 configuration="${USER}-${system}"
 
 if command -v home-manager >/dev/null; then
-	home-manager switch --flake "${flake_dir}#${configuration}" -b backup
+	home-manager switch --flake "${flake_dir}#\"${configuration}\"" -b backup
 	exit
 fi
 
 activation="$(nix --extra-experimental-features 'nix-command flakes' build --no-link \
-	--print-out-paths "${flake_dir}#homeConfigurations.${configuration}.activationPackage")"
+	--print-out-paths "${flake_dir}#homeConfigurations.\"${configuration}\".activationPackage")"
 HOME_MANAGER_BACKUP_EXT=backup "${activation}/activate"

@@ -23,6 +23,11 @@
           role = "host";
         }
         {
+          system = "aarch64-darwin";
+          username = "milan.rougemont";
+          role = "host";
+        }
+        {
           system = "aarch64-linux";
           username = "vscode";
           role = "container";
