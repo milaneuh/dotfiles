@@ -2,6 +2,13 @@
     dlog = -c diff.external=difft log --ext-diff
     dshow = -c diff.external=difft show --ext-diff
     ddiff = -c diff.external=difft diff
+	churn = !git log --format=format: --name-only --since=\"1 year ago\" | sort | uniq -c | sort -nr | head -20
+    who   = shortlog -sn --no-merges
+	bugs = !git log -i -E --grep=\"fix|bug|broken\" --name-only --format=\"\" | sort | uniq -c | sort -nr | head -20
+	pace = !git log --format=\"%ad\" --date=format:\"%Y-%m\" | sort | uniq -c
+	fire = !git log --oneline --since=\"1 year ago\" | grep -iE \"revert|hotfix|emergency|rollback\"
+	autofixup = !git commit --fixup $1 && git rebase --autosquash --interactive --rebase-merges $1~1 && echo \"autofixup finished\"
+	glola = !git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset' --all
 
 [color]
     ui = true
