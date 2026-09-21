@@ -89,6 +89,7 @@ in
     imagemagick
     nerd-fonts.jetbrains-mono
     obsidian
+    anki
     pandoc
     ripdrag
   ];
