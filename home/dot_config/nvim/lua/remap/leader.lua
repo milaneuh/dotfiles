@@ -74,6 +74,12 @@ M.setup = function()
 		vim.cmd("edit " .. path)
 	end, { noremap = true, silent = true, desc = "Open new scratch buffer" })
 
+	for i = 1, 9 do
+		vim.keymap.set("n", "<leader>" .. i, function()
+			bufutils.goto_nth(i)
+		end, { noremap = true, silent = true, desc = "Go to buffer " .. i .. " in tabline" })
+	end
+
 	-- Directory
 	vim.keymap.set("n", "<leader>dg", ':grep "" %:p:h<C-left><left><left>', { desc = "Grep in current file directory" })
 	vim.keymap.set("v", "<leader>dg", "y:grep <C-R>0 %:p:h", { desc = "Grep selection in current file directory" })
