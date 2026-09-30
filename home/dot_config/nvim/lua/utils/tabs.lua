@@ -57,6 +57,7 @@ M.tabline = function()
 	end
 
 	s = s .. "%#TabLineFill#%T%="
+	s = s .. "%{%v:lua.require('utils.buffers').bufferline()%}"
 	s = s .. "%#TabLine#%999X[X]"
 	return s
 end

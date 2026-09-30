@@ -73,7 +73,7 @@ M.setup = function()
 	vim.o.wildignorecase = true -- Ignore case in wildmenu
 
 	-- Tabs
-	vim.o.showtabline = 1
+	vim.o.showtabline = 2
 	vim.o.tabline = "%!v:lua.require('utils.tabs').tabline()"
 
 	-- Diagnostics
