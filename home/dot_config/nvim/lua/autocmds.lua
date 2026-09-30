@@ -48,6 +48,13 @@ M.setup = function()
 			vim.bo.makeprg = "mix compile"
 		end,
 	})
+
+	vim.api.nvim_create_autocmd({ "BufEnter", "BufDelete", "BufModifiedSet" }, {
+		pattern = "*",
+		callback = function()
+			vim.cmd("redrawtabline")
+		end,
+	})
 end
 
 return M
