@@ -138,19 +138,28 @@ function M.is_buffer_empty_and_unnamed(bufnr)
 end
 
 
+function M.listed()
+	return vim.tbl_filter(function(b) return vim.bo[b].buflisted end, vim.api.nvim_list_bufs())
+end
+
+function M.goto_nth(n)
+	local bufnr = M.listed()[n]
+	if bufnr then
+		vim.api.nvim_set_current_buf(bufnr)
+	end
+end
+
 function M.bufferline()
 	local current = vim.api.nvim_get_current_buf()
 	local parts = {}
-	for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
-		if vim.bo[bufnr].buflisted then
-			local name = vim.api.nvim_buf_get_name(bufnr)
-			name = name == "" and "No Name" or vim.fn.fnamemodify(name, ":t")
-			if vim.bo[bufnr].modified then
-				name = name .. "*"
-			end
-			local hl = (bufnr == current) and "%#TabLineSel#" or "%#TabLine#"
-			table.insert(parts, hl .. " " .. bufnr .. ":" .. name .. " ")
+	for i, bufnr in ipairs(M.listed()) do
+		local name = vim.api.nvim_buf_get_name(bufnr)
+		name = name == "" and "No Name" or vim.fn.fnamemodify(name, ":t")
+		if vim.bo[bufnr].modified then
+			name = name .. "*"
 		end
+		local hl = (bufnr == current) and "%#TabLineSel#" or "%#TabLine#"
+		table.insert(parts, hl .. " " .. i .. ":" .. name .. " ")
 	end
 	return table.concat(parts)
 end
