@@ -7,7 +7,6 @@ local navigation = require("utils.plugin.fzf.navigation")
 
 local fzf_functions_to_add_visual = {
 	{ func = "btags", mode = { "n", "v" }, remap = "<leader>ft", desc = "FZF: Find tags in current buffer" },
-	{ func = "buffers", mode = { "n", "v" }, remap = "<leader>bb", desc = "FZF: Find open buffers" },
 	{ func = "command_history", mode = { "n", "v" }, remap = "<leader>vh", desc = "FZF: Search command history" },
 	{ func = "commands", mode = { "n", "v" }, remap = "<leader>vc", desc = "FZF: Search available commands" },
 	{ func = "grep_project", mode = { "n", "v" }, remap = "<leader>pr", desc = "FZF: Grep in project" },
@@ -66,6 +65,7 @@ local additional_keymaps = {
 	},
 	{ mode = { "n", "v" }, remap = "<leader>gs", func = require("fzf-lua").git_status, desc = "FZF: Git status" },
 
+	{ mode = { "n", "v" }, remap = "<leader>bb", func = navigation.buffers, desc = "FZF: Find open buffers" },
 	{
 		mode = { "n", "v" },
 		remap = "<leader>z",
