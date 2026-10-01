@@ -44,6 +44,7 @@ M.setup = function()
 	-- Navigation
 	vim.o.mouse = "a" -- Enable mouse selection
 	vim.o.number = true -- Display line numbers
+	vim.o.relativenumber = true -- Display line numbers relative to the cursor
 	vim.o.scrolloff = 8 -- Enable scrolling when reaching the bottom
 	vim.o.grepprg = "rg --vimgrep" -- Use ripgrep with ignore file
 
