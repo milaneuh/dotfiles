@@ -3,7 +3,12 @@
 set -o errexit
 set -o nounset
 
-nix_config_hash="{{ list (include "../nix/flake.nix") (include "../nix/flake.lock") (include "../nix/home.nix") (include "../nix/packages.nix") | join "" | sha256sum }}"
+{{- $sources := "" }}
+{{- range (glob (joinPath .chezmoi.workingTree "nix" "**" "*.nix")) }}
+{{- $sources = printf "%s%s" $sources (include .) }}
+{{- end }}
+{{- $sources = printf "%s%s" $sources (include (joinPath .chezmoi.workingTree "nix" "flake.lock")) }}
+nix_config_hash="{{ $sources | sha256sum }}"
 flake_dir="${CHEZMOI_WORKING_TREE}/nix"
 
 echo "==> Applying home-manager configuration (${nix_config_hash:0:12})"

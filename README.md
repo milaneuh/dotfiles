@@ -29,6 +29,22 @@ scripts/lg                                    -> ~/.local/scripts/lg
 
 `chezmoi apply` places the files and runs `home-manager switch` whenever a file in `nix/` changes.
 
+### `nix/` follows the [dendritic pattern](https://github.com/mightyiam/dendritic)
+
+`flake.nix` only calls `flake-parts` with `import-tree ./modules`: every `.nix` file under
+`nix/modules/` is picked up automatically, so adding a module is adding a file.
+
+Each file under `nix/modules/home/` declares one `flake.modules.homeManager.<name>`:
+
+- `base` — identity, `home-manager` itself, the fetched (non-packaged) files
+- `packages` — the common toolchain, also exposed as the `nix develop` shell
+- `host` — GUI and media tooling, for a machine I sit in front of
+- `container` — devcontainer and VM tweaks
+- `docker` — docker CLI backed by colima, macOS only
+
+`nix/modules/machines.nix` is the only place that knows about machines: each one names the
+modules it wants, so there is no `role` flag threaded through the configuration.
+
 `~/.local/scripts` is a single symlink to this repository's `scripts/`, so edits there take
 effect immediately without `chezmoi apply`. `~/.local/bin` is left alone for binaries other
 installers drop in it.

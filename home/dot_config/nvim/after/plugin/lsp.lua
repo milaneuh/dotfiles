@@ -5,6 +5,7 @@ vim.lsp.enable({
 	"cssls",
 	"docker_compose_language_service",
 	"dockerls",
+	"elixirls",
 	"expert",
 	"gopls",
 	"helm_ls",
@@ -53,3 +54,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		end
 	end,
 })
+
+vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "Go to definition" })
+vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { desc = "Go to declaration" })

@@ -1,25 +1,7 @@
-{ pkgs }:
-
 let
-  inherit (pkgs) lib;
-  platform = pkgs.stdenv.hostPlatform;
-
-  rangerArchives = pkgs.fetchFromGitHub {
-    owner = "maximtrp";
-    repo = "ranger-archives";
-    rev = "0b1cfa9a77412c3b51da5b1b213c672227f9fbb4";
-    hash = "sha256-HEJ+8KlG++PK0vVpEYptbyuPZAKllX5PeyaTBKcf+8M=";
-  };
-
-  mermaid = pkgs.fetchurl {
-    url = "https://cdn.jsdelivr.net/npm/mermaid@11.17.2/dist/mermaid.min.js";
-    hash = "sha256-WB7X10vZBI0OOpE2OSfXLvIpQtdyJUayf3zCnjU5Drg=";
-  };
-in
-{
-  inherit rangerArchives mermaid;
-
-  common =
+  # Shared by every machine and by `nix develop`.
+  commonFor =
+    pkgs:
     (with pkgs; [
       bash-completion
       bash-language-server
@@ -67,7 +49,7 @@ in
       yq-go
       zoxide
     ])
-    ++ lib.optionals platform.isDarwin (
+    ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isDarwin (
       with pkgs;
       [
         coreutils
@@ -79,18 +61,10 @@ in
         ncurses
       ]
     )
-    ++ lib.optionals platform.isLinux [ pkgs.xclip ];
+    ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux [ pkgs.xclip ];
+in
+{
+  flake.modules.homeManager.packages = { pkgs, ... }: { home.packages = commonFor pkgs; };
 
-  host = with pkgs; [
-    alacritty
-    chafa
-    devpod
-    ffmpegthumbnailer
-    imagemagick
-    nerd-fonts.jetbrains-mono
-    obsidian
-    anki-bin
-    pandoc
-    ripdrag
-  ];
+  perSystem = { pkgs, ... }: { devShells.default = pkgs.mkShell { packages = commonFor pkgs; }; };
 }
