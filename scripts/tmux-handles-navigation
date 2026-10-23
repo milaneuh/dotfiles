@@ -2,4 +2,4 @@
 
 pane_tty=$(tmux display-message -p '#{pane_tty}')
 pane_procs=$(ps -t "${pane_tty#/dev/}" -o comm= 2>/dev/null | sed 's|.*/||')
-echo "$pane_procs" | grep --quiet --line-regexp --extended-regexp 'vi|vim|nvim|view|fzf'
+echo "$pane_procs" | grep --quiet --line-regexp --extended-regexp 'vi|vim|nvim|view|fzf|ssh|devpod'

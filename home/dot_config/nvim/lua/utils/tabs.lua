@@ -1,23 +1,12 @@
 local M = {}
 
-local function raw_label(tabpage, bufnr)
+local function raw_label(tabpage, tabnr)
 	local tab_ok, custom_label = pcall(vim.api.nvim_tabpage_get_var, tabpage, "tablabel")
 	if tab_ok and custom_label ~= "" then
 		return custom_label
 	end
 
-	local buf_name = vim.api.nvim_buf_get_name(bufnr)
-	if buf_name == "" then
-		local buftype = vim.bo[bufnr].buftype
-		return buftype == "" and "No Name" or ("<" .. buftype .. ">")
-	end
-
-	local filename = vim.fn.fnamemodify(buf_name, ":t")
-	if filename == "" then
-		return buf_name:match("fugitive") and "G status" or "No Name"
-	end
-
-	return filename
+	return tostring(tabnr)
 end
 
 M.tab_label = function(tabnr)
@@ -26,21 +15,10 @@ M.tab_label = function(tabnr)
 		return "Invalid Tab"
 	end
 
-	local ok, win = pcall(vim.api.nvim_tabpage_get_win, tabpage)
-	if not ok then
-		return "Invalid Tab"
-	end
-	local bufnr = vim.api.nvim_win_get_buf(win)
-	local modified = vim.bo[bufnr].modified
-
-	local label = raw_label(tabpage, bufnr)
+	local label = raw_label(tabpage, tabnr)
 
 	if vim.fn.strchars(label) > 30 then
 		label = vim.fn.strcharpart(label, 0, 29) .. "…"
-	end
-
-	if modified then
-		label = label .. "*"
 	end
 
 	return label

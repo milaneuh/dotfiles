@@ -1,5 +1,7 @@
 if not require("utils.pack").loaded("nvim-lspconfig") then return end
 
+vim.filetype.add({ extension = { templ = "templ" } })
+
 vim.lsp.enable({
 	"bashls",
 	"cssls",
@@ -16,6 +18,7 @@ vim.lsp.enable({
 	"lua_ls",
 	"marksman",
 	"pyright",
+	"templ",
 	"terraformls",
 	"ts_ls",
 	"yamlls",

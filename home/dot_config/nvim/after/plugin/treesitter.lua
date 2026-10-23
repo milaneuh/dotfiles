@@ -4,8 +4,9 @@ require("nvim-treesitter").setup({
 	install_dir = vim.fn.stdpath("data") .. "/site",
 })
 
-local filetype = { "bash", "c", "elixir", "javascript", "lua", "markdown", "python", "vim", "vimdoc" }
-require("nvim-treesitter").install(filetype)
+local filetype = { "bash", "c", "elixir", "javascript", "lua", "markdown", "python", "templ", "vim", "vimdoc" }
+-- go is only installed (not started) because templ injects it for Go expressions
+require("nvim-treesitter").install(vim.list_extend({ "go" }, filetype))
 
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = filetype,

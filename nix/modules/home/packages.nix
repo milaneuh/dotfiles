@@ -38,6 +38,7 @@ let
       shellcheck
       shfmt
       stylua
+      templ
       terraform-ls
       tmux
       tree

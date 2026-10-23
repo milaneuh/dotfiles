@@ -15,3 +15,5 @@ for config_file in ~/.bashrc.d/tools/*.bash; do
 done
 
 [[ -r ~/.bashrc.d/aliases.bash ]] && source ~/.bashrc.d/aliases.bash
+
+[[ -r ~/.bashrc.d/tmux.bash ]] && source ~/.bashrc.d/tmux.bash
