@@ -9,7 +9,7 @@ local fzf_functions_to_add_visual = {
 	{ func = "btags", mode = { "n", "v" }, remap = "<leader>ft", desc = "FZF: Find tags in current buffer" },
 	{ func = "command_history", mode = { "n", "v" }, remap = "<leader>vh", desc = "FZF: Search command history" },
 	{ func = "commands", mode = { "n", "v" }, remap = "<leader>vc", desc = "FZF: Search available commands" },
-	{ func = "grep_project", mode = { "n", "v" }, remap = "<leader>pr", desc = "FZF: Grep in project" },
+	{ func = "live_grep", mode = { "n", "v" }, remap = "<leader>pr", desc = "FZF: Live grep in project (rg)" },
 	{ func = "lines", mode = { "n", "v" }, remap = "<leader>br", desc = "FZF: Search lines in open buffers" },
 	{
 		func = "lsp_workspace_symbols",
