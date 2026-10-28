@@ -169,7 +169,7 @@ print_manual_steps() {
 		Installation finished
 
 		Log out and back in so the new login shell and session variables apply.
-		On macOS, Alacritty is in ~/Applications/Home Manager Apps and Colima starts
+		On macOS, Alacritty and Ghostty are in ~/Applications/Home Manager Apps and Colima starts
 		at login; check it with: colima status
 	EOF
 }

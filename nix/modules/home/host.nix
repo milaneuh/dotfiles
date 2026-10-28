@@ -11,6 +11,7 @@
         chafa
         devpod
         ffmpegthumbnailer
+        (if stdenv.hostPlatform.isDarwin then ghostty-bin else ghostty)
         imagemagick
         nerd-fonts.jetbrains-mono
         obsidian

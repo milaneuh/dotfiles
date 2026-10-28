@@ -1,0 +1,14 @@
+theme = Gruvbox Dark
+
+# Même lancement que alacritty : bash login interactif puis tmux
+command = shell:exec "$HOME/.nix-profile/bin/bash" -lic "exec tmux new-session -A -s main"
+
+macos-option-as-alt = true
+window-theme = dark
+
+font-family = JetBrainsMono Nerd Font Mono
+font-size = 13
+
+# Mêmes ré-encodages que alacritty (user-keys tmux)
+keybind = alt+left_bracket=text:\x1b[777~
+keybind = ctrl+shift+q=text:\x1b[778~
