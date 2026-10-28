@@ -11,7 +11,8 @@
         chafa
         devpod
         ffmpegthumbnailer
-        (if stdenv.hostPlatform.isDarwin then ghostty-bin else ghostty)
+        # terminfo collides with ncurses (both ship "ghostty"), ghostty-bin wins: it also has xterm-ghostty
+        (lib.hiPrio (if stdenv.hostPlatform.isDarwin then ghostty-bin else ghostty))
         imagemagick
         nerd-fonts.jetbrains-mono
         obsidian

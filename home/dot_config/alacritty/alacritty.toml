@@ -23,6 +23,10 @@ style = "Bold"
 family = "JetBrainsMono Nerd Font Mono"
 style = "Italic"
 
+[font.bold_italic]
+family = "JetBrainsMono Nerd Font Mono"
+style = "Bold Italic"
+
 [keyboard]
 bindings = [
   { key = "[", mods = "Alt", chars = "\u001b[777~" },
