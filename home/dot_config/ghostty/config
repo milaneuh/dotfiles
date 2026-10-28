@@ -1,7 +1,7 @@
 theme = Gruvbox Dark
 
 # Même lancement que alacritty : bash login interactif puis tmux
-command = shell:exec "$HOME/.nix-profile/bin/bash" -lic "exec tmux new-session -A -s main"
+command = shell:$HOME/.nix-profile/bin/bash -lic "exec tmux new-session -A -s main"
 
 macos-option-as-alt = true
 window-theme = dark
